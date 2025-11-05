@@ -26,6 +26,11 @@ export default function Navbar() {
 
   const handleCloseModal = () => setModalOpen(false);
 
+  // ✅ New helper function (allows switching to OTP)
+  const handleSwitchType = (type) => {
+    setModalType(type); // supports "login", "signup", and now "otp"
+  };
+
   // 🔹 Navbar scroll blur
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 40);
@@ -165,11 +170,7 @@ export default function Navbar() {
                 onClick={() => setShowSearch(!showSearch)}
                 className="p-2 rounded-full hover:bg-white/10 transition"
               >
-                <img
-                  src="assets/search.svg"
-                  alt="Search"
-                  className="h-5 w-5"
-                />
+                <img src="assets/search.svg" alt="Search" className="h-5 w-5" />
               </button>
 
               {showSearch && (
@@ -198,11 +199,7 @@ export default function Navbar() {
 
             {/* 🛒 Cart */}
             <button className="relative">
-              <img
-                src="assets/cart.svg"
-                alt="Cart"
-                className="h-5 w-5"
-              />
+              <img src="assets/cart.svg" alt="Cart" className="h-5 w-5" />
               <span className="absolute -top-2 -right-2 bg-red-500 text-xs rounded-full px-1">
                 0
               </span>
@@ -322,7 +319,7 @@ export default function Navbar() {
         isOpen={modalOpen}
         type={modalType}
         onClose={handleCloseModal}
-        switchType={(type) => setModalType(type)}
+        switchType={handleSwitchType} // ✅ fixed — supports OTP now
       />
     </>
   );

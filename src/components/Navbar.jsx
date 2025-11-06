@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
 import AuthModals from "./AuthModals";
+import toast from "react-hot-toast";
 
 export default function Navbar() {
   const location = useLocation();
@@ -11,6 +12,9 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState("login");
+
+  // 🔹 New: track login state
+  const [user, setUser] = useState(null);
 
   // 🔹 Refs for click-outside detection
   const profileRef = useRef(null);
@@ -26,9 +30,24 @@ export default function Navbar() {
 
   const handleCloseModal = () => setModalOpen(false);
 
-  // ✅ New helper function (allows switching to OTP)
-  const handleSwitchType = (type) => {
-    setModalType(type); // supports "login", "signup", and now "otp"
+  // ✅ Allow modal to switch between login/signup (and future otp)
+  const handleSwitchType = (type) => setModalType(type);
+
+  // ✅ New: Check localStorage for logged-in user
+  useEffect(() => {
+    const storedUser = localStorage.getItem("authUser");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  // ✅ New: Logout handler
+  const handleLogout = () => {
+    localStorage.removeItem("authUser");
+    setUser(null);
+    setShowProfileMenu(false);
+    toast.success("Logged out successfully");
+    window.location.reload();
   };
 
   // 🔹 Navbar scroll blur
@@ -164,7 +183,7 @@ export default function Navbar() {
               + Your Design
             </button>
 
-            {/* 🔍 Glassy Search Popup */}
+            {/* 🔍 Search */}
             <div ref={searchRef} className="relative">
               <button
                 onClick={() => setShowSearch(!showSearch)}
@@ -220,18 +239,30 @@ export default function Navbar() {
 
               {showProfileMenu && (
                 <div className="absolute right-0 mt-4 flex flex-col items-center space-y-3 z-50 animate-fadeIn">
-                  <button
-                    onClick={() => handleOpenModal("login")}
-                    className="relative w-[130px] text-white font-medium py-2 rounded-full bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-2xl border border-white/20 hover:from-white/20 hover:to-white/10 transition-all shadow-[0_4px_20px_rgba(255,255,255,0.1)]"
-                  >
-                    Login
-                  </button>
-                  <button
-                    onClick={() => handleOpenModal("signup")}
-                    className="relative w-[130px] text-white font-medium py-2 rounded-full bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-xl border border-white/20 hover:from-white/20 hover:to-white/10 transition-all shadow-[0_4px_20px_rgba(255,255,255,0.1)]"
-                  >
-                    Sign Up
-                  </button>
+                  {/* ✅ Conditional login/logout */}
+                  {user ? (
+                    <button
+                      onClick={handleLogout}
+                      className="relative w-[130px] text-white font-medium py-2 rounded-full bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-2xl border border-white/20 hover:from-white/20 hover:to-white/10 transition-all shadow-[0_4px_20px_rgba(255,255,255,0.1)]"
+                    >
+                      Logout
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => handleOpenModal("login")}
+                        className="relative w-[130px] text-white font-medium py-2 rounded-full bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-2xl border border-white/20 hover:from-white/20 hover:to-white/10 transition-all shadow-[0_4px_20px_rgba(255,255,255,0.1)]"
+                      >
+                        Login
+                      </button>
+                      <button
+                        onClick={() => handleOpenModal("signup")}
+                        className="relative w-[130px] text-white font-medium py-2 rounded-full bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-xl border border-white/20 hover:from-white/20 hover:to-white/10 transition-all shadow-[0_4px_20px_rgba(255,255,255,0.1)]"
+                      >
+                        Sign Up
+                      </button>
+                    </>
+                  )}
                 </div>
               )}
             </div>
@@ -298,18 +329,29 @@ export default function Navbar() {
 
           {/* Bottom Buttons */}
           <div className="absolute bottom-10 right-8 flex gap-4">
-            <button
-              onClick={() => handleOpenModal("login")}
-              className="px-6 py-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-base hover:bg-white/20 transition"
-            >
-              Login
-            </button>
-            <button
-              onClick={() => handleOpenModal("signup")}
-              className="px-6 py-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-base hover:bg-white/20 transition"
-            >
-              Sign up
-            </button>
+            {!user ? (
+              <>
+                <button
+                  onClick={() => handleOpenModal("login")}
+                  className="px-6 py-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-base hover:bg-white/20 transition"
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => handleOpenModal("signup")}
+                  className="px-6 py-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-base hover:bg-white/20 transition"
+                >
+                  Sign up
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={handleLogout}
+                className="px-6 py-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-base hover:bg-white/20 transition"
+              >
+                Logout
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -319,7 +361,7 @@ export default function Navbar() {
         isOpen={modalOpen}
         type={modalType}
         onClose={handleCloseModal}
-        switchType={handleSwitchType} // ✅ fixed — supports OTP now
+        switchType={handleSwitchType}
       />
     </>
   );

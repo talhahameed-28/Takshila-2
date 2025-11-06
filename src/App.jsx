@@ -10,11 +10,15 @@ import Catalogue from "./pages/Catalogue";
 import MyActivity from "./pages/MyActivity";
 import OurStory from "./pages/OurStory";
 import Blogs from "./pages/Blogs";
+import VerifyOtp from "./pages/verifyOtp"; // ✅ Added import for OTP page
 
 export default function App() {
   return (
     <div className="bg-[#111] text-white min-h-screen">
+      {/* Navbar (stays on every page) */}
       <Navbar />
+
+      {/* Page Routes */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/community" element={<Community />} />
@@ -22,7 +26,12 @@ export default function App() {
         <Route path="/my-activity" element={<MyActivity />} />
         <Route path="/our-story" element={<OurStory />} />
         <Route path="/blogs" element={<Blogs />} />
+
+        {/* ✅ Added Verify OTP route */}
+        <Route path="/verifyOtp" element={<VerifyOtp />} />
       </Routes>
+
+      {/* Footer (stays on every page) */}
       <Footer />
     </div>
   );

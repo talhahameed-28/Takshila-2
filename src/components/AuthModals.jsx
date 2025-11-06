@@ -7,72 +7,60 @@ import FacebookLogin from "@greatsumini/react-facebook-login";
 
 export default function AuthModals({ isOpen, type, onClose, switchType }) {
   const navigate = useNavigate();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false); // 🔹 Added to disable button
 
-  // 🧠 Handle Register
   const handleRegister = async (e) => {
     try {
       e.preventDefault();
-      setIsSubmitting(true);
-
-      const formData = new FormData(e.target);
+      setIsSubmitting(true); // 🔹 Disable Sign Up button
+      const formData = new FormData(e.target); // e.target = form
       const values = Object.fromEntries(formData.entries());
       console.log(values);
-
       axios.defaults.withCredentials = true;
       const { data } = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/register`,
         values
       );
-
       console.log(data);
       if (data.success) {
         onClose();
         navigate(`/verifyOtp`, { state: { userId: data.userId } });
       } else {
-        toast.error(data.message || "Something went wrong");
+        toast.error(data.message || "Signup failed");
       }
     } catch (err) {
       console.log(err);
-      toast.error("Signup failed");
+      toast.error("Something went wrong during signup");
     } finally {
-      // Re-enable after short delay to prevent spam clicks
-      setTimeout(() => setIsSubmitting(false), 3000);
+      setTimeout(() => setIsSubmitting(false), 3000); // 🔹 Re-enable after short delay
     }
   };
 
-  // 🧠 Handle Login
   const handleLogin = async (e) => {
     try {
+      axios.defaults.withCredentials = true;
       e.preventDefault();
-      setIsSubmitting(true);
-
-      const formData = new FormData(e.target);
+      const formData = new FormData(e.target); // e.target = form
       const values = Object.fromEntries(formData.entries());
       console.log(values);
-
-      axios.defaults.withCredentials = true;
       const { data } = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/login`,
         values
       );
-
       console.log(data);
       if (data.success) {
-        toast.success("Logging you in...");
+        toast.success("Logging you in");
+        localStorage.setItem("authUser", JSON.stringify(data.user)); // 🔹 Save user info
         window.location.reload();
       } else {
-        toast.error(data.message || "Invalid credentials");
+        toast.error(data.message);
       }
     } catch (err) {
       console.log(err);
       toast.error("Login failed");
-    } finally {
-      setTimeout(() => setIsSubmitting(false), 3000);
     }
   };
 
-  // 🧠 Handle Social Auth
   const handleFacebookAuth = async (response) => {
     try {
       axios.defaults.withCredentials = true;
@@ -84,10 +72,12 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
       if (data.success) {
         onClose();
         toast.success("Logged in through Facebook");
+        localStorage.setItem("authUser", JSON.stringify(data.user));
         navigate("/");
-      } else toast.error("Error");
+      } else toast.error("Facebook login error");
     } catch (err) {
       console.log(err);
+      toast.error("Facebook authentication failed");
     }
   };
 
@@ -103,11 +93,13 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
       console.log(data);
       if (data.success) {
         onClose();
-        toast.success("Google authentication successful");
+        toast.success("Google auth successful");
+        localStorage.setItem("authUser", JSON.stringify(data.user));
         navigate("/");
-      } else toast.error("Error");
+      } else toast.error("Google authentication failed");
     } catch (err) {
       console.log(err);
+      toast.error("Google authentication error");
     }
   };
 
@@ -199,14 +191,9 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
 
                   <button
                     type="submit"
-                    disabled={isSubmitting}
-                    className={`w-full text-sm py-3 rounded-full font-medium transition ${
-                      isSubmitting
-                        ? "bg-gray-600 cursor-not-allowed text-white/70"
-                        : "bg-black/80 text-white hover:bg-black"
-                    }`}
+                    className="w-full text-sm bg-black/80 py-3 rounded-full text-white font-medium hover:bg-black transition"
                   >
-                    {isSubmitting ? "Please wait..." : "Log In"}
+                    Log In
                   </button>
                 </form>
 
@@ -250,12 +237,12 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
                     console.log("Login Failed!", error);
                   }}
                 >
-                  Signup with Facebook
+                  Signup with facebook
                 </FacebookLogin>
               </div>
             </>
           ) : (
-            // SIGNUP MODAL
+            /* SIGNUP MODAL (same width, single column) */
             <div className="w-full flex flex-col justify-center items-center px-0 md:px-16">
               <h2 className="text-3xl font-semibold text-center mb-2">
                 Create Account
@@ -268,6 +255,7 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
                 onSubmit={handleRegister}
                 className="space-y-4 w-full text-xs max-w-2xl"
               >
+                {/* Row 1 */}
                 <div className="grid grid-cols-3 gap-3">
                   <input
                     name="firstName"
@@ -320,13 +308,14 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
                   className="input-style"
                 />
 
+                {/* 🔹 Sign Up Button (Disabled when submitting) */}
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`w-full py-3 rounded-full font-medium transition ${
+                  className={`w-full py-3 rounded-full text-white font-medium transition ${
                     isSubmitting
-                      ? "bg-gray-600 cursor-not-allowed text-white/70"
-                      : "bg-black/80 text-white hover:bg-black"
+                      ? "bg-gray-600 cursor-not-allowed"
+                      : "bg-black/80 hover:bg-black"
                   }`}
                 >
                   {isSubmitting ? "Please wait..." : "Sign Up"}
@@ -335,6 +324,7 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
 
               <hr className="border-white/30 my-6 w-full max-w-2xl" />
 
+              {/* Social Signup */}
               <div className="flex flex-col text-sm sm:flex-row justify-center items-center gap-4">
                 <GoogleOAuthProvider
                   clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
@@ -359,7 +349,7 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
                     console.log("Login Failed!", error);
                   }}
                 >
-                  Signup with Facebook
+                  Signup with facebook
                 </FacebookLogin>
               </div>
 

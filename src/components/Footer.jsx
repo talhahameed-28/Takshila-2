@@ -23,20 +23,22 @@ export default function Footer() {
 
   return (
     <>
-      {/* ✅ Outer Background (Matched to Homepage #e5e2df) */}
+      {/* ✅ Outer Background */}
       <div className="bg-[#e5e2df] pb-6 flex justify-center px-6 transition-colors duration-500">
-        {/* 🌿 Glossy Green Footer Container */}
+        {/* 🌌 Dark Glass Footer */}
         <footer
           className="relative w-full max-w-[1400px] rounded-3xl 
-          bg-gradient-to-br from-[#2E4B45]/95 via-[#2E4B45]/90 to-[#1f332e]/90 
-          border border-white text-gray-200 
-          backdrop-blur-3xl shadow-2xl py-14 px-8 md:px-20 
-          overflow-hidden transition-all duration-500"
+          bg-[#202020]/70 backdrop-blur-3xl border border-white/10 text-gray-200 
+          shadow-2xl py-14 px-8 md:px-20 overflow-hidden transition-all duration-500"
         >
-          {/* Glossy Shine Overlays */}
-          <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-transparent pointer-events-none"></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-white/10 via-transparent to-transparent mix-blend-overlay pointer-events-none"></div>
-          <div className="absolute top-0 left-0 right-0 h-[2px] bg-white/20 blur-sm opacity-70"></div>
+          {/* ✨ Glass Shine Layers */}
+          <div
+            className="absolute inset-0 pointer-events-none rounded-3xl 
+                          bg-gradient-to-tr from-white/15 via-transparent to-transparent 
+                          opacity-30 blur-md"
+          ></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-transparent pointer-events-none mix-blend-overlay"></div>
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-white/10 blur-sm opacity-50"></div>
 
           {/* Content Grid */}
           <div className="relative z-10 max-w-[1300px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-20">
@@ -45,9 +47,9 @@ export default function Footer() {
               <img
                 src="assets/logoo.svg"
                 alt="Takshila Logo"
-                className="h-14 w-14 drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]"
+                className="h-14 w-14 drop-shadow-[0_0_8px_rgba(255,255,255,0.25)]"
               />
-              <p className="text-sm leading-relaxed text-gray-200">
+              <p className="text-sm leading-relaxed text-gray-400">
                 Takshila is a company focused on creating decentralized shared
                 P2P economic systems to enable freedom in digital business
                 environments for all stakeholders.
@@ -59,7 +61,7 @@ export default function Footer() {
                     <a
                       key={index}
                       href="#"
-                      className="flex items-center justify-center w-10 h-10 rounded-full border border-white/20 bg-white/10 hover:bg-white/20 transition backdrop-blur-md shadow-sm hover:shadow-[0_0_8px_rgba(255,255,255,0.2)]"
+                      className="flex items-center justify-center w-10 h-10 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition backdrop-blur-md shadow-sm hover:shadow-[0_0_8px_rgba(255,255,255,0.15)]"
                     >
                       <img
                         src={`assets/${icon}`}
@@ -74,10 +76,10 @@ export default function Footer() {
 
             {/* Customer Services */}
             <div>
-              <h3 className="text-lg font-semibold mb-4 text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.2)]">
+              <h3 className="text-lg font-semibold mb-4 text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.15)]">
                 CUSTOMER SERVICES
               </h3>
-              <ul className="space-y-2 text-sm text-gray-200">
+              <ul className="space-y-2 text-sm text-gray-400">
                 {["Our Story", "FAQ's", "Contact us", "Blogs"].map((item) => (
                   <li key={item}>
                     <a
@@ -93,10 +95,10 @@ export default function Footer() {
 
             {/* Privacy & Legal */}
             <div>
-              <h3 className="text-lg font-semibold mb-4 text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.2)]">
+              <h3 className="text-lg font-semibold mb-4 text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.15)]">
                 Privacy & Legal
               </h3>
-              <ul className="space-y-2 text-sm text-gray-200">
+              <ul className="space-y-2 text-sm text-gray-400">
                 {[
                   "Privacy Policy",
                   "Terms & Conditions",
@@ -117,19 +119,19 @@ export default function Footer() {
 
             {/* Newsletter */}
             <div>
-              <h3 className="text-lg font-semibold mb-4 text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.2)]">
+              <h3 className="text-lg font-semibold mb-4 text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.15)]">
                 Subscribe Newsletter
               </h3>
-              <p className="text-sm mb-4 text-gray-300">
+              <p className="text-sm mb-4 text-gray-400">
                 Sign up for the latest offers and exclusives.
               </p>
               <div className="flex">
                 <input
                   type="email"
                   placeholder="Your email"
-                  className="w-full px-4 py-3 rounded-l-lg bg-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/40 backdrop-blur-md"
+                  className="w-full px-4 py-3 rounded-l-lg bg-white/5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/20 backdrop-blur-md"
                 />
-                <button className="px-4 rounded-r-lg bg-white/20 hover:bg-white/30 transition">
+                <button className="px-4 rounded-r-lg bg-white/10 hover:bg-white/20 transition">
                   <img
                     src="assets/mail.svg"
                     alt="Send"
@@ -141,10 +143,10 @@ export default function Footer() {
           </div>
 
           {/* Bottom Gloss Line */}
-          <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
 
           {/* Copyright */}
-          <div className="relative mt-12 text-center text-xs border-t pt-6 border-white/10 text-gray-300">
+          <div className="relative mt-12 text-center text-xs border-t pt-6 border-white/10 text-gray-500">
             Copyright © 2025 Takshila. All Rights Reserved.
           </div>
         </footer>
@@ -154,14 +156,17 @@ export default function Footer() {
       <button
         onClick={scrollToTop}
         aria-label="Scroll to top"
-        className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-br from-[#2E4B45]/90 to-[#243a35]/90 backdrop-blur-md border border-white/30 shadow-lg hover:shadow-[0_0_10px_rgba(255,255,255,0.3)] flex items-center justify-center transition-all duration-300"
+        className="fixed bottom-6 right-6 w-14 h-14 rounded-full 
+                   bg-[#202020]/80 backdrop-blur-md border border-white/10 
+                   shadow-lg hover:shadow-[0_0_10px_rgba(255,255,255,0.2)] 
+                   flex items-center justify-center transition-all duration-300"
       >
         <svg
           className="absolute w-12 h-12 transform -rotate-90"
           viewBox="0 0 36 36"
         >
           <path
-            stroke="#b3dbd0"
+            stroke="#cfcfcf"
             strokeWidth="2.5"
             fill="none"
             strokeDasharray="100"
@@ -173,7 +178,7 @@ export default function Footer() {
 
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 z-10 text-[#b3dbd0]"
+          className="h-6 w-6 z-10 text-white"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"

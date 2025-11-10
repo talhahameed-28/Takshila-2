@@ -83,3 +83,20 @@ body {
 .animate-fadeIn {
   animation: fadeIn 0.25s ease-out;
 }
+
+@keyframes shine-full {
+  0% {
+    left: -120%;
+  }
+  70% {
+    left: 140%;
+  }
+  100% {
+    left: 140%;
+  }
+}
+
+.animate-shine-full {
+  animation: shine-full 8s linear infinite;
+  animation-delay: 2s;
+}

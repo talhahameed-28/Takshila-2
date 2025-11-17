@@ -3,6 +3,8 @@ import React, { useState, useEffect, useRef } from "react";
 import AuthModals from "./AuthModals";
 import toast from "react-hot-toast";
 import "../index.css"; // make sure this imports the animation keyframes below
+import ReactDOM from "react-dom";
+
 
 export default function Navbar() {
   const location = useLocation();
@@ -196,9 +198,6 @@ export default function Navbar() {
             <button className="bg-white/5 hover:bg-white/10 text-white px-4 py-1 rounded-full backdrop-blur-md transition text-sm">
               Ai Designer
             </button>
-            <button className="bg-white/5 hover:bg-white/10 text-white px-4 py-1 rounded-full backdrop-blur-md transition text-sm">
-              + Your Design
-            </button>
 
             {/* 🔍 Search */}
             <div ref={searchRef} className="relative z-[9999]">
@@ -237,17 +236,15 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* 🛒 Cart */}
-            <button className="relative">
-              <img
-                src="assets/cart.svg"
-                alt="Cart"
-                className="h-5 w-5 "
-              />
+            <Link
+              to="/cart"
+              className="relative p-2 rounded-full hover:bg-white/10 transition"
+            >
+              <img src="assets/cart.svg" alt="Cart" className="h-5 w-5" />
               <span className="absolute -top-2 -right-2 bg-red-500 text-xs rounded-full px-1">
                 0
               </span>
-            </button>
+            </Link>
 
             {/* 👤 Profile Dropdown */}
             <div ref={profileRef} className="relative z-[9999]">
@@ -263,30 +260,70 @@ export default function Navbar() {
               </button>
 
               {showProfileMenu && (
-                <div className="absolute right-0 mt-4 flex flex-col items-center space-y-3 z-[9999] animate-fadeIn">
+<div
+    className="absolute right-0 mt-4 flex flex-col items-center space-y-4 z-[99999] animate-fadeIn
+               px-6 py-6 rounded-3xl border border-white/10 
+               shadow-[0_0_25px_rgba(255,255,255,0.15)]
+               bg-[#202020]/70 overflow-hidden backdrop-blur-3xl"
+    style={{
+      WebkitBackdropFilter: "blur(40px) saturate(150%)",
+      backdropFilter: "blur(40px) saturate(150%)"
+    }}
+  >
+    {/* Glass Layer 1 */}
+    <div className="absolute inset-0 rounded-3xl pointer-events-none 
+                    bg-gradient-to-tr from-white/15 via-transparent to-transparent
+                    opacity-25 blur-sm"></div>
+
+    {/* Glass Layer 2 */}
+    <div className="absolute inset-0 rounded-3xl pointer-events-none
+                    bg-gradient-to-b from-white/10 via-transparent to-transparent 
+                    mix-blend-overlay"></div>
+
+
+                  {/* 🔹 If logged in → Show Logout */}
                   {user ? (
                     <button
                       onClick={handleLogout}
-                      className="relative w-[130px] text-white font-medium py-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-xl border border-white/10 transition-all shadow-[0_4px_20px_rgba(255,255,255,0.1)]"
+                      className="relative w-[130px] text-white font-medium py-2 rounded-full
+                       bg-white/10 hover:bg-white/20 backdrop-blur-sm ring-1 ring-white/12
+                       border border-white/6 transition-all shadow-[0_4px_12px_rgba(0,0,0,0.4)]"
                     >
                       Logout
                     </button>
                   ) : (
                     <>
+                      {/* 🔹 Login */}
                       <button
                         onClick={() => handleOpenModal("login")}
-                        className="relative w-[130px] text-white font-medium py-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-xl border border-white/10 transition-all shadow-[0_4px_20px_rgba(255,255,255,0.1)]"
+                        className="relative w-[130px] text-white font-medium py-2 rounded-full
+                       bg-white/10 hover:bg-white/20 backdrop-blur-sm ring-1 ring-white/12
+                       border border-white/6 transition-all shadow-[0_4px_12px_rgba(0,0,0,0.4)]"
                       >
                         Login
                       </button>
+
+                      {/* 🔹 Sign Up */}
                       <button
                         onClick={() => handleOpenModal("signup")}
-                        className="relative w-[130px] text-white font-medium py-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-xl border border-white/10 transition-all shadow-[0_4px_20px_rgba(255,255,255,0.1)]"
+                        className="relative w-[130px] text-white font-medium py-2 rounded-full
+                       bg-white/10 hover:bg-white/20 backdrop-blur-sm ring-1 ring-white/12
+                       border border-white/6 transition-all shadow-[0_4px_12px_rgba(0,0,0,0.4)]"
                       >
                         Sign Up
                       </button>
                     </>
                   )}
+
+                  {/* 🔹 Your Orders (Always Visible, Now at Bottom) */}
+                  <Link
+                    to="/orders"
+                    className="relative w-[130px] text-center text-white font-medium py-2 rounded-full
+                     bg-white/10 hover:bg-white/20 backdrop-blur-sm ring-1 ring-white/12
+                     border border-white/6 transition-all shadow-[0_4px_12px_rgba(0,0,0,0.4)]"
+                  >
+                    Your Orders
+                  </Link>
                 </div>
               )}
             </div>

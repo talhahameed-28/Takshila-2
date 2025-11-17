@@ -10,7 +10,12 @@ import Catalogue from "./pages/Catalogue";
 import MyActivity from "./pages/MyActivity";
 import OurStory from "./pages/OurStory";
 import Blogs from "./pages/Blogs";
-import VerifyOtp from "./pages/VerifyOtp"; // ✅ Added import for OTP page
+import VerifyOtp from "./pages/verifyOtp"; // ✅ OTP page import
+import Orders from "./pages/Orders";
+
+
+// ✅ Add this import for Cart page
+import Cart from "./pages/Cart";
 
 export default function App() {
   return (
@@ -27,8 +32,12 @@ export default function App() {
         <Route path="/our-story" element={<OurStory />} />
         <Route path="/blogs" element={<Blogs />} />
 
-        {/* ✅ Added Verify OTP route */}
+        {/* ✅ Verify OTP route */}
         <Route path="/verifyOtp" element={<VerifyOtp />} />
+
+        {/* ✅ New Cart route */}
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/orders" element={<Orders />} />
       </Routes>
 
       {/* Footer (stays on every page) */}

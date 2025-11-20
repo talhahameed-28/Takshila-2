@@ -1,19 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import AuthModals from "./AuthModals";
 import toast from "react-hot-toast";
-import "../index.css";
+import "../index.css"; // make sure this imports the animation keyframes below
 import ReactDOM from "react-dom";
 
-// ✅ NEW: Import AuthContext
-import { AuthContext } from "../context/AuthContext";
 
 export default function Navbar() {
   const location = useLocation();
-
-  // ✅ NEW: Get user globally from context
-  const { user, setUser } = useContext(AuthContext);
-
   const [showSearch, setShowSearch] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -21,6 +15,7 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState("login");
+  const [user, setUser] = useState(null);
 
   const profileRef = useRef(null);
   const searchRef = useRef(null);
@@ -36,13 +31,17 @@ export default function Navbar() {
   const handleCloseModal = () => setModalOpen(false);
   const handleSwitchType = (type) => setModalType(type);
 
-  // ❌ REMOVED your old localStorage useEffect
-  // Context already handles this globally
+  useEffect(() => {
+    const storedUser = localStorage.getItem("authUser");
+    if (storedUser) setUser(JSON.parse(storedUser));
+  }, []);
 
-  // ✅ UPDATED LOGOUT (no reload, Context auto updates Navbar)
   const handleLogout = () => {
-    setUser(null); // global update
+    localStorage.removeItem("authUser");
+    setUser(null);
+    setShowProfileMenu(false);
     toast.success("Logged out successfully");
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -206,7 +205,11 @@ export default function Navbar() {
                 onClick={() => setShowSearch(!showSearch)}
                 className="p-2 rounded-full hover:bg-white/10 transition"
               >
-                <img src="assets/search.svg" alt="Search" className="h-5 w-5" />
+                <img
+                  src="assets/search.svg"
+                  alt="Search"
+                  className="h-5 w-5 "
+                />
               </button>
 
               {showSearch && (
@@ -257,17 +260,28 @@ export default function Navbar() {
               </button>
 
               {showProfileMenu && (
-                <div
-                  className="absolute right-0 mt-4 flex flex-col items-center space-y-4 z-[99999] animate-fadeIn
+<div
+    className="absolute right-0 mt-4 flex flex-col items-center space-y-4 z-[99999] animate-fadeIn
                px-6 py-6 rounded-3xl border border-white/10 
                shadow-[0_0_25px_rgba(255,255,255,0.15)]
                bg-[#202020]/70 overflow-hidden backdrop-blur-3xl"
-                  style={{
-                    WebkitBackdropFilter: "blur(40px) saturate(150%)",
-                    backdropFilter: "blur(40px) saturate(150%)",
-                  }}
-                >
-                  {/* 🔹 Logged In → Logout */}
+    style={{
+      WebkitBackdropFilter: "blur(40px) saturate(150%)",
+      backdropFilter: "blur(40px) saturate(150%)"
+    }}
+  >
+    {/* Glass Layer 1 */}
+    <div className="absolute inset-0 rounded-3xl pointer-events-none 
+                    bg-gradient-to-tr from-white/15 via-transparent to-transparent
+                    opacity-25 blur-sm"></div>
+
+    {/* Glass Layer 2 */}
+    <div className="absolute inset-0 rounded-3xl pointer-events-none
+                    bg-gradient-to-b from-white/10 via-transparent to-transparent 
+                    mix-blend-overlay"></div>
+
+
+                  {/* 🔹 If logged in → Show Logout */}
                   {user ? (
                     <button
                       onClick={handleLogout}
@@ -279,6 +293,7 @@ export default function Navbar() {
                     </button>
                   ) : (
                     <>
+                      {/* 🔹 Login */}
                       <button
                         onClick={() => handleOpenModal("login")}
                         className="relative w-[130px] text-white font-medium py-2 rounded-full
@@ -288,6 +303,7 @@ export default function Navbar() {
                         Login
                       </button>
 
+                      {/* 🔹 Sign Up */}
                       <button
                         onClick={() => handleOpenModal("signup")}
                         className="relative w-[130px] text-white font-medium py-2 rounded-full
@@ -299,6 +315,7 @@ export default function Navbar() {
                     </>
                   )}
 
+                  {/* 🔹 Your Orders (Always Visible, Now at Bottom) */}
                   <Link
                     to="/orders"
                     className="relative w-[130px] text-center text-white font-medium py-2 rounded-full

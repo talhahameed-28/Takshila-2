@@ -10,7 +10,7 @@ import Catalogue from "./pages/Catalogue";
 import MyActivity from "./pages/MyActivity";
 import OurStory from "./pages/OurStory";
 import Blogs from "./pages/Blogs";
-import VerifyOtp from "./pages/verifyOtp"; // ✅ OTP page import
+import VerifyOtp from "./pages/VerifyOtp"; // ✅ OTP page import
 import Orders from "./pages/Orders";
 
 

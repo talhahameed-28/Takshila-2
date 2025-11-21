@@ -25,8 +25,8 @@ export default function VerifyOtp() {
 
       if (data.success) {
         toast.success("OTP Verified Successfully 🎉");
-        window.dispatchEvent(new Event("auth-changed"));
         localStorage.setItem("authUser", JSON.stringify(data.user)); // 🔹 Save login session
+        window.dispatchEvent(new Event("auth-changed"));
         navigate("/"); // redirect to home
       } else {
         toast.error(data.message || "Invalid OTP");

@@ -24,7 +24,6 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
       );
 
       if (data.success) {
-        window.dispatchEvent(new Event("auth-changed"));
         onClose();
         navigate(`/verifyOtp`, { state: { userId: data.userId } });
       } else {

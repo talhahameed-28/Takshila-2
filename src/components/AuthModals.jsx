@@ -19,7 +19,7 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
       axios.defaults.withCredentials = true;
 
       const { data } = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/https://takshila.cloud/api`,
+        `${import.meta.env.VITE_BASE_URL}/register`,
         values
       );
 

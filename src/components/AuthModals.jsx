@@ -7,21 +7,22 @@ import FacebookLogin from "@greatsumini/react-facebook-login";
 
 export default function AuthModals({ isOpen, type, onClose, switchType }) {
   const navigate = useNavigate();
-  const [isSubmitting, setIsSubmitting] = useState(false); // 🔹 Added to disable button
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleRegister = async (e) => {
     try {
       e.preventDefault();
-      setIsSubmitting(true); // 🔹 Disable Sign Up button
-      const formData = new FormData(e.target); // e.target = form
+      setIsSubmitting(true);
+
+      const formData = new FormData(e.target);
       const values = Object.fromEntries(formData.entries());
-      console.log(values);
       axios.defaults.withCredentials = true;
+
       const { data } = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/https://takshila.cloud/api`,
         values
       );
-      console.log(data);
+
       if (data.success) {
         onClose();
         navigate(`/verifyOtp`, { state: { userId: data.userId } });
@@ -29,76 +30,104 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
         toast.error(data.message || "Signup failed");
       }
     } catch (err) {
-      console.log(err);
       toast.error("Something went wrong during signup");
     } finally {
-      setTimeout(() => setIsSubmitting(false), 3000); // 🔹 Re-enable after short delay
+      setTimeout(() => setIsSubmitting(false), 3000);
     }
   };
 
+  /* --------------------------------------------------------
+     🔥 UPDATED LOGIN (NO PAGE RELOAD)
+  ---------------------------------------------------------*/
   const handleLogin = async (e) => {
     try {
       axios.defaults.withCredentials = true;
       e.preventDefault();
-      const formData = new FormData(e.target); // e.target = form
+
+      const formData = new FormData(e.target);
       const values = Object.fromEntries(formData.entries());
-      console.log(values);
+
       const { data } = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/login`,
         values
       );
-      console.log(data);
+
       if (data.success) {
         toast.success("Logging you in");
-        localStorage.setItem("authUser", JSON.stringify(data.user)); // 🔹 Save user info
-        window.location.reload();
+
+        localStorage.setItem("authUser", JSON.stringify(data.user));
+
+        // 🔥 Notify navbar instantly
+        window.dispatchEvent(new Event("auth-changed"));
+
+        // 🔥 Close modal
+        onClose();
       } else {
         toast.error(data.message);
       }
     } catch (err) {
-      console.log(err);
       toast.error("Login failed");
     }
   };
 
+  /* --------------------------------------------------------
+     🔥 UPDATED FACEBOOK LOGIN
+  ---------------------------------------------------------*/
   const handleFacebookAuth = async (response) => {
     try {
       axios.defaults.withCredentials = true;
+
       const { data } = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/auth/facebook`,
         { id_token: response.accessToken }
       );
-      console.log(data);
+
       if (data.success) {
-        onClose();
         toast.success("Logged in through Facebook");
+
         localStorage.setItem("authUser", JSON.stringify(data.user));
+
+        // 🔥 Notify navbar instantly
+        window.dispatchEvent(new Event("auth-changed"));
+
+        onClose();
         navigate("/");
-      } else toast.error("Facebook login error");
+      } else {
+        toast.error("Facebook login error");
+      }
     } catch (err) {
-      console.log(err);
       toast.error("Facebook authentication failed");
     }
   };
 
+  /* --------------------------------------------------------
+     🔥 UPDATED GOOGLE LOGIN
+  ---------------------------------------------------------*/
   const handleGoogleAuth = async (credentialResponse) => {
     try {
       axios.defaults.withCredentials = true;
+
       const id_token = credentialResponse.credential;
-      console.log(credentialResponse);
+
       const { data } = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/auth/google`,
         { id_token }
       );
-      console.log(data);
+
       if (data.success) {
-        onClose();
         toast.success("Google auth successful");
+
         localStorage.setItem("authUser", JSON.stringify(data.user));
+
+        // 🔥 Notify navbar instantly
+        window.dispatchEvent(new Event("auth-changed"));
+
+        onClose();
         navigate("/");
-      } else toast.error("Google authentication failed");
+      } else {
+        toast.error("Google authentication failed");
+      }
     } catch (err) {
-      console.log(err);
       toast.error("Google authentication error");
     }
   };
@@ -222,6 +251,7 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
                     onError={() => console.log("Login Failed")}
                   />
                 </GoogleOAuthProvider>
+
                 <FacebookLogin
                   style={{
                     backgroundColor: "#4267b2",
@@ -233,16 +263,14 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
                   }}
                   appId="1299732128027988"
                   onSuccess={handleFacebookAuth}
-                  onFail={(error) => {
-                    console.log("Login Failed!", error);
-                  }}
+                  onFail={(error) => console.log("Login Failed!", error)}
                 >
                   Signup with facebook
                 </FacebookLogin>
               </div>
             </>
           ) : (
-            /* SIGNUP MODAL (same width, single column) */
+            /* SIGNUP MODAL */
             <div className="w-full flex flex-col justify-center items-center px-0 md:px-16">
               <h2 className="text-3xl font-semibold text-center mb-2">
                 Create Account
@@ -255,7 +283,6 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
                 onSubmit={handleRegister}
                 className="space-y-4 w-full text-xs max-w-2xl"
               >
-                {/* Row 1 */}
                 <div className="grid grid-cols-3 gap-3">
                   <input
                     name="firstName"
@@ -308,7 +335,6 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
                   className="input-style"
                 />
 
-                {/* 🔹 Sign Up Button (Disabled when submitting) */}
                 <button
                   type="submit"
                   disabled={isSubmitting}
@@ -324,7 +350,6 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
 
               <hr className="border-white/30 my-6 w-full max-w-2xl" />
 
-              {/* Social Signup */}
               <div className="flex flex-col text-sm sm:flex-row justify-center items-center gap-4">
                 <GoogleOAuthProvider
                   clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
@@ -334,6 +359,7 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
                     onError={() => console.log("Login Failed")}
                   />
                 </GoogleOAuthProvider>
+
                 <FacebookLogin
                   style={{
                     backgroundColor: "#4267b2",
@@ -345,9 +371,7 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
                   }}
                   appId="1299732128027988"
                   onSuccess={handleFacebookAuth}
-                  onFail={(error) => {
-                    console.log("Login Failed!", error);
-                  }}
+                  onFail={(error) => console.log("Login Failed!", error)}
                 >
                   Signup with facebook
                 </FacebookLogin>

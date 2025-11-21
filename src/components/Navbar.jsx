@@ -4,6 +4,7 @@ import AuthModals from "./AuthModals";
 import toast from "react-hot-toast";
 import "../index.css";
 import ReactDOM from "react-dom";
+import axios from "axios";
 
 export default function Navbar() {
   const location = useLocation();
@@ -50,14 +51,22 @@ export default function Navbar() {
   /* --------------------------------------------------
     ✅ UPDATED LOGOUT (NO PAGE RELOAD)
   -------------------------------------------------- */
-  const handleLogout = () => {
-    localStorage.removeItem("authUser");
-    setUser(null);
-    setShowProfileMenu(false);
-    toast.success("Logged out successfully");
-
-    // Notify all components that auth changed
-    window.dispatchEvent(new Event("auth-changed"));
+  const handleLogout =async () => {
+    try {
+      const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/logout`)
+      if(data.success){
+        localStorage.removeItem("authUser");
+        setUser(null);
+        setShowProfileMenu(false);
+        toast.success("Logged out successfully");
+        window.dispatchEvent(new Event("auth-changed"));     
+        // Notify all components that auth changed
+      }else{
+        toast.error("Couldn't process your request")
+      }    
+    } catch (error) {
+      toast.error("Some error occurred")
+    }
   };
 
   // SCROLL LISTENER

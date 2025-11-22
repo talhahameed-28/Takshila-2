@@ -268,7 +268,7 @@ export default function Navbar() {
             </div>
 
             <Link
-              to="/cart"
+              to="/wishlist"
               className="relative p-2 rounded-full hover:bg-white/10 transition"
             >
               <img src="assets/cart.svg" alt="Cart" className="h-5 w-5" />

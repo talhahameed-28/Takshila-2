@@ -3,27 +3,23 @@ import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
-// Import all your pages
 import Home from "./pages/Home";
 import Community from "./pages/Community";
 import Catalogue from "./pages/Catalogue";
 import MyActivity from "./pages/MyActivity";
 import OurStory from "./pages/OurStory";
 import Blogs from "./pages/Blogs";
-import VerifyOtp from "./pages/VerifyOtp"; // ✅ OTP page import
+import VerifyOtp from "./pages/VerifyOtp";
 import Orders from "./pages/Orders";
 
-
-// ✅ Add this import for Cart page
-import Cart from "./pages/Cart";
+// ✅ Replace Cart with Wishlist
+import Wishlist from "./pages/Wishlist";
 
 export default function App() {
   return (
     <div className="bg-[#111] text-white min-h-screen">
-      {/* Navbar (stays on every page) */}
       <Navbar />
 
-      {/* Page Routes */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/community" element={<Community />} />
@@ -31,16 +27,14 @@ export default function App() {
         <Route path="/my-activity" element={<MyActivity />} />
         <Route path="/our-story" element={<OurStory />} />
         <Route path="/blogs" element={<Blogs />} />
-
-        {/* ✅ Verify OTP route */}
         <Route path="/verifyOtp" element={<VerifyOtp />} />
 
-        {/* ✅ New Cart route */}
-        <Route path="/cart" element={<Cart />} />
+        {/* ⭐ Updated Wishlist Route */}
+        <Route path="/wishlist" element={<Wishlist />} />
+
         <Route path="/orders" element={<Orders />} />
       </Routes>
 
-      {/* Footer (stays on every page) */}
       <Footer />
     </div>
   );

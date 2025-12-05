@@ -51,7 +51,7 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
       if (data.success) {
         onClose();
         // navigate(`/verifyOtp`, { state: { userId: data.userId } });
-        navigate("/email-verify")
+        navigate(`/email-verify/${values.email}`)
       } else {
         toast.error(data.message || "Signup failed");
       }

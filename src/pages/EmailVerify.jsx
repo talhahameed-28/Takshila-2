@@ -1,14 +1,17 @@
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const EmailVerify = () => {
+  const {email}=useParams()
     const resendEmail=async()=>{
       try {
-        const {data}=axios.post(`${import.meta.env.VITE_BASE_URL}/api/v1/email/verification-notification`)
-        if(data.success) toast.succes(data.message)
+        const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/v1/email/verification-notification`,{email})
+        console.log(data)
+        if(data.success) toast.success(data.message)
           else toast.error("Couldn't resend email")
       } catch (error) {
+        console.log(error)
         toast.error("Request cannot be processed")
       }
     }

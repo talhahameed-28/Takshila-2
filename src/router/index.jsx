@@ -21,8 +21,8 @@ const MainRoutes = () => {
             <Route path={ROUTES.ACTIVITY} element={<MyActivity />} />
             <Route path={ROUTES.ABOUT} element={<OurStory />} />
             <Route path={ROUTES.BLOG} element={<Blogs />} />
-            <Route path={ROUTES.EMAILVERIFY} element={<EmailVerify />} />
-           
+            {/* <Route path={ROUTES.EMAILVERIFY} element={<EmailVerify />} /> */}
+           <Route path="/email-verify/:email" element={<EmailVerify />} />
             <Route path="/reset-password/:token" element={<VerifyOtp />} />
 
             <Route path={ROUTES.WISHLIST} element={<Wishlist />} />

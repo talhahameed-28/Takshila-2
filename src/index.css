@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+/* Custom fonts, animations, etc. */
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Shared styles (your custom CSS) */
+
+.hero-bg-image {
+  opacity: 0;
+  z-index: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.hero-bg-image.active {
+  opacity: 1 !important;
+  z-index: 10;
+}
+
+/* Overlay + modal animation */
+#overlay {
+  opacity: 0;
+  transition: opacity 220ms ease;
+  backface-visibility: hidden;
+}
+
+#overlay.show {
+  opacity: 1;
+}
+
+.modal {
+  transform: translateY(10px) scale(0.98);
+  opacity: 0;
+  transition: transform 320ms cubic-bezier(.22,.9,.27,1), opacity 320ms cubic-bezier(.22,.9,.27,1);
+}
+
+.modal.modal-open {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+@keyframes modal-pop {
+  0% { transform: translateY(12px) scale(.98); opacity: 0 }
+  70% { transform: translateY(-6px) scale(1.02); opacity: 1 }
+  100% { transform: translateY(0) scale(1); opacity: 1 }
+}
+
+.modal.modal-pop {
+  animation: modal-pop 380ms cubic-bezier(.2,.9,.3,1);
+}
+
+.otp-input {
+  width: 3rem;
+  height: 3rem;
+  text-align: center;
+  font-size: 1.25rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.input-style {
+  @apply w-full bg-white/30 text-white px-4 py-3 rounded-full placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/40;
+}
+
+.otp-input {
+  @apply w-12 h-12 text-center text-lg rounded-lg bg-white/20 text-white focus:outline-none focus:ring-2 focus:ring-white/40;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes shine-full {
+  0% {
+    left: -120%;
+  }
+  70% {
+    left: 140%;
+  }
+  100% {
+    left: 140%;
+  }
+}
+
+.animate-shine-full {
+  animation: shine-full 8s linear infinite;
+  animation-delay: 2s;
+}

@@ -15,7 +15,7 @@ import Orders from "./pages/Orders";
 import EmailVerify from "./pages/EmailVerify";
 import Wishlist from "./pages/Wishlist"
 import MainRoutes from "./router";
- 
+
 import DesignStudio from "./pages/DesignStudio";
 
 
@@ -44,10 +44,13 @@ export default function App() {
             <Route path="/my-activity" element={<MyActivity />} />
             <Route path="/our-story" element={<OurStory />} />
             <Route path="/blogs" element={<Blogs />} />
-            <Route path="/verifyOtp" element={<VerifyOtp />} />
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/orders" element={<Orders />} />
             <Route path="/design-studio" element={<DesignStudio />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route path="/email-verify" element={<EmailVerify />} />
+            {/* MainRoutes for Auth related routes */}
+            <Route path="/*" element={<MainRoutes />} />
           </Routes>
 
           <Footer />

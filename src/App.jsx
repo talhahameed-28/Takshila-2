@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -11,19 +11,49 @@ import OurStory from "./pages/OurStory";
 import Blogs from "./pages/Blogs";
 import ResetPassword from "./pages/ResetPassword"; 
 import Orders from "./pages/Orders";
+
 import EmailVerify from "./pages/EmailVerify";
 import Wishlist from "./pages/Wishlist"
 import MainRoutes from "./router";
  
+import DesignStudio from "./pages/DesignStudio";
+
+
+// ⬇️ Video Loader Component
+import VideoLoader from "./components/VideoLoader";
+
 
 export default function App() {
+  const [loading, setLoading] = useState(true); // loader state
+
   return (
-    <div className="bg-[#111] text-white min-h-screen">
-      <Navbar />
+    <>
+      {/* Loader — shows first, hides automatically */}
+      {loading && <VideoLoader onFinish={() => setLoading(false)} />}
 
-        <MainRoutes />
 
-      <Footer />
-    </div>
+      {/* Main Website (hidden until loader ends) */}
+      {!loading && (
+        <div className="bg-[#111] text-white min-h-screen">
+          <Navbar />
+
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/community" element={<Community />} />
+            <Route path="/catalogue" element={<Catalogue />} />
+            <Route path="/my-activity" element={<MyActivity />} />
+            <Route path="/our-story" element={<OurStory />} />
+            <Route path="/blogs" element={<Blogs />} />
+            <Route path="/verifyOtp" element={<VerifyOtp />} />
+            <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/design-studio" element={<DesignStudio />} />
+          </Routes>
+
+          <Footer />
+        </div>
+      )}
+    </>
+
   );
 }

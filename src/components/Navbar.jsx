@@ -239,9 +239,12 @@ export default function Navbar() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-3">
-            <button className="bg-white/5 hover:bg-white/10 text-white px-4 py-1 rounded-full backdrop-blur-md transition text-sm">
-              Ai Designer
-            </button>
+            <Link
+              to="/design-studio"
+              className="bg-white/5 hover:bg-white/10 text-white px-4 py-1 rounded-full backdrop-blur-md transition text-sm"
+            >
+              Design Studio
+            </Link>
 
             {/* Search */}
             <div ref={searchRef} className="relative z-[9999]">

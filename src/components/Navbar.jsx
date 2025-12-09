@@ -35,16 +35,24 @@ export default function Navbar() {
     ✅ UPDATED USER LOADING + GLOBAL AUTH LISTENER
   -------------------------------------------------- */
   useEffect(() => {
-  const loadUser = () => {
-    const storedUser = localStorage.getItem("authUser");
+  const loadUser =async () => {
+    try {
+          const storedUser = localStorage.getItem("token");
 
-    // ✅ smallest fix: guard against "undefined"
-    if (!storedUser || storedUser === "undefined") {
-      setUser(null);
-      return;
+        if (!storedUser || storedUser === "undefined") {
+          setUser(null);
+          return;
+        }
+        const {data}=await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/user`,{
+            headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+        },withCredentials: true
+      })
+    if(data.success)setUser(data.data.user);
+    } catch (error) {
+      
     }
-
-    setUser(JSON.parse(storedUser));
+   
   };
 
   loadUser(); // initial load
@@ -66,7 +74,6 @@ export default function Navbar() {
   })
   console.log(data)
       if(data.success){
-        localStorage.removeItem("authUser");
         localStorage.removeItem("token")
         setUser(null);
         setShowProfileMenu(false);

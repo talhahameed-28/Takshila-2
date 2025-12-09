@@ -82,7 +82,6 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
       if (data.success) {
         toast.success("Logging you in");
 
-        localStorage.setItem("authUser", JSON.stringify(data.data.user));
         localStorage.setItem("token", data.data.access_token);
         // 🔥 Notify navbar instantly
         window.dispatchEvent(new Event("auth-changed"));
@@ -107,13 +106,13 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
 
       const { data } = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/api/v1/auth/facebook/verify`,
-        { id_token: response.accessToken }
+        { token: response.accessToken }
       );
 
       if (data.success) {
         toast.success("Logged in through Facebook");
 
-        localStorage.setItem("authUser", JSON.stringify(data.user));
+        localStorage.setItem("token", data.data.access_token);
 
         // 🔥 Notify navbar instantly
         window.dispatchEvent(new Event("auth-changed"));
@@ -145,7 +144,6 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
       if (data.success) {
         toast.success("Google auth successful");
 
-        localStorage.setItem("authUser", JSON.stringify(data.data.user));
         localStorage.setItem("token", data.data.access_token);
 
         // 🔥 Notify navbar instantly
@@ -300,7 +298,7 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
                     border: "none",
                     borderRadius: "4px",
                   }}
-                  appId="1299732128027988"
+                  appId={import.meta.env.VITE_FACEBOOK_APP_ID}
                   onSuccess={handleFacebookAuth}
                   onFail={(error) => console.log("Login Failed!", error)}
                 >

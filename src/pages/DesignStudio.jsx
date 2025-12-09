@@ -18,7 +18,7 @@ export default function DesignStudio() {
   const [aiCommission, setAiCommission] = useState(76.52);
 
   // -----------------------------------
-  // UPLOAD MODE STATES (separate)
+  // UPLOAD MODE STATES
   // -----------------------------------
   const [upGoldType, setUpGoldType] = useState("");
   const [upKarat, setUpKarat] = useState("");
@@ -31,7 +31,12 @@ export default function DesignStudio() {
   const [upCommission, setUpCommission] = useState(76.52);
 
   // -----------------------------------
-  // PRICE CALCULATOR (dual mode)
+  // PRICE BREAKDOWN POPUP
+  // -----------------------------------
+  const [showBreakdown, setShowBreakdown] = useState(false);
+
+  // -----------------------------------
+  // PRICE CALCULATOR
   // -----------------------------------
   const calculatePrice = (mode) => {
     let base = 2000;
@@ -70,23 +75,83 @@ export default function DesignStudio() {
     }
   };
 
-  // AI price updates
   useEffect(() => {
     calculatePrice("ai");
   }, [aiGoldType, aiKarat, aiShape, aiQuality, aiCenterCarat, aiTotalCarat]);
 
-  // UPLOAD price updates
   useEffect(() => {
     calculatePrice("upload");
   }, [upGoldType, upKarat, upShape, upQuality, upCenterCarat, upTotalCarat]);
 
   // -----------------------------------
-  // LEFT PANEL COMPONENT (dual mode)
+  // HELPERS FOR PRICE BREAKDOWN POPUP
+  // -----------------------------------
+  const getActiveValues = () => {
+    if (activeTab === "ai") {
+      return {
+        gold: aiGoldType,
+        karat: aiKarat,
+        shape: aiShape,
+        quality: aiQuality,
+        centerCarat: aiCenterCarat,
+        totalCarat: aiTotalCarat,
+        price: aiPrice,
+        commission: aiCommission,
+      };
+    }
+    return {
+      gold: upGoldType,
+      karat: upKarat,
+      shape: upShape,
+      quality: upQuality,
+      centerCarat: upCenterCarat,
+      totalCarat: upTotalCarat,
+      price: upPrice,
+      commission: upCommission,
+    };
+  };
+
+  const active = getActiveValues();
+
+  const goldAdj =
+    active.gold === "Rose"
+      ? 50
+      : active.gold === "Yellow"
+      ? 30
+      : active.gold === "White"
+      ? 70
+      : 0;
+
+  const karatAdj =
+    active.karat === "10K"
+      ? 20
+      : active.karat === "14K"
+      ? 40
+      : active.karat === "18K"
+      ? 80
+      : 0;
+
+  const shapeAdj =
+    active.shape === "Oval" ? 100 : active.shape === "Princess" ? 150 : 0;
+
+  const qualityAdj =
+    active.quality === "Good"
+      ? 20
+      : active.quality === "Premium"
+      ? 60
+      : active.quality === "Excellent"
+      ? 120
+      : 0;
+
+  const centerAdj = (Number(active.centerCarat) || 0) * 200;
+  const totalAdj = (Number(active.totalCarat) || 0) * 150;
+
+  // -----------------------------------
+  // LEFT PANEL (shared)
   // -----------------------------------
   const LeftPanelTop = ({ mode }) => {
     const isAi = mode === "ai";
 
-    // Select states based on mode
     const goldType = isAi ? aiGoldType : upGoldType;
     const setGold = isAi ? setAiGoldType : setUpGoldType;
 
@@ -123,45 +188,49 @@ export default function DesignStudio() {
         <div className="grid grid-cols-2 gap-6">
           <div>
             <p className="text-sm mb-2">Type</p>
-            {["Rose", "Yellow", "White"].map((option) => (
-              <label
-                key={option}
-                className="flex items-center gap-2 text-xs tracking-wide cursor-pointer"
-              >
-                <input
-                  type="radio"
-                  name={`gold-${mode}`}
-                  checked={goldType === option}
-                  onChange={() => setGold(option)}
-                />
-                {option}
-              </label>
-            ))}
+            <div className="flex gap-4">
+              {["Rose", "Yellow", "White"].map((option) => (
+                <label
+                  key={option}
+                  className="flex items-center gap-1 text-xs tracking-wide cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    name={`gold-${mode}`}
+                    checked={goldType === option}
+                    onChange={() => setGold(option)}
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
           </div>
 
           <div>
             <p className="text-sm mb-2">Karat</p>
-            {["10K", "14K", "18K"].map((k) => (
-              <label
-                key={k}
-                className="flex items-center gap-2 text-xs tracking-wide cursor-pointer"
-              >
-                <input
-                  type="radio"
-                  name={`karat-${mode}`}
-                  checked={karat === k}
-                  onChange={() => setKaratValue(k)}
-                />
-                {k}
-              </label>
-            ))}
+            <div className="flex gap-4">
+              {["10K", "14K", "18K"].map((k) => (
+                <label
+                  key={k}
+                  className="flex items-center gap-1 text-xs tracking-wide cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    name={`karat-${mode}`}
+                    checked={karat === k}
+                    onChange={() => setKaratValue(k)}
+                  />
+                  {k}
+                </label>
+              ))}
+            </div>
           </div>
         </div>
 
         {/* RING SIZE */}
         <p className="text-sm mt-4 mb-2">Ring Size</p>
         <select
-          className="bg-[#D9D9D9] text-black w-40 p-2 rounded-lg"
+          className="bg-[#D9D9D9] text-black w-52 h-11 px-4 rounded-full"
           value={ringSize}
           onChange={(e) => setRing(e.target.value)}
         >
@@ -180,7 +249,7 @@ export default function DesignStudio() {
           <div>
             <p className="text-sm mb-2">Shape</p>
             <select
-              className="bg-white text-black rounded-full px-4 py-2 w-48"
+              className="bg-white text-black w-52 h-11 px-4 rounded-full"
               value={shape}
               onChange={(e) => setShapeValue(e.target.value)}
             >
@@ -192,20 +261,22 @@ export default function DesignStudio() {
 
           <div>
             <p className="text-sm mb-2">Quality</p>
-            {["Good", "Premium", "Excellent"].map((q) => (
-              <label
-                key={q}
-                className="flex items-center gap-2 text-xs tracking-wide cursor-pointer"
-              >
-                <input
-                  type="radio"
-                  name={`quality-${mode}`}
-                  checked={quality === q}
-                  onChange={() => setQualityValue(q)}
-                />
-                {q}
-              </label>
-            ))}
+            <div className="flex gap-4">
+              {["Good", "Premium", "Excellent"].map((q) => (
+                <label
+                  key={q}
+                  className="flex items-center gap-1 text-xs tracking-wide cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    name={`quality-${mode}`}
+                    checked={quality === q}
+                    onChange={() => setQualityValue(q)}
+                  />
+                  {q}
+                </label>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -214,7 +285,7 @@ export default function DesignStudio() {
           <div>
             <p className="text-sm mb-2">Center Stone Carat</p>
             <select
-              className="bg-[#D9D9D9] text-black w-40 p-2 rounded-lg"
+              className="bg-[#D9D9D9] text-black w-52 h-11 px-4 rounded-full"
               value={centerCarat}
               onChange={(e) => setCenterCaratValue(e.target.value)}
             >
@@ -228,7 +299,7 @@ export default function DesignStudio() {
           <div>
             <p className="text-sm mb-2">Total Carat Weight</p>
             <select
-              className="bg-[#D9D9D9] text-black w-40 p-2 rounded-lg"
+              className="bg-[#D9D9D9] text-black w-52 h-11 px-4 rounded-full"
               value={totalCarat}
               onChange={(e) => setTotalCaratValue(e.target.value)}
             >
@@ -240,9 +311,18 @@ export default function DesignStudio() {
           </div>
         </div>
 
-        {/* PRICE */}
+        {/* PRICE BOX */}
         <div className="flex justify-between bg-[#D9D9D9] text-black p-4 rounded-lg text-xs font-medium mt-6 tracking-wide">
-          <p>Price: ${price}</p>
+          <div className="flex items-center">
+            <p>Price: ${price}</p>
+            <button
+              onClick={() => setShowBreakdown(true)}
+              className="ml-2 w-4 h-4 bg-black text-white rounded-full text-[10px] flex items-center justify-center"
+            >
+              i
+            </button>
+          </div>
+
           <p>Commission: ${commission}</p>
         </div>
       </>
@@ -250,7 +330,7 @@ export default function DesignStudio() {
   };
 
   // -----------------------------------
-  // RIGHT PANEL (shared component)
+  // RIGHT PANEL (shared)
   // -----------------------------------
   const RightPanel = () => (
     <div className="flex flex-col">
@@ -293,7 +373,7 @@ export default function DesignStudio() {
   );
 
   // -----------------------------------
-  // RETURN PAGE
+  // PAGE RETURN
   // -----------------------------------
   return (
     <div className="w-full min-h-screen bg-[#E5E1DA] pt-24 pb-20 flex flex-col items-center">
@@ -307,7 +387,7 @@ export default function DesignStudio() {
         </p>
       </section>
 
-      {/* TAB SWITCH */}
+      {/* TABS */}
       <div className="flex mt-8 bg-white rounded-full shadow-md overflow-hidden w-[420px] h-[48px]">
         <button
           onClick={() => setActiveTab("ai")}
@@ -319,6 +399,7 @@ export default function DesignStudio() {
         >
           AI DESIGNER
         </button>
+
         <button
           onClick={() => setActiveTab("upload")}
           className={`flex-1 text-sm tracking-widest ${
@@ -331,7 +412,7 @@ export default function DesignStudio() {
         </button>
       </div>
 
-      {/* AI MODE */}
+      {/* AI DESIGNER MODE */}
       {activeTab === "ai" && (
         <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-10 mt-10 px-6">
           <div className="bg-[#6C6C6C] rounded-3xl p-8 text-white">
@@ -371,6 +452,39 @@ export default function DesignStudio() {
           </div>
 
           <RightPanel />
+        </div>
+      )}
+
+      {/* PRICE BREAKDOWN POPUP */}
+      {showBreakdown && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white w-[340px] rounded-2xl p-6 shadow-xl">
+            <h2 className="text-lg font-semibold mb-4 text-gray-800">
+              Price Breakdown
+            </h2>
+
+            <div className="space-y-2 text-sm text-gray-700">
+              <p>Base Price: $2000</p>
+              <p>Gold Type Adjustment: +${goldAdj}</p>
+              <p>Karat Adjustment: +${karatAdj}</p>
+              <p>Shape Adjustment: +${shapeAdj}</p>
+              <p>Quality Adjustment: +${qualityAdj}</p>
+              <p>Center Stone Carat: +${centerAdj}</p>
+              <p>Total Carat Weight: +${totalAdj}</p>
+
+              <hr className="my-3" />
+
+              <p className="font-semibold">Final Price: ${active.price}</p>
+              <p className="font-semibold">Commission: ${active.commission}</p>
+            </div>
+
+            <button
+              onClick={() => setShowBreakdown(false)}
+              className="mt-6 w-full py-2 bg-black text-white rounded-full"
+            >
+              Close
+            </button>
+          </div>
         </div>
       )}
     </div>

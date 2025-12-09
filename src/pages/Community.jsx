@@ -1,5 +1,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { useWishlist } from "../context/WishlistContext";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 /* Helpers */
 const parsePrice = (p) =>
@@ -10,504 +12,14 @@ const fmt = (n) =>
     ? n.toLocaleString("en-US", { style: "currency", currency: "USD" })
     : n;
 
-/* ------------------ JEWELLERY DATA (UNCHANGED) ------------------ */
-
-const jewelleryData = [
-  {
-    id: 1,
-    image: "assets/jewel1.jpg",
-    name: "Krishna",
-    designer: "Aikansh Tyagi",
-    price: "$7263.28",
-    goldType: "Yellow",
-    goldKarat: "18K",
-    ringSize: "9.0",
-    diamondShape: "Round",
-    quality: 85,
-    centerStoneCarat: 4,
-    totalCaratWeight: 5,
-    description:
-      "A regal 18K yellow gold ring with a brilliant round center stone. Intricate hand-engraved shoulders and fine micro-pave create a celestial glow.",
-  },
-  {
-    id: 2,
-    image: "assets/jewel2.jpg",
-    name: "Diamond Band",
-    designer: "Sanchit",
-    price: "$8798.32",
-    goldType: "White",
-    goldKarat: "14K",
-    ringSize: "7.5",
-    diamondShape: "Oval",
-    quality: 75,
-    centerStoneCarat: 3,
-    totalCaratWeight: 4.5,
-    description:
-      "A refined 14K white gold band set with graduated oval diamonds — perfect for stacking or a minimalist bridal look.",
-  },
-  {
-    id: 3,
-    image: "assets/jewel3.jpg",
-    name: "J's Ring",
-    designer: "Jeshl Adeshra",
-    price: "$3678.40",
-    goldType: "Rose",
-    goldKarat: "10K",
-    ringSize: "6.5",
-    diamondShape: "Princess",
-    quality: 60,
-    centerStoneCarat: 2.5,
-    totalCaratWeight: 3,
-    description:
-      "A warm 10K rose gold ring with a princess-cut centerpiece and crisp geometric lines — modern yet romantic.",
-  },
-  {
-    id: 4,
-    image: "assets/jewel4.jpg",
-    name: "Cat Elegance",
-    designer: "Amara Rao",
-    price: "$4920.55",
-    goldType: "Yellow",
-    goldKarat: "18K",
-    ringSize: "8.0",
-    diamondShape: "Marquise",
-    quality: 78,
-    centerStoneCarat: 3,
-    totalCaratWeight: 4,
-    description:
-      "Inspired by feline grace, this marquise-cut ring in 18K yellow gold showcases fluid lines and a delicate bezel setting.",
-  },
-  {
-    id: 5,
-    image: "assets/jewel5.jpg",
-    name: "Golden Grace",
-    designer: "Arnav Kapoor",
-    price: "$5999.99",
-    goldType: "Yellow",
-    goldKarat: "18K",
-    ringSize: "6.25",
-    diamondShape: "Cushion",
-    quality: 88,
-    centerStoneCarat: 3.5,
-    totalCaratWeight: 4.8,
-    description:
-      "An elegant cushion-cut center in 18K yellow gold with cathedral prongs and hand-applied milgrain edging for vintage flair.",
-  },
-  {
-    id: 6,
-    image: "assets/jewel6.jpg",
-    name: "Royal Spark",
-    designer: "Mira Desai",
-    price: "$7645.22",
-    goldType: "White",
-    goldKarat: "18K",
-    ringSize: "7.25",
-    diamondShape: "Round",
-    quality: 92,
-    centerStoneCarat: 4.2,
-    totalCaratWeight: 5.3,
-    description:
-      "A luxury 18K white gold creation centered around a high-clarity round diamond — classic proportions and expert setting.",
-  },
-  {
-    id: 7,
-    image: "assets/jewel7.jpg",
-    name: "Opal Charm",
-    designer: "Ananya Jain",
-    price: "$5380.00",
-    goldType: "Rose",
-    goldKarat: "14K",
-    ringSize: "6.75",
-    diamondShape: "Cabochon",
-    quality: 68,
-    centerStoneCarat: 2.2,
-    totalCaratWeight: 2.5,
-    description:
-      "A luminous opal cabochon set in 14K rose gold, accented with tiny round melee diamonds for a soft iridescent effect.",
-  },
-  {
-    id: 8,
-    image: "assets/jewel8.jpg",
-    name: "Emerald Glow",
-    designer: "Rohit Verma",
-    price: "$6890.15",
-    goldType: "Yellow",
-    goldKarat: "18K",
-    ringSize: "8.5",
-    diamondShape: "Emerald",
-    quality: 86,
-    centerStoneCarat: 3.8,
-    totalCaratWeight: 4.6,
-    description:
-      "A statement 18K yellow gold ring featuring an emerald-cut center stone with halo accents — refined geometry and rich tone.",
-  },
-  {
-    id: 9,
-    image: "assets/jewel9.jpg",
-    name: "Ruby Luxe",
-    designer: "Nisha Patel",
-    price: "$7220.88",
-    goldType: "Yellow",
-    goldKarat: "18K",
-    ringSize: "7.0",
-    diamondShape: "Round",
-    quality: 90,
-    centerStoneCarat: 3.6,
-    totalCaratWeight: 4.7,
-    description:
-      "A vivid ruby center set in warm 18K yellow gold surrounded by fine pavé diamonds — bold color, expert workmanship.",
-  },
-  {
-    id: 10,
-    image: "assets/jewel10.jpg",
-    name: "Celestial Band",
-    designer: "Meera Chauhan",
-    price: "$8333.19",
-    goldType: "White",
-    goldKarat: "18K",
-    ringSize: "6.0",
-    diamondShape: "Cushion",
-    quality: 95,
-    centerStoneCarat: 5.0,
-    totalCaratWeight: 6.2,
-    description:
-      "A premium 18K white gold band with a cushion-cut star center — exceptional clarity and hand-set melee for a celestial finish.",
-  },
-  {
-    id: 11,
-    image: "assets/jewel11.jpg",
-    name: "Aurora Ring",
-    designer: "Ishaan Sharma",
-    price: "$6900.25",
-    goldType: "Rose",
-    goldKarat: "14K",
-    ringSize: "8.25",
-    diamondShape: "Oval",
-    quality: 80,
-    centerStoneCarat: 3.2,
-    totalCaratWeight: 4.0,
-    description:
-      "An oval-cut center mounted in 14K rose gold with delicate openwork shoulders — modern romanticism at its best.",
-  },
-  {
-    id: 12,
-    image: "assets/jewel12.jpg",
-    name: "Pearl Dusk",
-    designer: "Diya Kapoor",
-    price: "$4120.70",
-    goldType: "Yellow",
-    goldKarat: "10K",
-    ringSize: "6.0",
-    diamondShape: "Pearl",
-    quality: 65,
-    centerStoneCarat: 1.8,
-    totalCaratWeight: 2.0,
-    description:
-      "A classic pearl ring set in 10K yellow gold with tiny diamond accents — understated luxury with heirloom appeal.",
-  },
-  {
-    id: 13,
-    image: "assets/jewel13.jpg",
-    name: "Vintage Muse",
-    designer: "Kabir Mehta",
-    price: "$5322.90",
-    goldType: "Yellow",
-    goldKarat: "14K",
-    ringSize: "7.75",
-    diamondShape: "Old Mine",
-    quality: 72,
-    centerStoneCarat: 2.7,
-    totalCaratWeight: 3.2,
-    description:
-      "A vintage-inspired 14K yellow gold ring with an old mine cut center and ornate filigree for nostalgic elegance.",
-  },
-  {
-    id: 14,
-    image: "assets/jewel14.jpg",
-    name: "Rose Gold Whisper",
-    designer: "Mitali Desai",
-    price: "$6305.45",
-    goldType: "Rose",
-    goldKarat: "18K",
-    ringSize: "6.5",
-    diamondShape: "Heart",
-    quality: 84,
-    centerStoneCarat: 3.0,
-    totalCaratWeight: 3.9,
-    description:
-      "A romantic 18K rose gold piece featuring a heart-shaped center and soft pavé shoulders — feminine and charming.",
-  },
-  {
-    id: 15,
-    image: "assets/jewel15.jpg",
-    name: "Golden Empress",
-    designer: "Rajvi Singh",
-    price: "$8490.00",
-    goldType: "Yellow",
-    goldKarat: "18K",
-    ringSize: "9.5",
-    diamondShape: "Round",
-    quality: 93,
-    centerStoneCarat: 4.8,
-    totalCaratWeight: 5.9,
-    description:
-      "A regal statement in 18K yellow gold with a large round center, reinforced setting, and mirror-polished finish for royal presence.",
-  },
-  {
-    id: 16,
-    image: "assets/jewel16.jpg",
-    name: "Crimson Shine",
-    designer: "Yash Tandon",
-    price: "$5795.55",
-    goldType: "White",
-    goldKarat: "14K",
-    ringSize: "7.0",
-    diamondShape: "Cabochon",
-    quality: 70,
-    centerStoneCarat: 2.0,
-    totalCaratWeight: 2.7,
-    description:
-      "A 14K white gold ring featuring a smooth cabochon ruby with minimal accents — bold color in clean form.",
-  },
-  {
-    id: 17,
-    image: "assets/jewel17.jpg",
-    name: "Moonlit Tiara",
-    designer: "Reema Bhatia",
-    price: "$9600.99",
-    goldType: "White",
-    goldKarat: "18K",
-    ringSize: "6.75",
-    diamondShape: "Marquise",
-    quality: 96,
-    centerStoneCarat: 5.5,
-    totalCaratWeight: 7.1,
-    description:
-      "An opulent 18K white gold tiara-style ring, heavily set with marquise and round diamonds — true couture craftsmanship.",
-  },
-  {
-    id: 18,
-    image: "assets/jewel18.jpg",
-    name: "Silver Mirage",
-    designer: "Aarav Khanna",
-    price: "$4775.22",
-    goldType: "Rose",
-    goldKarat: "10K",
-    ringSize: "8.0",
-    diamondShape: "Round",
-    quality: 66,
-    centerStoneCarat: 2.1,
-    totalCaratWeight: 3.0,
-    description:
-      "A delicate 10K rose gold ring with a center round gem and brushed metal contrasts for a contemporary finish.",
-  },
-  {
-    id: 19,
-    image: "assets/jewel19.jpg",
-    name: "Ocean Bloom",
-    designer: "Kavya Nair",
-    price: "$6350.35",
-    goldType: "Yellow",
-    goldKarat: "14K",
-    ringSize: "7.25",
-    diamondShape: "Pear",
-    quality: 82,
-    centerStoneCarat: 3.3,
-    totalCaratWeight: 4.2,
-    description:
-      "A pear-shaped center in 14K yellow gold with sweeping openwork inspired by oceanic petals — fluid and elegant.",
-  },
-  {
-    id: 20,
-    image: "assets/jewel20.jpg",
-    name: "Royal Crescent",
-    designer: "Tanish Malhotra",
-    price: "$7120.50",
-    goldType: "Yellow",
-    goldKarat: "18K",
-    ringSize: "9.0",
-    diamondShape: "Crescent",
-    quality: 89,
-    centerStoneCarat: 4.0,
-    totalCaratWeight: 5.0,
-    description:
-      "A sculptural crescent motif ring in 18K yellow gold — center stone sits within a crescent halo that enhances light return.",
-  },
-  {
-    id: 21,
-    image: "assets/jewel21.jpg",
-    name: "Diamond Crest",
-    designer: "Aarohi Ghosh",
-    price: "$7921.12",
-    goldType: "White",
-    goldKarat: "18K",
-    ringSize: "7.5",
-    diamondShape: "Princess",
-    quality: 91,
-    centerStoneCarat: 4.1,
-    totalCaratWeight: 5.6,
-    description:
-      "A precision-cut princess center in 18K white gold with angular accents and a refined, geometric setting.",
-  },
-  {
-    id: 22,
-    image: "assets/jewel22.jpg",
-    name: "Golden Ivy",
-    designer: "Ira Sharma",
-    price: "$6012.08",
-    goldType: "Yellow",
-    goldKarat: "14K",
-    ringSize: "6.5",
-    diamondShape: "Round",
-    quality: 79,
-    centerStoneCarat: 3.0,
-    totalCaratWeight: 3.8,
-    description:
-      "Delicate ivy-inspired leaf motifs in 14K yellow gold surround a bright round center — handcrafted botanical detail.",
-  },
-  {
-    id: 23,
-    image: "assets/jewel23.jpg",
-    name: "Petal Radiance",
-    designer: "Zara Ali",
-    price: "$4780.64",
-    goldType: "Rose",
-    goldKarat: "14K",
-    ringSize: "7.0",
-    diamondShape: "Cushion",
-    quality: 74,
-    centerStoneCarat: 2.4,
-    totalCaratWeight: 3.0,
-    description:
-      "A cushion-cut center framed by petal-shaped shoulders in 14K rose gold — soft textures and refined curves.",
-  },
-  {
-    id: 24,
-    image: "assets/jewel24.jpg",
-    name: "Twilight Band",
-    designer: "Aryan Dutta",
-    price: "$5625.55",
-    goldType: "White",
-    goldKarat: "14K",
-    ringSize: "6.0",
-    diamondShape: "Round",
-    quality: 76,
-    centerStoneCarat: 2.8,
-    totalCaratWeight: 3.6,
-    description:
-      "A modern white gold band with high-polish finish and flush-set round diamonds for low-profile brilliance.",
-  },
-  {
-    id: 25,
-    image: "assets/jewel25.jpg",
-    name: "Halo Whisper",
-    designer: "Esha Kapoor",
-    price: "$7008.44",
-    goldType: "Yellow",
-    goldKarat: "18K",
-    ringSize: "8.0",
-    diamondShape: "Round",
-    quality: 87,
-    centerStoneCarat: 3.6,
-    totalCaratWeight: 4.4,
-    description:
-      "A halo-style classic in 18K yellow gold — a luminous round center encircled by delicate accent stones for amplified sparkle.",
-  },
-  {
-    id: 26,
-    image: "assets/jewel26.jpg",
-    name: "Eternal Flame",
-    designer: "Nikhil Joshi",
-    price: "$8433.99",
-    goldType: "White",
-    goldKarat: "18K",
-    ringSize: "9.0",
-    diamondShape: "Radiant",
-    quality: 94,
-    centerStoneCarat: 4.6,
-    totalCaratWeight: 5.8,
-    description:
-      "A bold radiant-cut center in 18K white gold with stepped facets that capture intense fire and scintillation.",
-  },
-  {
-    id: 27,
-    image: "assets/jewel27.jpg",
-    name: "Golden Lattice",
-    designer: "Ria Patel",
-    price: "$6750.22",
-    goldType: "Yellow",
-    goldKarat: "14K",
-    ringSize: "7.25",
-    diamondShape: "Emerald",
-    quality: 81,
-    centerStoneCarat: 3.4,
-    totalCaratWeight: 4.3,
-    description:
-      "Intricate latticework in 14K yellow gold frames an emerald-cut center for architectural elegance and warmth.",
-  },
-  {
-    id: 28,
-    image: "assets/jewel28.jpg",
-    name: "Starlight Charm",
-    designer: "Vihaan Mehta",
-    price: "$5902.45",
-    goldType: "Rose",
-    goldKarat: "14K",
-    ringSize: "6.75",
-    diamondShape: "Round",
-    quality: 77,
-    centerStoneCarat: 2.9,
-    totalCaratWeight: 3.5,
-    description:
-      "A whimsical rose-gold ring with a starburst diamond motif — playful yet crafted with refined detail.",
-  },
-  {
-    id: 29,
-    image: "assets/jewel29.jpg",
-    name: "Enchanted Glow",
-    designer: "Tanvi Sood",
-    price: "$7600.75",
-    goldType: "Yellow",
-    goldKarat: "18K",
-    ringSize: "8.5",
-    diamondShape: "Oval",
-    quality: 88,
-    centerStoneCarat: 3.9,
-    totalCaratWeight: 4.9,
-    description:
-      "A luminous oval center in 18K yellow gold with tapered baguette accents for an elongated, elegant profile.",
-  },
-  {
-    id: 30,
-    image: "assets/jewel30.jpg",
-    name: "Majestic Halo",
-    designer: "Devansh Rao",
-    price: "$8325.40",
-    goldType: "White",
-    goldKarat: "18K",
-    ringSize: "7.0",
-    diamondShape: "Round",
-    quality: 95,
-    centerStoneCarat: 4.5,
-    totalCaratWeight: 6.0,
-    description:
-      "A high-carat white gold halo masterpiece with exceptional center clarity and expertly matched accent stones.",
-  },
-];
-
-
-/* ------------------------------------------------------------------- */
 
 export default function Community() {
   const [currentPage, setCurrentPage] = useState(1);
   const cardsPerPage = 9;
-  const totalPages = Math.ceil(jewelleryData.length / cardsPerPage);
+  const [jewelleryData, setJewelleryData] = useState([])
+  const [totalProducts, setTotalProducts] = useState()
+  const totalPages = Math.ceil(totalProducts / cardsPerPage);
 
-  const startIndex = (currentPage - 1) * cardsPerPage;
-  const currentCards = jewelleryData.slice(
-    startIndex,
-    startIndex + cardsPerPage
-  );
 
   const [selected, setSelected] = useState(null);
 
@@ -526,6 +38,25 @@ export default function Community() {
     document.body.style.overflow = selected ? "hidden" : "";
     return () => (document.body.style.overflow = "");
   }, [selected]);
+
+  useEffect(() => {
+    const loadProducts=async()=>{
+      try {
+        const {data}=await axios.get(`${import.meta.env.VITE_BASE_URL}/api/product?per_page=9&page=${currentPage}`)
+        console.log(data)
+        if(data.success) {
+          setJewelleryData(data.data.products)
+          setTotalProducts(data.data.pagination.total)
+        }
+        else toast.error("Couldn't fetch products")
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    loadProducts()
+    
+  }, [currentPage])
+  
 
   const goToPage = (p) => {
     if (p >= 1 && p <= totalPages) setCurrentPage(p);
@@ -596,7 +127,7 @@ export default function Community() {
       {/* Grid */}
       <main className="flex-grow px-6 md:px-12 lg:px-20 pb-24">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
-          {currentCards.map((item) => {
+          {jewelleryData.map((item) => {
             const isWishlisted = wishlistItems.some((w) => w.id === item.id);
 
             return (
@@ -755,7 +286,7 @@ export default function Community() {
                   {selected.name}
                 </h2>
                 <p className="text-[#b6d2c9] text-sm mt-1">
-                  Designed by {selected.designer}
+                  Designed by {selected.user.name}
                 </p>
                 <p className="text-white/80 text-sm mt-4">
                   {selected.description}

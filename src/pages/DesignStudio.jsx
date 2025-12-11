@@ -1,35 +1,42 @@
-import React, { useState, useEffect } from "react";
+import axios from "axios";
+import React, { useState, useEffect, useRef } from "react";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 export default function DesignStudio() {
+  const navigate=useNavigate()
   // ACTIVE TAB
   const [activeTab, setActiveTab] = useState("ai"); // "ai" | "upload"
 
   // -----------------------------------
   // AI DESIGNER STATES
   // -----------------------------------
-  const [aiGoldType, setAiGoldType] = useState("");
-  const [aiKarat, setAiKarat] = useState("");
-  const [aiRingSize, setAiRingSize] = useState("");
+  const [aiGoldType, setAiGoldType] = useState("rose");
+  const [aiKarat, setAiKarat] = useState("10K");
+  const [aiRingSize, setAiRingSize] = useState(3);
   const [aiShape, setAiShape] = useState("Round");
-  const [aiQuality, setAiQuality] = useState("");
-  const [aiCenterCarat, setAiCenterCarat] = useState("");
-  const [aiTotalCarat, setAiTotalCarat] = useState("");
+  const [aiQuality, setAiQuality] = useState("good");
+  const [aiCenterCarat, setAiCenterCarat] = useState(0.5);
+  const [aiTotalCarat, setAiTotalCarat] = useState(1.0);
   const [aiPrice, setAiPrice] = useState(2186.33);
   const [aiCommission, setAiCommission] = useState(76.52);
-
+  const [aiPreviewimage, setAiPreviewimage] = useState(null)
+  const [loadingDesign, setLoadingDesign] = useState(false)
+  const promptRef=useRef()
   // -----------------------------------
   // UPLOAD MODE STATES (separate)
   // -----------------------------------
-  const [upGoldType, setUpGoldType] = useState("");
-  const [upKarat, setUpKarat] = useState("");
-  const [upRingSize, setUpRingSize] = useState("");
+  const [upGoldType, setUpGoldType] = useState("rose");
+  const [upKarat, setUpKarat] = useState("10K");
+  const [upRingSize, setUpRingSize] = useState(3);
   const [upShape, setUpShape] = useState("Round");
-  const [upQuality, setUpQuality] = useState("");
-  const [upCenterCarat, setUpCenterCarat] = useState("");
-  const [upTotalCarat, setUpTotalCarat] = useState("");
+  const [upQuality, setUpQuality] = useState("good");
+  const [upCenterCarat, setUpCenterCarat] = useState(0.5);
+  const [upTotalCarat, setUpTotalCarat] = useState(1.0);
   const [upPrice, setUpPrice] = useState(2186.33);
   const [upCommission, setUpCommission] = useState(76.52);
-
+  const [upPreviewImage,setUpPreviewImage]= useState(null)
+  const uploadRef = useRef()
   // -----------------------------------
   // PRICE CALCULATOR (dual mode)
   // -----------------------------------
@@ -43,20 +50,20 @@ export default function DesignStudio() {
     const centerCarat = mode === "ai" ? aiCenterCarat : upCenterCarat;
     const totalCarat = mode === "ai" ? aiTotalCarat : upTotalCarat;
 
-    if (gold === "Rose") base += 50;
-    if (gold === "Yellow") base += 30;
-    if (gold === "White") base += 70;
+    if (gold === "rose") base += 50;
+    if (gold === "yellow") base += 30;
+    if (gold === "white") base += 70;
 
     if (karat === "10K") base += 20;
     if (karat === "14K") base += 40;
     if (karat === "18K") base += 80;
 
-    if (shape === "Oval") base += 100;
-    if (shape === "Princess") base += 150;
+    if (shape === "oval") base += 100;
+    if (shape === "princess") base += 150;
 
-    if (quality === "Good") base += 20;
-    if (quality === "Premium") base += 60;
-    if (quality === "Excellent") base += 120;
+    if (quality === "good") base += 20;
+    if (quality === "premium") base += 60;
+    if (quality === "excellent") base += 120;
 
     base += (Number(centerCarat) || 0) * 200;
     base += (Number(totalCarat) || 0) * 150;
@@ -79,6 +86,109 @@ export default function DesignStudio() {
   useEffect(() => {
     calculatePrice("upload");
   }, [upGoldType, upKarat, upShape, upQuality, upCenterCarat, upTotalCarat]);
+
+  const handleClick = () => uploadRef.current.click();
+
+  const handleChange=(e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Create a local preview URL
+    const imageUrl = URL.createObjectURL(file);
+    setUpPreviewImage(imageUrl);
+  };
+
+  const handleMyDesignUpload=async(e)=>{
+    try { 
+      e.preventDefault()
+      const formData = new FormData(e.target);
+      const values = Object.fromEntries(formData.entries());
+      axios.defaults.withCredentials=true
+      const calculatedPrice=upPrice+upCommission
+      const total=values.royalties + calculatedPrice
+      // values.images=[values.images]
+      const {centerStoneCarat,
+              description,
+              diamondShape,
+              goldKarat,
+              goldType,
+              images,
+              name,
+              quality,
+              ringSize,
+              royalties,
+              totalCaratWeight,}=values
+      console.log(values)
+      const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/post-design`,
+        {name,description,price:total,images,
+          meta_data:{
+            centerStoneCarat,
+            diamondShape,
+            goldKarat,
+            goldType,
+            quality,
+            ringSize,
+            royalties,
+            totalCaratWeight
+          }
+          
+        },
+      {headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`
+    },withCredentials: true})
+      console.log(data)
+      if(data.success){
+        toast.success("Design added to community!")
+        navigate("/community")
+      }
+    } catch (error) {
+      console.log(error)
+      
+    }
+  }
+
+  const generateAiImage=async(goldType,karat,ringSize,shape,quality,centerCarat,totalCarat,price,commission)=>{
+    console.log(goldType,karat,ringSize,shape,quality,centerCarat,totalCarat,price,commission)
+    try {
+      setLoadingDesign(true)
+      console.log(typeof(promptRef.current.value))
+      axios.defaults.withCredentials=true
+      console.log(promptRef.current.value)
+      const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/generate/image`,
+        {goldType,
+          goldKarat:karat,
+          diamondShape:shape,
+          quality,
+          centerStoneCarat:centerCarat,
+          totalCaratWeight:totalCarat,
+          ringDesign:promptRef.current.value?promptRef.current.value:"none",
+          ringSize,
+          price,
+          commission
+        },
+      {headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`
+    },withCredentials: true})
+    console.log(data)
+    if(data.success){
+      setAiPreviewimage(data.data.product.image)
+      
+
+      toast.success("Image generated successfully")
+    }else{
+      toast.error(data.message)
+    }
+    } catch (error) {
+        console.log(error)
+    }finally{
+      setLoadingDesign(false)
+    }
+  }
+
+  const handleAiDesignUpload=async()=>{
+    
+  }
+
 
   // -----------------------------------
   // LEFT PANEL COMPONENT (dual mode)
@@ -123,14 +233,15 @@ export default function DesignStudio() {
         <div className="grid grid-cols-2 gap-6">
           <div>
             <p className="text-sm mb-2">Type</p>
-            {["Rose", "Yellow", "White"].map((option) => (
+            {["rose", "yellow", "white"].map((option) => (
               <label
                 key={option}
-                className="flex items-center gap-2 text-xs tracking-wide cursor-pointer"
+                className="flex w-fit items-center gap-2 text-xs tracking-wide cursor-pointer"
               >
                 <input
                   type="radio"
-                  name={`gold-${mode}`}
+                  value={option}
+                  name={`goldType`}
                   checked={goldType === option}
                   onChange={() => setGold(option)}
                 />
@@ -144,11 +255,12 @@ export default function DesignStudio() {
             {["10K", "14K", "18K"].map((k) => (
               <label
                 key={k}
-                className="flex items-center gap-2 text-xs tracking-wide cursor-pointer"
+                className="flex w-fit items-center gap-2 text-xs tracking-wide cursor-pointer"
               >
                 <input
+                value={k}
                   type="radio"
-                  name={`karat-${mode}`}
+                  name={`goldKarat`}
                   checked={karat === k}
                   onChange={() => setKaratValue(k)}
                 />
@@ -161,11 +273,12 @@ export default function DesignStudio() {
         {/* RING SIZE */}
         <p className="text-sm mt-4 mb-2">Ring Size</p>
         <select
+        name="ringSize"
           className="bg-[#D9D9D9] text-black w-40 p-2 rounded-lg"
           value={ringSize}
           onChange={(e) => setRing(e.target.value)}
         >
-          <option value="">Select size</option>
+          
           {[3, 4, 5, 6, 7, 8, 9].map((size) => (
             <option key={size}>{size}</option>
           ))}
@@ -180,6 +293,7 @@ export default function DesignStudio() {
           <div>
             <p className="text-sm mb-2">Shape</p>
             <select
+              name="diamondShape"
               className="bg-white text-black rounded-full px-4 py-2 w-48"
               value={shape}
               onChange={(e) => setShapeValue(e.target.value)}
@@ -192,14 +306,15 @@ export default function DesignStudio() {
 
           <div>
             <p className="text-sm mb-2">Quality</p>
-            {["Good", "Premium", "Excellent"].map((q) => (
+            {["good", "premium", "excellent"].map((q) => (
               <label
                 key={q}
-                className="flex items-center gap-2 text-xs tracking-wide cursor-pointer"
+                className="flex w-fit items-center gap-2 text-xs tracking-wide cursor-pointer"
               >
                 <input
+                  value={q}
                   type="radio"
-                  name={`quality-${mode}`}
+                  name={`quality`}
                   checked={quality === q}
                   onChange={() => setQualityValue(q)}
                 />
@@ -210,15 +325,15 @@ export default function DesignStudio() {
         </div>
 
         {/* CARATS */}
-        <div className="grid grid-cols-2 gap-6 mt-4">
+        <div className="grid grid-cols-3 gap-6 mt-4">
           <div>
             <p className="text-sm mb-2">Center Stone Carat</p>
             <select
+              name="centerStoneCarat"
               className="bg-[#D9D9D9] text-black w-40 p-2 rounded-lg"
               value={centerCarat}
               onChange={(e) => setCenterCaratValue(e.target.value)}
             >
-              <option value="">Select</option>
               <option>0.5</option>
               <option>1.0</option>
               <option>1.5</option>
@@ -228,16 +343,31 @@ export default function DesignStudio() {
           <div>
             <p className="text-sm mb-2">Total Carat Weight</p>
             <select
+              name="totalCaratWeight"
               className="bg-[#D9D9D9] text-black w-40 p-2 rounded-lg"
               value={totalCarat}
               onChange={(e) => setTotalCaratValue(e.target.value)}
             >
-              <option value="">Select</option>
+              
               <option>1.0</option>
               <option>1.5</option>
               <option>2.0</option>
             </select>
           </div>
+
+          {mode !=="ai" && (
+            <div>
+            <p className="text-sm mb-2">Royalties</p>
+            <input
+              name="royalties"
+              className="bg-[#D9D9D9] text-black w-40 p-2 rounded-lg"
+              type="number"
+              
+            />
+              
+        
+          </div>
+          )}
         </div>
 
         {/* PRICE */}
@@ -245,6 +375,18 @@ export default function DesignStudio() {
           <p>Price: ${price}</p>
           <p>Commission: ${commission}</p>
         </div>
+        {mode==="ai"  && (
+          <div className="relative mt-4">
+              <textarea
+                ref={promptRef}
+                placeholder="Prompt your jewelry design..."
+                className="w-full h-40 bg-[#D9D9D9] text-black p-4 rounded-xl"
+              />
+              <button type="button" onClick={()=>generateAiImage(goldType,karat,ringSize,shape,quality,centerCarat,totalCarat,price,commission)} className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-[#3A3A3A] text-white px-10 py-2 rounded-full">
+                Generate
+              </button>
+            </div>
+        )}
       </>
     );
   };
@@ -254,9 +396,20 @@ export default function DesignStudio() {
   // -----------------------------------
   const RightPanel = () => (
     <div className="flex flex-col">
-      <div className="w-full h-[520px] bg-white rounded-3xl shadow-md"></div>
+      <div className="w-full h-[520px] bg-white rounded-3xl shadow-md">
+      {loadingDesign?(   <div className="flex flex-col items-center justify-center py-10">
+      <div className="h-10 w-10 border-4 border-gray-300 border-t-gray-700 rounded-full animate-spin"></div>
+
+      <p className="mt-4 text-sm text-gray-600 text-center max-w-xs">
+        Generating design, please do not refresh/switch tabs to view it here
+      </p>
+    </div>):(<img className="w-full rounded-3xl h-full" src={activeTab=="upload"?upPreviewImage:aiPreviewimage} alt="imagePreview" />)}
+       
+      </div>
 
       <input
+        
+        name="name"
         type="text"
         placeholder="Name Your Design..."
         className="w-full mt-6 p-3 rounded-full bg-[#D9D9D9] text-black"
@@ -264,28 +417,30 @@ export default function DesignStudio() {
 
       <div className="relative mt-4">
         <textarea
+        required
+          name="description"
           placeholder="Add your product's description..."
           className="w-full p-4 rounded-2xl bg-[#D9D9D9] text-black h-32"
         />
-        <button className="absolute bottom-3 right-3 bg-[#3F3F3F] text-white px-6 py-2 rounded-full">
+        <button  type="submit" className="cursor-pointer absolute bottom-3 right-3 bg-[#3F3F3F] text-white px-6 py-2 rounded-full">
           Submit
         </button>
       </div>
 
       <div className="flex justify-between items-center mt-10 mx-2">
-        <button className="w-12 h-12 flex items-center justify-center bg-[#C3C3C3] rounded-full">
+        <button className="cursor-pointer w-12 h-12 flex items-center justify-center bg-[#C3C3C3] rounded-full">
           <img src="/assets/Share.svg" className="w-6 h-6" />
         </button>
 
-        <button className="w-12 h-12 flex items-center justify-center bg-[#C3C3C3] rounded-full mx-2">
+        <button className="cursor-pointer w-12 h-12 flex items-center justify-center bg-[#C3C3C3] rounded-full mx-2">
           <img src="/assets/wishlist.svg" className="w-6 h-6" />
         </button>
 
-        <button className="flex-1 mx-2 py-3 bg-[#6B6B6B] text-white rounded-full text-center text-xs tracking-widest">
+        <button className="cursor-pointer flex-1 mx-2 py-3 bg-[#6B6B6B] text-white rounded-full text-center text-xs tracking-widest">
           POST ON COMMUNITY
         </button>
 
-        <button className="flex-1 mx-2 py-3 bg-[#6B6B6B] text-white rounded-full text-center text-xs tracking-widest">
+        <button className="cursor-pointer flex-1 mx-2 py-3 bg-[#6B6B6B] text-white rounded-full text-center text-xs tracking-widest">
           BUY NOW
         </button>
       </div>
@@ -333,45 +488,38 @@ export default function DesignStudio() {
 
       {/* AI MODE */}
       {activeTab === "ai" && (
-        <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-10 mt-10 px-6">
+        <form className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-10 mt-10 px-6">
           <div className="bg-[#6C6C6C] rounded-3xl p-8 text-white">
             <LeftPanelTop mode="ai" />
 
             {/* PROMPT */}
-            <div className="relative mt-4">
-              <textarea
-                placeholder="Prompt your jewelry design..."
-                className="w-full h-40 bg-[#D9D9D9] text-black p-4 rounded-xl"
-              />
-              <button className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-[#3A3A3A] text-white px-10 py-2 rounded-full">
-                Generate
-              </button>
-            </div>
+            
           </div>
 
           <RightPanel />
-        </div>
+        </form>
       )}
 
       {/* UPLOAD MODE */}
       {activeTab === "upload" && (
-        <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-10 mt-10 px-6">
+        <form onSubmit={handleMyDesignUpload} encType="multipart/form-data" accept="image/*" className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-10 mt-10 px-6">
           <div className="bg-[#6C6C6C] rounded-3xl p-8 text-white">
             <LeftPanelTop mode="upload" />
 
             {/* UPLOAD BOX */}
-            <div className="mt-6 bg-[#4A4A4A] w-full h-48 rounded-2xl flex flex-col items-center justify-center">
+            <div onClick={handleClick} className="cursor-pointer mt-6 bg-[#4A4A4A] w-full h-48 rounded-2xl flex flex-col items-center justify-center">
+              <input name="images" onChange={handleChange} type="file" ref={uploadRef} className="hidden" />
               <div className="w-12 h-12 bg-[#D9D9D9] rounded-full flex items-center justify-center text-black text-3xl mb-4">
                 +
               </div>
-              <button className="px-10 py-2 bg-black text-white rounded-full tracking-wide">
+              <button type="button" className="cursor-pointer px-10 py-2 bg-black text-white rounded-full tracking-wide">
                 UPLOAD
               </button>
             </div>
           </div>
 
           <RightPanel />
-        </div>
+        </form>
       )}
     </div>
   );

@@ -4,9 +4,13 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import FacebookLogin from "@greatsumini/react-facebook-login";
+import { useDispatch } from "react-redux";
+import { setUser } from "../store/slices/userSlice";
 
 export default function AuthModals({ isOpen, type, onClose, switchType }) {
   const navigate = useNavigate();
+  const dispatch=useDispatch()
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleReset=async(e)=>{
@@ -80,11 +84,11 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
       );
       console.log(data)
       if (data.success) {
-        toast.success("Logging you in");
-
         localStorage.setItem("token", data.data.access_token);
+        dispatch(setUser(data.data.user))
+        toast.success("Logging you in");
         // 🔥 Notify navbar instantly
-        window.dispatchEvent(new Event("auth-changed"));
+        // window.dispatchEvent(new Event("auth-changed"));
 
         // 🔥 Close modal
         onClose();
@@ -110,12 +114,12 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
       );
 
       if (data.success) {
+        dispatch(setUser(data.data.user))
+        localStorage.setItem("token", data.data.access_token);
         toast.success("Logged in through Facebook");
 
-        localStorage.setItem("token", data.data.access_token);
-
         // 🔥 Notify navbar instantly
-        window.dispatchEvent(new Event("auth-changed"));
+        // window.dispatchEvent(new Event("auth-changed"));
 
         onClose();
         navigate("/");
@@ -142,12 +146,12 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
       );
       console.log(data)
       if (data.success) {
-        toast.success("Google auth successful");
-
+        dispatch(setUser(data.data.user))
         localStorage.setItem("token", data.data.access_token);
-
+        
         // 🔥 Notify navbar instantly
-        window.dispatchEvent(new Event("auth-changed"));
+        // window.dispatchEvent(new Event("auth-changed"));
+        toast.success("Google auth successful");
 
         onClose();
         navigate("/");
@@ -155,7 +159,7 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
         toast.error("Google authentication failed");
       }
     } catch (err) {
-      console
+      console.log(err)
       toast.error("Google authentication error");
     }
   };
@@ -413,7 +417,7 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
                     border: "none",
                     borderRadius: "4px",
                   }}
-                  appId="1299732128027988"
+                  appId={import.meta.env.VITE_FACEBOOK_APP_ID}
                   onSuccess={handleFacebookAuth}
                   onFail={(error) => console.log("Login Failed!", error)}
                 >

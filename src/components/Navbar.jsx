@@ -1,21 +1,27 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
 import AuthModals from "./AuthModals";
 import toast from "react-hot-toast";
 import "../index.css";
 import ReactDOM from "react-dom";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../store/slices/userSlice";
 
-export default function Navbar() {
+export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,setModalOpen,modalType,setModalType,showProfileMenu, setShowProfileMenu}) {
   const location = useLocation();
+  const navigate=useNavigate()
+  const dispatch=useDispatch()
+  const { isLoggedIn, user } = useSelector((state) => state.user);
+
   const [showSearch, setShowSearch] = useState(false);
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  // const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showAboutMenu, setShowAboutMenu] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalType, setModalType] = useState("login");
-  const [user, setUser] = useState(null);
+  // const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  // const [modalOpen, setModalOpen] = useState(false);
+  // const [modalType, setModalType] = useState("login");
+  // const [user, setUser] = useState(null);
 
   const profileRef = useRef(null);
   const searchRef = useRef(null);
@@ -34,32 +40,32 @@ export default function Navbar() {
   /* --------------------------------------------------
     ✅ UPDATED USER LOADING + GLOBAL AUTH LISTENER
   -------------------------------------------------- */
-  useEffect(() => {
-  const loadUser =async () => {
-    try {
-          const storedUser = localStorage.getItem("token");
+//   useEffect(() => {
+//   const loadUser =async () => {
+//     try {
+//           const storedUser = localStorage.getItem("token");
 
-        if (!storedUser || storedUser === "undefined") {
-          setUser(null);
-          return;
-        }
-        const {data}=await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/user`,{
-            headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`
-        },withCredentials: true
-      })
-    if(data.success)setUser(data.data.user);
-    } catch (error) {
-      
-    }
+//         if (!storedUser || storedUser === "undefined") {
+//           setUser(null);
+//           return;
+//         }
+//         const {data}=await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/user`,{
+//             headers: {
+//         Authorization: `Bearer ${localStorage.getItem("token")}`
+//         },withCredentials: true
+//       })
+//     if(data.success)setUser(data.data.user);
+//     } catch (error) {
+//       console.log(error)
+//     }
    
-  };
+//   };
 
-  loadUser(); // initial load
+//   loadUser(); // initial load
 
-  window.addEventListener("auth-changed", loadUser);
-  return () => window.removeEventListener("auth-changed", loadUser);
-}, []);
+//   window.addEventListener("auth-changed", loadUser);
+//   return () => window.removeEventListener("auth-changed", loadUser);
+// }, []);
 
   /* --------------------------------------------------
     ✅ UPDATED LOGOUT (NO PAGE RELOAD)
@@ -75,10 +81,13 @@ export default function Navbar() {
   console.log(data)
       if(data.success){
         localStorage.removeItem("token")
-        setUser(null);
+        // setUser(null);
+        dispatch(logout())
         setShowProfileMenu(false);
+        handleCloseModal()
+        navigate("/")
         toast.success("Logged out successfully");
-        window.dispatchEvent(new Event("auth-changed"));     
+        // window.dispatchEvent(new Event("auth-changed"));     
         // Notify all components that auth changed
       }else{
         toast.error("Couldn't process your request")
@@ -324,7 +333,7 @@ export default function Navbar() {
                     backdropFilter: "blur(40px) saturate(150%)",
                   }}
                 >
-                  {user ? (
+                  {isLoggedIn ? (
                     <button
                       onClick={handleLogout}
                       className="relative w-[130px] text-white font-medium py-2 rounded-full

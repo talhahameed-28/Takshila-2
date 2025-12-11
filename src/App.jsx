@@ -27,7 +27,7 @@ import VideoLoader from "./components/VideoLoader";
 
 
 export default function App() {
-  // const [loading, setLoading] = useState(true); // loader state
+  const [loading, setLoading] = useState(true); // loader state
   const dispatch = useDispatch();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
     const [showAboutMenu, setShowAboutMenu] = useState(false);
@@ -38,11 +38,10 @@ export default function App() {
     dispatch(fetchUser());
   }, [dispatch]);
  
-const [loading, setLoading] = useState(false)
   return (
     <>
       {/* Loader — shows first, hides automatically */}
-      {/* {loading && <VideoLoader onFinish={() => setLoading(false)} />} */}
+      {loading && <VideoLoader onFinish={() => setLoading(false)} />}
 
 
       {/* Main Website (hidden until loader ends) */}

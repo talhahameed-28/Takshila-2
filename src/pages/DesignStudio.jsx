@@ -118,8 +118,10 @@ const scrollRef = useRef(0);
       const formData = new FormData(e.target);
       const values = Object.fromEntries(formData.entries());
       axios.defaults.withCredentials=true
-      const calculatedPrice=Number(upPrice)+Number(upCommission)
-      const total=values.royalties + Number(calculatedPrice)
+      const calculatedPrice=activeTab==="ai"?
+                      Number(aiPriceBreakdown.totalPriceWithRoyalties)+Number(aiPriceBreakdown.commission):
+                      Number(upPriceBreakdown.totalPriceWithRoyalties)+Number(upPriceBreakdown.commission)
+      const total=(activeTab==="ai"?0:Number(values.royalties)) + Number(calculatedPrice)
       // values.images=[values.images]
       const {centerStoneCarat,
         description,
@@ -138,6 +140,7 @@ const scrollRef = useRef(0);
       return
 
     }
+    console.log(total)
       const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/post-design`,
         {name,description,price:total,images,
           meta_data:{
@@ -585,11 +588,11 @@ activeTab])
 
       {/* AI DESIGNER MODE */}
       {activeTab === "ai" && (
-        <form className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-10 mt-10 px-6">
+        <form onSubmit={handleMyDesignUpload} encType="multipart/form-data" accept="image/*" className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-10 mt-10 px-6">
           <div className="bg-[#6C6C6C] rounded-3xl p-8 text-white">
             <LeftPanelTop mode="ai" />
 
-            {/* PROMPT */}
+            
             
           </div>
 

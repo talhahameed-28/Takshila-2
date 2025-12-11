@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef,useLayoutEffect } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -7,6 +7,8 @@ export default function DesignStudio() {
   const navigate=useNavigate()
   // ACTIVE TAB
   const [activeTab, setActiveTab] = useState("ai"); // "ai" | "upload"
+const scrollRef = useRef(0);
+
 
   // -----------------------------------
   // AI DESIGNER STATES
@@ -36,11 +38,20 @@ export default function DesignStudio() {
   const [upPrice, setUpPrice] = useState(2186.33);
   const [upCommission, setUpCommission] = useState(76.52);
   const [upPreviewImage,setUpPreviewImage]= useState(null)
+  const [royalty, setRoyalty] = useState(0)
   const uploadRef = useRef()
   // -----------------------------------
   // PRICE BREAKDOWN POPUP
   // -----------------------------------
   const [showBreakdown, setShowBreakdown] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      scrollRef.current = window.scrollY;
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // -----------------------------------
   // PRICE CALCULATOR
@@ -82,13 +93,13 @@ export default function DesignStudio() {
     }
   };
 
-  useEffect(() => {
-    calculatePrice("ai");
-  }, [aiGoldType, aiKarat, aiShape, aiQuality, aiCenterCarat, aiTotalCarat]);
+  // useEffect(() => {
+  //   calculatePrice("ai");
+  // }, [aiGoldType, aiKarat, aiShape, aiQuality, aiCenterCarat, aiTotalCarat]);
 
-  useEffect(() => {
-    calculatePrice("upload");
-  }, [upGoldType, upKarat, upShape, upQuality, upCenterCarat, upTotalCarat]);
+  // useEffect(() => {
+  //   calculatePrice("upload");
+  // }, [upGoldType, upKarat, upShape, upQuality, upCenterCarat, upTotalCarat]);
 
   const handleClick = () => uploadRef.current.click();
 
@@ -107,21 +118,26 @@ export default function DesignStudio() {
       const formData = new FormData(e.target);
       const values = Object.fromEntries(formData.entries());
       axios.defaults.withCredentials=true
-      const calculatedPrice=upPrice+upCommission
-      const total=values.royalties + calculatedPrice
+      const calculatedPrice=Number(upPrice)+Number(upCommission)
+      const total=values.royalties + Number(calculatedPrice)
       // values.images=[values.images]
       const {centerStoneCarat,
-              description,
-              diamondShape,
-              goldKarat,
-              goldType,
-              images,
-              name,
-              quality,
-              ringSize,
-              royalties,
-              totalCaratWeight,}=values
-      console.log(values)
+        description,
+        diamondShape,
+        goldKarat,
+        goldType,
+        images,
+        name,
+        quality,
+        ringSize,
+        royalties,
+        totalCaratWeight,}=values
+        console.log(values)
+    if(totalCaratWeight<centerStoneCarat) {
+      toast.error("Total carat cannot be lesser than Center Stone Carat")
+      return
+
+    }
       const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/post-design`,
         {name,description,price:total,images,
           meta_data:{
@@ -153,6 +169,11 @@ export default function DesignStudio() {
   const generateAiImage=async(goldType,karat,ringSize,shape,quality,centerCarat,totalCarat,price,commission)=>{
     console.log(goldType,karat,ringSize,shape,quality,centerCarat,totalCarat,price,commission)
     try {
+      if(totalCarat<centerCarat) {
+        
+        toast.error("Total carat cannot be lesser than Center Stone Carat")
+        return
+      }
       setLoadingDesign(true)
       console.log(typeof(promptRef.current.value))
       axios.defaults.withCredentials=true
@@ -162,12 +183,12 @@ export default function DesignStudio() {
           goldKarat:karat,
           diamondShape:shape,
           quality,
-          centerStoneCarat:centerCarat,
-          totalCaratWeight:totalCarat,
+          centerStoneCarat:Number(centerCarat),
+          totalCaratWeight:Number(totalCarat),
           ringDesign:promptRef.current.value?promptRef.current.value:"none",
-          ringSize,
-          price,
-          commission
+          ringSize:Number(ringSize),
+          price:Number(price),
+          commission:Number(commission)
         },
       {headers: {
     Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -196,70 +217,70 @@ export default function DesignStudio() {
   // -----------------------------------
   // HELPERS FOR PRICE BREAKDOWN POPUP
   // -----------------------------------
-  const getActiveValues = () => {
-    if (activeTab === "ai") {
+  const [upPriceBreakdown, setUpPriceBreakdown] = useState({})
+  const [aiPriceBreakdown, setAiPriceBreakdown] = useState({})
+
+ 
+  useLayoutEffect(() => {
+    
+    const getActiveValues = () => {
+      if (activeTab === "ai") {
+        return {
+          ringSize: aiRingSize,
+          goldType: aiGoldType,
+          goldKarat: aiKarat,
+          quality: aiQuality,
+          totalCaratWeight: aiTotalCarat,
+        };
+      }
       return {
-        gold: aiGoldType,
-        karat: aiKarat,
-        shape: aiShape,
-        quality: aiQuality,
-        centerCarat: aiCenterCarat,
-        totalCarat: aiTotalCarat,
-        price: aiPrice,
-        commission: aiCommission,
+        ringSize:upRingSize,
+        goldType: upGoldType,
+        goldKarat: upKarat,
+        quality: upQuality,
+        totalCaratWeight: upTotalCarat,
+        royalties:royalty
       };
-    }
-    return {
-      gold: upGoldType,
-      karat: upKarat,
-      shape: upShape,
-      quality: upQuality,
-      centerCarat: upCenterCarat,
-      totalCarat: upTotalCarat,
-      price: upPrice,
-      commission: upCommission,
     };
-  };
+ 
+    const getBreakdown=async(active)=>{
+      try {
+        axios.defaults.withCredentials=true
+        const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/calculate/price`,{...active})
+        console.log(data)
+        if(data.success){
+          if(activeTab==="ai") setAiPriceBreakdown(data.data)
+            else setUpPriceBreakdown(data.data)
+        }
+      } catch (error) {
+        console.log(error)
+      }
 
-  const active = getActiveValues();
+    }
+    const active = getActiveValues();
+    getBreakdown(active)
+    window.scrollTo(0, scrollRef.current);
+  }, [aiGoldType,
+aiKarat,
+aiRingSize,
+aiQuality,
+aiTotalCarat,
+upGoldType,
+upKarat,
+upRingSize,
+upTotalCarat,
+upQuality,
+royalty,
+activeTab])
+  
 
-  const goldAdj =
-    active.gold === "Rose"
-      ? 50
-      : active.gold === "Yellow"
-      ? 30
-      : active.gold === "White"
-      ? 70
-      : 0;
-
-  const karatAdj =
-    active.karat === "10K"
-      ? 20
-      : active.karat === "14K"
-      ? 40
-      : active.karat === "18K"
-      ? 80
-      : 0;
-
-  const shapeAdj =
-    active.shape === "Oval" ? 100 : active.shape === "Princess" ? 150 : 0;
-
-  const qualityAdj =
-    active.quality === "Good"
-      ? 20
-      : active.quality === "Premium"
-      ? 60
-      : active.quality === "Excellent"
-      ? 120
-      : 0;
-
-  const centerAdj = (Number(active.centerCarat) || 0) * 200;
-  const totalAdj = (Number(active.totalCarat) || 0) * 150;
 
   // -----------------------------------
   // LEFT PANEL (shared)
   // -----------------------------------
   const LeftPanelTop = ({ mode }) => {
+
+
     const isAi = mode === "ai";
 
     const goldType = isAi ? aiGoldType : upGoldType;
@@ -283,8 +304,8 @@ export default function DesignStudio() {
     const totalCarat = isAi ? aiTotalCarat : upTotalCarat;
     const setTotalCaratValue = isAi ? setAiTotalCarat : setUpTotalCarat;
 
-    const price = isAi ? aiPrice : upPrice;
-    const commission = isAi ? aiCommission : upCommission;
+    const price = isAi ? aiPriceBreakdown.totalPriceWithRoyalties : upPriceBreakdown.totalPriceWithRoyalties;
+    const commission = isAi ? aiPriceBreakdown.commission : upPriceBreakdown.commission;
 
     return (
       <>
@@ -395,7 +416,7 @@ export default function DesignStudio() {
             <p className="text-sm mb-2">Center Stone Carat</p>
             <select
               name="centerStoneCarat"
-              className="bg-[#D9D9D9] text-black w-52 h-11 px-4 rounded-full"
+              className="bg-[#D9D9D9] text-black w-42 h-11 px-4 rounded-full"
               value={centerCarat}
               onChange={(e) => setCenterCaratValue(e.target.value)}
             >
@@ -409,7 +430,7 @@ export default function DesignStudio() {
             <p className="text-sm mb-2">Total Carat Weight</p>
             <select
               name="totalCaratWeight"
-              className="bg-[#D9D9D9] text-black w-52 h-11 px-4 rounded-full"
+              className="bg-[#D9D9D9] text-black w-42 h-11 px-4 rounded-full"
               value={totalCarat}
               onChange={(e) => setTotalCaratValue(e.target.value)}
             >
@@ -424,10 +445,11 @@ export default function DesignStudio() {
             <div>
             <p className="text-sm mb-2">Royalties</p>
             <input
+              onChange={(e)=>{setRoyalty(e.target.value)}}
               name="royalties"
-              className="bg-[#D9D9D9] text-black w-40 p-2 rounded-lg"
+              className="bg-[#D9D9D9] text-black h-11 w-42 px-2 rounded-full"
               type="number"
-              
+              value={royalty}
             />
               
         
@@ -606,18 +628,18 @@ export default function DesignStudio() {
             </h2>
 
             <div className="space-y-2 text-sm text-gray-700">
-              <p>Base Price: $2000</p>
-              <p>Gold Type Adjustment: +${goldAdj}</p>
-              <p>Karat Adjustment: +${karatAdj}</p>
-              <p>Shape Adjustment: +${shapeAdj}</p>
-              <p>Quality Adjustment: +${qualityAdj}</p>
-              <p>Center Stone Carat: +${centerAdj}</p>
-              <p>Total Carat Weight: +${totalAdj}</p>
+              <p>Quality Cost:+${activeTab==="ai"?aiPriceBreakdown.breakdown.qualityCost:upPriceBreakdown.breakdown.qualityCost}</p>
+              <p>Metal cost: +${activeTab==="ai"?aiPriceBreakdown.breakdown.metalCost:upPriceBreakdown.breakdown.metalCost}</p>
+              <p>Working charges: +${activeTab==="ai"?aiPriceBreakdown.breakdown.workingChargesCost:upPriceBreakdown.breakdown.workingChargesCost}</p>
+              <p>Setting cost: +${activeTab==="ai"?aiPriceBreakdown.breakdown.diamondSettingCost:upPriceBreakdown.breakdown.diamondSettingCost}</p>
+              <p>Certification: +${activeTab==="ai"?aiPriceBreakdown.breakdown.certificationCost:upPriceBreakdown.breakdown.certificationCost}</p>
+              <p>Shipping: +${activeTab==="ai"?aiPriceBreakdown.breakdown.shipmentCost:upPriceBreakdown.breakdown.shipmentCost}</p>
+              <p>Designer royalties: +${activeTab==="ai"?aiPriceBreakdown.royalties:upPriceBreakdown.royalties}</p>
 
               <hr className="my-3" />
 
-              <p className="font-semibold">Final Price: ${active.price}</p>
-              <p className="font-semibold">Commission: ${active.commission}</p>
+              <p className="font-semibold">Final Price: ${activeTab==="ai"?aiPriceBreakdown.totalPriceWithRoyalties:upPriceBreakdown.totalPriceWithRoyalties}</p>
+              <p className="font-semibold">Commission: ${activeTab==="ai"?aiPriceBreakdown.commission:upPriceBreakdown.commission}</p>
             </div>
 
             <button

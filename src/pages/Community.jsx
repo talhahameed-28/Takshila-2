@@ -123,7 +123,47 @@ export default function Community() {
           Discover designs crafted by our talented community members.
         </p>
       </section>
+{/* Pagination */}
+        <div className="flex justify-center items-center gap-3 mb-14">
+          <button
+            onClick={() => goToPage(currentPage - 1)}
+            disabled={currentPage === 1}
+            className={`w-10 h-10 rounded-full text-lg font-bold ${
+              currentPage === 1
+                ? "text-gray-400"
+                : "text-[#1a1a1a] hover:text-[#2E4B45]"
+            }`}
+          >
+            &lt;
+          </button>
 
+          {Array.from({ length: totalPages }, (_, p) => (
+            <button
+              key={p}
+              onClick={() => goToPage(p + 1)}
+              className={`w-9 h-9 rounded-full text-sm flex items-center justify-center ${
+                currentPage === p + 1
+                  ? "bg-[#2E4B45] text-white"
+                  : "bg-white text-[#1a1a1a] hover:bg-[#d8d6d3]"
+              }`}
+            >
+              {p + 1}
+            </button>
+          ))}
+
+          <button
+            onClick={() => goToPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className={`w-10 h-10 rounded-full text-lg font-bold ${
+              currentPage === totalPages
+                ? "text-gray-400"
+                : "text-[#1a1a1a] hover:text-[#2E4B45]"
+            }`}
+          >
+            &gt;
+          </button>
+        </div>
+     
       {/* Grid */}
       <main className="flex-grow px-6 md:px-12 lg:px-20 pb-24">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
@@ -207,7 +247,7 @@ export default function Community() {
         </div>
 
         {/* Pagination */}
-        <div className="flex justify-center items-center gap-3 mt-14">
+        {/* <div className="flex justify-center items-center gap-3 mt-14">
           <button
             onClick={() => goToPage(currentPage - 1)}
             disabled={currentPage === 1}
@@ -245,7 +285,7 @@ export default function Community() {
           >
             &gt;
           </button>
-        </div>
+        </div> */}
       </main>
 
       {/* MODAL (unchanged except Buy Now removed) */}

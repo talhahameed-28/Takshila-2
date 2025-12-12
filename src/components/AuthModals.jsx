@@ -25,8 +25,13 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
         `${import.meta.env.VITE_BASE_URL}/api/v1/password/forgot`,
         values
       );
+      if(data.success){
+        toast.success("Reset link sent to email🎉")
+      }else{
+        toast.error("Couldn't process your request")
+      }
     } catch (error) {
-      
+      console.log(error)
     }finally {
       setTimeout(() => setIsSubmitting(false), 3000);
     }

@@ -12,7 +12,11 @@ import Wishlist from "../pages/Wishlist";
 import VerifyOtp from '../pages/ResetPassword';
 import DesignStudio from "../pages/DesignStudio";
 import ProtectedRoute from "./protectedRoute";
-
+import PrivacyPolicy from "../pages/Privacypolicy"
+import Refundpolicy from "../pages/Refundpolicy"
+import Shippingpolicy from "../pages/Shippingpolicy"
+import TermConditions from "../pages/TermsConditions"
+import ScrollToTop from "../utils/ScrollToTop";
 const MainRoutes = ({setIsMobileMenuOpen,setModalOpen,setModalType,setShowProfileMenu}) => {
     const handleOpenModal = (type) => {
     setModalType(type);
@@ -22,23 +26,30 @@ const MainRoutes = ({setIsMobileMenuOpen,setModalOpen,setModalType,setShowProfil
   };
     return(
         <>
-         <Routes>
-            <Route path={ROUTES.HOME} element={<Home />} />
-            <Route path={ROUTES.COMMUNITY} element={<Community />} />
-            <Route path={ROUTES.CATALOGUE} element={<Catalogue />} />
-            <Route path={ROUTES.ABOUT} element={<OurStory />} />
-            <Route path={ROUTES.BLOG} element={<Blogs />} />
-            {/* <Route path={ROUTES.EMAILVERIFY} element={<EmailVerify />} /> */}
-           <Route path="/email-verify/:email" element={<EmailVerify />} />
-            <Route path="/reset-password/:token" element={<VerifyOtp />} />
-            <Route element={<ProtectedRoute handleOpenModal={handleOpenModal}/>}>
-                <Route path={ROUTES.ACTIVITY} element={<MyActivity />} />
-                <Route path="/design-studio" element={<DesignStudio />} />
-                <Route path={ROUTES.WISHLIST} element={<Wishlist />} />
-                <Route path={ROUTES.ORDER} element={<Orders />} />
-            </Route>
+        <ScrollToTop/>
 
-        </Routes>
+            <Routes>
+                <Route path={ROUTES.HOME} element={<Home />} />
+                <Route path={ROUTES.COMMUNITY} element={<Community />} />
+                <Route path={ROUTES.CATALOGUE} element={<Catalogue />} />
+                <Route path={ROUTES.ABOUT} element={<OurStory />} />
+                <Route path={ROUTES.BLOG} element={<Blogs />} />
+                {/* <Route path={ROUTES.EMAILVERIFY} element={<EmailVerify />} /> */}
+            <Route path={ROUTES.EMAILVERIFY} element={<EmailVerify />} />
+                <Route path={ROUTES.RESETPASSWORD} element={<VerifyOtp />} />
+                <Route path={ROUTES.PRIVACYPOLICY} element={<PrivacyPolicy />} />
+                <Route path={ROUTES.TERMSCONDITIONS} element={<TermConditions />} />
+                <Route path={ROUTES.REFUNDPOLICY} element={<Refundpolicy />} />
+                <Route path={ROUTES.SHIPPINGPOLICY} element={<Shippingpolicy />} />
+                <Route element={<ProtectedRoute handleOpenModal={handleOpenModal}/>}>
+                    <Route path={ROUTES.ACTIVITY} element={<MyActivity />} />
+                    <Route path={ROUTES.DESIGNSTUDIO} element={<DesignStudio />} />
+                    <Route path={ROUTES.WISHLIST} element={<Wishlist />} />
+                    <Route path={ROUTES.ORDER} element={<Orders />} />
+                </Route>
+
+            </Routes>
+       
         </>
     );
 }

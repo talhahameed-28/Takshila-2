@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 
 export default function Footer() {
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -100,18 +100,16 @@ export default function Footer() {
               </h3>
               <ul className="space-y-2 text-sm text-gray-400">
                 {[
-                  "Privacy Policy",
-                  "Terms & Conditions",
-                  "Refund Policy",
-                  "Shipping Policy",
+                  {name:"Privacy Policy",path:"/privacy-policy"},
+                  {name:"Terms & Conditions",path:"/terms-&-conditions"},
+                  {name:"Refund Policy",path:"/refund-policy"},
+                  {name:"Shipping Policy",path:"/shipping-policy"},
                 ].map((item) => (
-                  <li key={item}>
-                    <a
-                      href="#"
-                      className="hover:underline hover:text-white transition"
-                    >
-                      {item}
-                    </a>
+                  <li key={item.name}>
+                    <NavLink
+                        to={item.path}
+                        className={({isActive})=>`${isActive?"underline":""} transition-all text-gray-300 hover:text-white` }
+                      >{item.name}</NavLink>
                   </li>
                 ))}
               </ul>

@@ -7,7 +7,8 @@ export default function DesignStudio() {
   const navigate=useNavigate()
   // ACTIVE TAB
   const [activeTab, setActiveTab] = useState("ai"); // "ai" | "upload"
-const scrollRef = useRef(0);
+  const [uploading, setUploading] = useState(false)
+  const scrollRef = useRef(0);
 
 
   // -----------------------------------
@@ -112,62 +113,115 @@ const scrollRef = useRef(0);
     setUpPreviewImage(imageUrl);
   };
 
-  const handleMyDesignUpload=async(e)=>{
-    try { 
-      e.preventDefault()
-      const formData = new FormData(e.target);
-      const values = Object.fromEntries(formData.entries());
-      axios.defaults.withCredentials=true
-      const calculatedPrice=activeTab==="ai"?
-                      Number(aiPriceBreakdown.totalPriceWithRoyalties)+Number(aiPriceBreakdown.commission):
-                      Number(upPriceBreakdown.totalPriceWithRoyalties)+Number(upPriceBreakdown.commission)
-      const total=(activeTab==="ai"?0:Number(values.royalties)) + Number(calculatedPrice)
-      // values.images=[values.images]
-      const {centerStoneCarat,
-        description,
-        diamondShape,
-        goldKarat,
-        goldType,
-        images,
-        name,
-        quality,
-        ringSize,
-        royalties,
-        totalCaratWeight,}=values
-        console.log(values)
-    if(totalCaratWeight<centerStoneCarat) {
-      toast.error("Total carat cannot be lesser than Center Stone Carat")
-      return
+  const handleMyDesignUpload = async (e) => {
+  try {
+    setUploading(true)
+    e.preventDefault();
 
+    const formData = new FormData(e.target);
+
+    // Extract all normal text fields EXCEPT files
+    const values = Object.fromEntries(
+      [...formData.entries()].filter(([key, value]) => !(value instanceof File))
+    );
+
+    axios.defaults.withCredentials = true;
+
+    const calculatedPrice =
+      activeTab === "ai"
+        ? Number(aiPriceBreakdown.totalPriceWithRoyalties) +
+          Number(aiPriceBreakdown.commission)
+        : Number(upPriceBreakdown.totalPriceWithRoyalties) +
+          Number(upPriceBreakdown.commission);
+
+    const total =
+      (activeTab === "ai" ? 0 : Number(values.royalties)) +
+      Number(calculatedPrice);
+
+    // ---- FILE ARRAY FIX ----
+    const images = formData.getAll("images[]"); // File array
+    // ------------------------
+
+    const {
+      centerStoneCarat,
+      description,
+      diamondShape,
+      goldKarat,
+      goldType,
+      name,
+      quality,
+      ringSize,
+      royalties,
+      totalCaratWeight,
+    } = values;
+
+    console.log(values);
+    console.log("Files:", images);
+
+    if (totalCaratWeight < centerStoneCarat) {
+      toast.error("Total carat cannot be lesser than Center Stone Carat");
+      return;
     }
-    console.log(total)
-      const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/post-design`,
-        {name,description,price:total,images,
-          meta_data:{
-            centerStoneCarat,
-            diamondShape,
-            goldKarat,
-            goldType,
-            quality,
-            ringSize,
-            royalties,
-            totalCaratWeight
-          }
-          
+
+    // ---- SEND AS FORM DATA ----
+    const sendData = new FormData();
+
+    // Append simple text fields
+    sendData.append("name", name);
+    sendData.append("description", description);
+    sendData.append("price", total);
+
+    // Append meta_data fields individually
+    sendData.append("meta_data[centerStoneCarat]", centerStoneCarat);
+    sendData.append("meta_data[diamondShape]", diamondShape);
+    sendData.append("meta_data[goldKarat]", goldKarat);
+    sendData.append("meta_data[goldType]", goldType);
+    sendData.append("meta_data[quality]", quality);
+    sendData.append("meta_data[ringSize]", ringSize);
+    if(activeTab!=="ai") sendData.append("meta_data[royalties]", royalties);
+    sendData.append("meta_data[totalCaratWeight]", totalCaratWeight);
+
+    // Append each image file
+    if(activeTab==="ai"){
+      console.log(aiPreviewimage)
+      const response = await fetch(aiPreviewimage);
+      const blob = await response.blob();
+      const file= new File([blob], name, { type: blob.type });
+      sendData.append("images[]",file)
+    }else{
+        images.forEach((file) => {
+        sendData.append("images[]", file);
+      });
+    }
+ 
+    // ---------------------------
+    console.log(sendData)
+    const { data } = await axios.post(
+      `${import.meta.env.VITE_BASE_URL}/api/product/post-design`,
+      sendData,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "multipart/form-data",
         },
-      {headers: {
-    Authorization: `Bearer ${localStorage.getItem("token")}`
-    },withCredentials: true})
-      console.log(data)
-      if(data.success){
-        toast.success("Design added to community!")
-        navigate("/community")
+        withCredentials: true,
       }
-    } catch (error) {
-      console.log(error)
-      
+    );
+
+    console.log(data);
+
+    if (data.success) {
+      toast.success("Design added to community!");
+      navigate("/community");
     }
+  } catch (error) {
+    console.log(error);
+    toast.error("Please try again")
+  }finally{
+    setUploading(false)
   }
+};
+
 
   const generateAiImage=async(goldType,karat,ringSize,shape,quality,centerCarat,totalCarat,price,commission)=>{
     console.log(goldType,karat,ringSize,shape,quality,centerCarat,totalCarat,price,commission)
@@ -191,7 +245,8 @@ const scrollRef = useRef(0);
           ringDesign:promptRef.current.value?promptRef.current.value:"none",
           ringSize:Number(ringSize),
           price:Number(price),
-          commission:Number(commission)
+          commission:Number(commission),
+          royalties:0
         },
       {headers: {
     Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -521,8 +576,8 @@ activeTab])
           placeholder="Add your product's description..."
           className="w-full p-4 rounded-2xl bg-[#D9D9D9] text-black h-32"
         />
-        <button  type="submit" className="cursor-pointer absolute bottom-3 right-3 bg-[#3F3F3F] text-white px-6 py-2 rounded-full">
-          Submit
+        <button disabled={uploading} type="submit" className={`${uploading? "bg-gray-600 cursor-not-allowed px-8":"cursor-pointer  bg-[#3F3F3F] text-white px-6"} py-2 rounded-full absolute bottom-3 right-3` }>
+         {uploading?"Uploading, please wait...":"Submit"}
         </button>
       </div>
 
@@ -608,7 +663,7 @@ activeTab])
 
             {/* UPLOAD BOX */}
             <div onClick={handleClick} className="cursor-pointer mt-6 bg-[#4A4A4A] w-full h-48 rounded-2xl flex flex-col items-center justify-center">
-              <input name="images" onChange={handleChange} type="file" ref={uploadRef} className="hidden" />
+              <input name="images[]" multiple onChange={handleChange} type="file" ref={uploadRef} className="hidden" />
               <div className="w-12 h-12 bg-[#D9D9D9] rounded-full flex items-center justify-center text-black text-3xl mb-4">
                 +
               </div>

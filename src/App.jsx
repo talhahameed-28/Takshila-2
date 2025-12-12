@@ -60,27 +60,11 @@ export default function App() {
             setShowProfileMenu={setShowProfileMenu}/>
             
           <Routes>
-            {/* <Route path="/" element={<Home />} />
-            <Route path="/community" element={<Community />} />
-            <Route path="/catalogue" element={<Catalogue />} />
-            <Route path="/my-activity" element={<MyActivity />} />
-            <Route path="/our-story" element={<OurStory />} />
-            <Route path="/blogs" element={<Blogs />} />
-            <Route path="/wishlist" element={<Wishlist />} />
-            <Route path="/orders" element={<Orders />} />
-            <Route path="/design-studio" element={<DesignStudio />} />
-            <Route path="/reset-password/:token" element={<ResetPassword />} />
-            <Route path="/email-verify" element={<EmailVerify />} /> */}
             {/* MainRoutes for Auth related routes */}
-            <Route path="/*" element={<MainRoutes showAboutMenu={showAboutMenu}
-            setShowAboutMenu={setShowAboutMenu}
-            isMobileMenuOpen={isMobileMenuOpen}
-            setIsMobileMenuOpen={setIsMobileMenuOpen}
-            modalOpen={modalOpen}
+            <Route path="/*" element={<MainRoutes  
+            setIsMobileMenuOpen={setIsMobileMenuOpen}    
             setModalOpen={setModalOpen}
-            modalType={modalType}
-            setModalType={setModalType}
-            showProfileMenu={showProfileMenu}
+            setModalType={setModalType}     
             setShowProfileMenu={setShowProfileMenu}/>} />
           </Routes>
 

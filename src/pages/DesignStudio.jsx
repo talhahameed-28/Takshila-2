@@ -385,11 +385,11 @@ activeTab])
           <div>
             <p className="text-sm mb-2">Type</p>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-10">
               {["rose", "yellow", "white"].map((option) => (
                 <label
                   key={option}
-                  className="flex items-center gap-2 text-xs tracking-wide cursor-pointer"
+                  className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"
                 >
                   <input
                     type="radio"
@@ -399,7 +399,7 @@ activeTab])
                     onChange={() => setGold(option)}
                     className="w-5 h-5 accent-black"
                   />
-                  {option}
+                  <span className="mt-1 capitalize">{option}</span>
                 </label>
               ))}
             </div>
@@ -408,11 +408,11 @@ activeTab])
           <div>
             <p className="text-sm mb-2">Karat</p>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-10">
               {["10K", "14K", "18K"].map((k) => (
                 <label
                   key={k}
-                  className="flex items-center gap-2 text-xs tracking-wide cursor-pointer"
+                  className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"
                 >
                   <input
                     type="radio"
@@ -422,7 +422,8 @@ activeTab])
                     onChange={() => setKaratValue(k)}
                     className="w-5 h-5 accent-black"
                   />
-                  {k}
+
+                  <span className="mt-1 capitalize">{k}</span>
                 </label>
               ))}
             </div>
@@ -557,7 +558,7 @@ activeTab])
             <textarea
               ref={promptRef}
               placeholder="Prompt your jewelry design..."
-              className="w-full h-56 mt-4 bg-[#D9D9D9] text-black p-4 rounded-xl"
+              className="w-full h-48 mt-4 bg-[#D9D9D9] text-black p-4 rounded-xl"
             />
             <button
               type="button"

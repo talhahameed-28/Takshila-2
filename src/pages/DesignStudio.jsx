@@ -384,54 +384,64 @@ activeTab])
         <div className="grid grid-cols-2 gap-6">
           <div>
             <p className="text-sm mb-2">Type</p>
-            {["rose", "yellow", "white"].map((option) => (
-              <label
-                key={option}
-                className="flex w-fit items-center gap-2 text-xs tracking-wide cursor-pointer"
-              >
-                <input
-                  type="radio"
-                  value={option}
-                  name={`goldType`}
-                  checked={goldType === option}
-                  onChange={() => setGold(option)}
-                />
-                {option}
-              </label>
-            ))}
+
+            <div className="flex items-center gap-4">
+              {["rose", "yellow", "white"].map((option) => (
+                <label
+                  key={option}
+                  className="flex items-center gap-2 text-xs tracking-wide cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    value={option}
+                    name="goldType"
+                    checked={goldType === option}
+                    onChange={() => setGold(option)}
+                    className="w-5 h-5 accent-black"
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
           </div>
 
           <div>
             <p className="text-sm mb-2">Karat</p>
-            {["10K", "14K", "18K"].map((k) => (
-              <label
-                key={k}
-                className="flex w-fit items-center gap-2 text-xs tracking-wide cursor-pointer"
-              >
-                <input
-                value={k}
-                  type="radio"
-                  name={`goldKarat`}
-                  checked={karat === k}
-                  onChange={() => setKaratValue(k)}
-                />
-                {k}
-              </label>
-            ))}
+
+            <div className="flex items-center gap-4">
+              {["10K", "14K", "18K"].map((k) => (
+                <label
+                  key={k}
+                  className="flex items-center gap-2 text-xs tracking-wide cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    value={k}
+                    name="goldKarat"
+                    checked={karat === k}
+                    onChange={() => setKaratValue(k)}
+                    className="w-5 h-5 accent-black"
+                  />
+                  {k}
+                </label>
+              ))}
+            </div>
           </div>
         </div>
 
         {/* RING SIZE */}
         <p className="text-sm mt-4 mb-2">Ring Size</p>
+
         <select
-        name="ringSize"
-          className="bg-[#D9D9D9] text-black w-52 h-11 px-4 rounded-full"
+          name="ringSize"
           value={ringSize}
           onChange={(e) => setRing(e.target.value)}
+          className="bg-[#D9D9D9] text-black w-52 h-11 px-4 rounded-full"
         >
-          
-          {[3, 4, 5, 6, 7, 8, 9].map((size) => (
-            <option key={size}>{size}</option>
+          {Array.from({ length: 21 }, (_, i) => 3 + i * 0.5).map((size) => (
+            <option key={size} value={size.toFixed(1)}>
+              {size.toFixed(1)}
+            </option>
           ))}
         </select>
 
@@ -456,22 +466,27 @@ activeTab])
           </div>
 
           <div>
-            <p className="text-sm mb-2">Quality</p>
-            {["good", "premium", "excellent"].map((q) => (
-              <label
-                key={q}
-                className="flex w-fit items-center gap-2 text-xs tracking-wide cursor-pointer"
-              >
-                <input
-                  value={q}
-                  type="radio"
-                  name={`quality`}
-                  checked={quality === q}
-                  onChange={() => setQualityValue(q)}
-                />
-                {q}
-              </label>
-            ))}
+            <p className="text-sm mb-3">Quality</p>
+
+            <div className="flex items-center gap-8">
+              {["good", "premium", "excellent"].map((q) => (
+                <label
+                  key={q}
+                  className="flex flex-col items-center cursor-pointer text-xs tracking-wide"
+                >
+                  <input
+                    type="radio"
+                    value={q}
+                    name="quality"
+                    checked={quality === q}
+                    onChange={() => setQualityValue(q)}
+                    className="w-5 h-5 accent-black" /* Larger selector */
+                  />
+
+                  <span className="mt-1 capitalize">{q}</span>
+                </label>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -479,46 +494,47 @@ activeTab])
         <div className="grid grid-cols-3 gap-6 mt-4">
           <div>
             <p className="text-sm mb-2">Center Stone Carat</p>
-            <select
+
+            <input
               name="centerStoneCarat"
-              className="bg-[#D9D9D9] text-black w-42 h-11 px-4 rounded-full"
+              type="number"
+              min="1"
+              max="5"
+              step="0.1"
               value={centerCarat}
               onChange={(e) => setCenterCaratValue(e.target.value)}
-            >
-              <option>0.5</option>
-              <option>1.0</option>
-              <option>1.5</option>
-            </select>
+              className="bg-[#D9D9D9] text-black w-42 h-11 px-4 rounded-full"
+            />
           </div>
 
           <div>
             <p className="text-sm mb-2">Total Carat Weight</p>
-            <select
+
+            <input
               name="totalCaratWeight"
-              className="bg-[#D9D9D9] text-black w-42 h-11 px-4 rounded-full"
+              type="number"
+              min="1"
+              max="6"
+              step="0.1"
               value={totalCarat}
               onChange={(e) => setTotalCaratValue(e.target.value)}
-            >
-              
-              <option>1.0</option>
-              <option>1.5</option>
-              <option>2.0</option>
-            </select>
+              className="bg-[#D9D9D9] text-black w-42 h-11 px-4 rounded-full"
+            />
           </div>
 
-          {mode !=="ai" && (
+          {mode !== "ai" && (
             <div>
-            <p className="text-sm mb-2">Royalties</p>
-            <input
-              onChange={(e)=>{setRoyalty(e.target.value)}}
-              name="royalties"
-              className="bg-[#D9D9D9] text-black h-11 w-42 px-2 rounded-full"
-              type="number"
-              value={royalty}
-            />
-              
-        
-          </div>
+              <p className="text-sm mb-2">Royalties</p>
+              <input
+                onChange={(e) => {
+                  setRoyalty(e.target.value);
+                }}
+                name="royalties"
+                className="bg-[#D9D9D9] text-black h-11 w-42 px-2 rounded-full"
+                type="number"
+                value={royalty}
+              />
+            </div>
           )}
         </div>
 
@@ -536,17 +552,33 @@ activeTab])
 
           <p>Commission: ${commission}</p>
         </div>
-        {mode==="ai"  && (
+        {mode === "ai" && (
           <div className="relative mt-4">
-              <textarea
-                ref={promptRef}
-                placeholder="Prompt your jewelry design..."
-                className="w-full h-40 bg-[#D9D9D9] text-black p-4 rounded-xl"
-              />
-              <button type="button" onClick={()=>generateAiImage(goldType,karat,ringSize,shape,quality,centerCarat,totalCarat,price,commission)} className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-[#3A3A3A] text-white px-10 py-2 rounded-full">
-                Generate
-              </button>
-            </div>
+            <textarea
+              ref={promptRef}
+              placeholder="Prompt your jewelry design..."
+              className="w-full h-56 mt-4 bg-[#D9D9D9] text-black p-4 rounded-xl"
+            />
+            <button
+              type="button"
+              onClick={() =>
+                generateAiImage(
+                  goldType,
+                  karat,
+                  ringSize,
+                  shape,
+                  quality,
+                  centerCarat,
+                  totalCarat,
+                  price,
+                  commission
+                )
+              }
+              className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-[#3A3A3A] text-white px-10 py-2 rounded-full"
+            >
+              Generate
+            </button>
+          </div>
         )}
       </>
     );

@@ -143,15 +143,20 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
     <>
       {/* 🔹 Navbar Header */}
       <header
-        className={`fixed top-0 left-0 w-full flex justify-center px-8 py-4 z-50 transition-all duration-500 ${
-          isScrolled ? "bg-transparent" : "bg-transparent"
-        }`}
+        className={`fixed top-0 left-0 w-full flex justify-center 
+              px-4 sm:px-6 md:px-8 py-4 
+              z-[10000] transition-all duration-500 ${
+                isScrolled ? "bg-transparent" : "bg-transparent"
+              }`}
       >
         <div
-          className="flex items-center justify-between w-full max-w-6xl space-x-6 px-4 py-2 rounded-full 
-                     bg-[#202020]/70 backdrop-blur-md border border-white/10 
-                     shadow-[0_0_25px_rgba(255,255,255,0.1)] transition-all duration-500 relative 
-                     overflow-visible group"
+          className="flex items-center justify-between w-full 
+               max-w-[95%] sm:max-w-[600px] md:max-w-[900px] lg:max-w-6xl 
+               space-x-3 sm:space-x-4 md:space-x-6 
+               px-3 sm:px-4 py-2 rounded-full 
+               bg-[#202020]/70 backdrop-blur-md border border-white/10 
+               shadow-[0_0_25px_rgba(255,255,255,0.1)] 
+               transition-all duration-500 relative overflow-visible group"
         >
           {/* (YOUR UI CODE — UNTOUCHED) */}
           {/* (I DID NOT MODIFY ANYTHING FROM HERE DOWN) */}
@@ -205,7 +210,7 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
             ))}
 
             {/* About Dropdown */}
-            <div ref={aboutRef} className="relative">
+            <div ref={aboutRef} className="relative z-[9999]">
               <button
                 onClick={() => setShowAboutMenu(!showAboutMenu)}
                 className={`flex items-center transition ${
@@ -218,38 +223,39 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
                 About Us ▾
               </button>
 
-              <div
-                className={`absolute left-0 mt-2 w-44 rounded-lg border border-white/10 
-                            backdrop-blur-xl bg-white/10 text-gray-100 shadow-lg z-[9999] 
-                            transition-all duration-300 ease-in-out transform origin-top ${
-                              showAboutMenu
-                                ? "opacity-100 scale-y-100 translate-y-0"
-                                : "opacity-0 scale-y-0 -translate-y-2 pointer-events-none"
-                            }`}
-              >
-                <Link
-                  to="/our-story"
-                  className={`block px-4 py-2 rounded-t-lg transition ${
-                    isActive("/our-story")
-                      ? "bg-white/10 text-white font-semibold"
-                      : "hover:bg-white/10"
-                  }`}
-                  onClick={() => setShowAboutMenu(false)}
+              {showAboutMenu && (
+                <div
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-6
+        flex flex-col items-center space-y-4 z-[99999] animate-fadeIn
+        px-3 py-3 rounded-3xl border border-white/10
+        shadow-[0_0_25px_rgba(255,255,255,0.15)]
+        bg-[#202020]/70 overflow-hidden backdrop-blur-3xl"
+                  style={{
+                    WebkitBackdropFilter: "blur(40px) saturate(150%)",
+                    backdropFilter: "blur(40px) saturate(150%)",
+                  }}
                 >
-                  Our Story
-                </Link>
-                <Link
-                  to="/blogs"
-                  className={`block px-4 py-2 transition ${
-                    isActive("/blogs")
-                      ? "bg-white/10 text-white font-semibold"
-                      : "hover:bg-white/10"
-                  }`}
-                  onClick={() => setShowAboutMenu(false)}
-                >
-                  Blogs
-                </Link>
-              </div>
+                  <Link
+                    to="/our-story"
+                    onClick={() => setShowAboutMenu(false)}
+                    className="relative w-[130px] text-center text-white font-medium py-2 rounded-full
+          bg-white/10 hover:bg-white/20 backdrop-blur-sm ring-1 ring-white/12
+          border border-white/6 transition-all shadow-[0_4px_12px_rgba(0,0,0,0.4)]"
+                  >
+                    Our Story
+                  </Link>
+
+                  <Link
+                    to="/blogs"
+                    onClick={() => setShowAboutMenu(false)}
+                    className="relative w-[130px] text-center text-white font-medium py-2 rounded-full
+          bg-white/10 hover:bg-white/20 backdrop-blur-sm ring-1 ring-white/12
+          border border-white/6 transition-all shadow-[0_4px_12px_rgba(0,0,0,0.4)]"
+                  >
+                    Blogs
+                  </Link>
+                </div>
+              )}
             </div>
           </nav>
 
@@ -278,7 +284,7 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
               {showSearch && (
                 <div
                   className="absolute right-0 mt-3 flex items-center gap-2 p-2 
-                             backdrop-blur-xl bg-white/5 border border-white/10
+                             backdrop-blur-3xl bg-black/70 border border-white/10
                              rounded-full shadow-[0_4px_20px_rgba(255,255,255,0.1)]
                              animate-fadeIn z-[9999]"
                 >
@@ -325,7 +331,7 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
               {showProfileMenu && (
                 <div
                   className="absolute right-0 mt-4 flex flex-col items-center space-y-4 z-[99999] animate-fadeIn
-               px-6 py-6 rounded-3xl border border-white/10 
+               px-3 py-3 rounded-3xl border border-white/10 
                shadow-[0_0_25px_rgba(255,255,255,0.15)]
                bg-[#202020]/70 overflow-hidden backdrop-blur-3xl"
                   style={{
@@ -376,8 +382,148 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
               )}
             </div>
           </div>
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden p-2 rounded-full bg-white/10 hover:bg-white/20 
+             backdrop-blur-md border border-white/10 transition"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              {isMobileMenuOpen ? (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              ) : (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              )}
+            </svg>
+          </button>
         </div>
       </header>
+
+      {/* ================= MOBILE MENU ================= */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-[9990] md:hidden">
+          {/* Backdrop */}
+          <div
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="absolute inset-0 bg-black/70 backdrop-blur-md"
+          />
+
+          {/* Content */}
+          <div className="absolute top-24 right-4 w-[90%] max-w-sm flex flex-col items-end space-y-6 animate-fadeIn">
+            {/* Search Bar */}
+            <div
+              className="w-full flex items-center gap-2 px-4 py-3 mb-14 mt-10 rounded-full
+                   bg-white/10 border border-white/10 backdrop-blur-xl"
+            >
+              <input
+                type="text"
+                placeholder="Search..."
+                className="flex-1 bg-transparent text-white placeholder-gray-400
+                     focus:outline-none"
+              />
+              <button
+                className="p-2 bg-white/10 hover:bg-white/20
+                     border border-white/10 text-white rounded-full transition"
+              >
+                →
+              </button>
+            </div>
+
+            {/* Main Navigation */}
+            {mobileItems
+              .filter(
+                (item) => item.name !== "Our Story" && item.name !== "Blogs"
+              )
+              .map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`w-fit ml-auto text-right px-20 py-3 rounded-full
+                        text-lg font-medium transition
+              ${
+                isActive(item.path)
+                  ? "bg-white/20 text-white shadow-[0_0_12px_rgba(255,255,255,0.4)]"
+                  : "bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white"
+              }`}
+                >
+                  {item.name}
+                </Link>
+              ))}
+
+            {/* Your Orders (after My Activity) */}
+            {isLoggedIn && (
+              <Link
+                to="/orders"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="w-fit ml-auto text-right px-20 py-3 rounded-full
+                     text-lg bg-white/10 hover:bg-white/20
+                     text-white transition"
+              >
+                Your Orders
+              </Link>
+            )}
+
+            {/* Design Studio */}
+            <Link
+              to="/design-studio"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="w-fit ml-auto text-right px-20 py-3 rounded-full
+                   text-lg bg-[#2E4B45] hover:bg-[#1f332e]
+                   text-white transition shadow-md"
+            >
+              Design Studio
+            </Link>
+
+            {/* Auth Buttons */}
+            {!isLoggedIn ? (
+              <div className="flex gap-4 pt-4 ml-auto">
+                <button
+                  onClick={() => handleOpenModal("login")}
+                  className="px-14 py-2 rounded-full
+                       bg-white/10 hover:bg-white/20
+                       text-white transition"
+                >
+                  Login
+                </button>
+
+                <button
+                  onClick={() => handleOpenModal("signup")}
+                  className="px-14 py-2 rounded-full
+                       bg-white/10 hover:bg-white/20
+                       text-white transition"
+                >
+                  Sign Up
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={handleLogout}
+                className="w-fit ml-auto px-20 py-3 rounded-full
+                     bg-red-500/20 hover:bg-red-500/30
+                     text-white transition"
+              >
+                Logout
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       <AuthModals
         isOpen={modalOpen}

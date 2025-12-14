@@ -211,9 +211,16 @@ export default function DesignStudio() {
     console.log(data);
 
     if (data.success) {
-      toast.success("Design added to community!");
-      navigate("/community");
+      toast.success("Design saved!");
+      navigate("/my-activity");
     }
+
+    /*if (data.success) {
+  toast.success("Design added to community!");
+  navigate("/community");
+  }
+  */
+
   } catch (error) {
     console.log(error);
     toast.error("Please try again")
@@ -551,18 +558,25 @@ activeTab])
   const RightPanel = () => (
     <div className="flex flex-col">
       <div className="w-full h-[520px] bg-white rounded-3xl shadow-md">
-      {loadingDesign?(   <div className="flex flex-col items-center justify-center py-10">
-      <div className="h-10 w-10 border-4 border-gray-300 border-t-gray-700 rounded-full animate-spin"></div>
+        {loadingDesign ? (
+          <div className="flex flex-col items-center justify-center py-10">
+            <div className="h-10 w-10 border-4 border-gray-300 border-t-gray-700 rounded-full animate-spin"></div>
 
-      <p className="mt-4 text-sm text-gray-600 text-center max-w-xs">
-        Generating design, please do not refresh/switch tabs to view it here
-      </p>
-    </div>):(<img className="w-full rounded-3xl h-full" src={activeTab=="upload"?upPreviewImage:aiPreviewimage} alt="imagePreview" />)}
-       
+            <p className="mt-4 text-sm text-gray-600 text-center max-w-xs">
+              Generating design, please do not refresh/switch tabs to view it
+              here
+            </p>
+          </div>
+        ) : (
+          <img
+            className="w-full rounded-3xl h-full"
+            src={activeTab == "upload" ? upPreviewImage : aiPreviewimage}
+            alt="imagePreview"
+          />
+        )}
       </div>
 
       <input
-        
         name="name"
         type="text"
         placeholder="Name Your Design..."
@@ -571,13 +585,21 @@ activeTab])
 
       <div className="relative mt-4">
         <textarea
-        required
+          required
           name="description"
           placeholder="Add your product's description..."
           className="w-full p-4 rounded-2xl bg-[#D9D9D9] text-black h-32"
         />
-        <button disabled={uploading} type="submit" className={`${uploading? "bg-gray-600 cursor-not-allowed px-8":"cursor-pointer  bg-[#3F3F3F] text-white px-6"} py-2 rounded-full absolute bottom-3 right-3` }>
-         {uploading?"Uploading, please wait...":"Submit"}
+        <button
+          disabled={uploading}
+          type="submit"
+          className={`${
+            uploading
+              ? "bg-gray-600 cursor-not-allowed px-8"
+              : "cursor-pointer  bg-[#3F3F3F] text-white px-6"
+          } py-2 rounded-full absolute bottom-3 right-3`}
+        >
+          {uploading ? "Uploading, please wait..." : "Submit"}
         </button>
       </div>
 
@@ -590,7 +612,17 @@ activeTab])
           <img src="/assets/wishlist.svg" className="w-6 h-6" />
         </button>
 
-        <button className="cursor-pointer flex-1 mx-2 py-3 bg-[#6B6B6B] text-white rounded-full text-center text-xs tracking-widest">
+        {
+          /* BUY & POST BUTTONS  <button className="cursor-pointer flex-1 mx-2 py-3 bg-[#6B6B6B] text-white rounded-full text-center text-xs tracking-widest">
+            POST ON COMMUNITY
+          </button>*/
+        }
+
+        <button
+          type="button"
+          onClick={() => navigate("/community")}
+          className="cursor-pointer flex-1 mx-2 py-3 bg-[#6B6B6B] text-white rounded-full text-center text-xs tracking-widest"
+        >
           POST ON COMMUNITY
         </button>
 

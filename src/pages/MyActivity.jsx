@@ -1,131 +1,112 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function MyActivity() {
-  const [activeSection, setActiveSection] = useState("Section 1");
+  const navigate = useNavigate();
+  const [designs, setDesigns] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const imagesSection1 = [
-    "assets/design1.jpg",
-    "assets/design2.jpg",
-    "assets/design3.jpg",
-    "assets/design4.jpg",
-    "assets/design5.jpg",
-    "assets/design6.jpg",
-  ];
-  const imagesSection2 = [
-    "assets/necklace1.jpg",
-    "assets/necklace2.jpg",
-    "assets/necklace3.jpg",
-    "assets/necklace4.jpg",
-  ];
-  const imagesSection3 = [
-    "assets/ring1.jpg",
-    "assets/ring2.jpg",
-    "assets/ring3.jpg",
-  ];
+  // FETCH USER DESIGNS
+  useEffect(() => {
+    const getMyDesigns = async () => {
+      try {
+        axios.defaults.withCredentials = true;
 
-  const getImages = () => {
-    if (activeSection === "Section 1") return imagesSection1;
-    if (activeSection === "Section 2") return imagesSection2;
-    return imagesSection3;
-  };
+        const { data } = await axios.get(
+          `${import.meta.env.VITE_BASE_URL}/api/product/my-designs`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        if (data.success) {
+          setDesigns(data.designs);
+        }
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getMyDesigns();
+  }, []);
 
   return (
-    <div className="bg-[#e5e2df] min-h-screen w-full flex flex-col items-center text-[#1a1a1a] font-sans overflow-x-hidden">
-      {/* 🔹 Backdrop */}
-      <div className="w-full h-40 sm:h-48 md:h-56 lg:h-64 bg-black flex justify-center items-center relative">
-        <h1 className="text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl font-medium tracking-wide">
-          Backdrop
-        </h1>
-      </div>
+    <div className="bg-[#e5e2df] min-h-screen flex flex-col text-[#1a1a1a]">
+      <main className="flex-grow pt-40 px-6 md:px-12 lg:px-20 pb-24 transition-all duration-500">
+        {/* Header */}
+        <section className="text-center mb-12">
+          <h1 className="text-5xl md:text-5xl font-serif font-light tracking-wide text-[#1a1a1a]">
+            MY ACTIVITY
+          </h1>
+          <div className="w-full max-w-4xl mx-auto border-t border-gray-400 mt-6"></div>
+        </section>
 
-      {/* 🔹 Profile Section */}
-      <div className="relative w-full max-w-6xl flex flex-col items-center -mt-14 sm:-mt-16 md:-mt-20 px-4 sm:px-6 md:px-8">
-        {/* Circular Image/Video Placeholder */}
-        <div className="w-28 h-28 sm:w-36 sm:h-36 md:w-40 md:h-40 bg-[#d8d8d8] rounded-full border-4 border-white flex justify-center items-center text-center text-xs sm:text-sm md:text-base text-gray-600 overflow-hidden">
-          <span>
-            Image + <br className="sm:hidden" /> Introductory <br /> Video
-          </span>
-        </div>
+        {/* Loading */}
+        {loading && (
+          <p className="text-center text-gray-500 text-sm mt-10">
+            Loading your designs...
+          </p>
+        )}
 
-        {/* Username & Handle */}
-        <div className="text-center mt-4 sm:mt-6">
-          <p className="text-xs sm:text-sm text-gray-600">@talha_028</p>
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-wide">
-            TALHA HAMEED
-          </h2>
-        </div>
+        {/* Empty State */}
+        {!loading && designs.length === 0 && (
+          <div className="flex flex-col items-center justify-center text-center mt-20 h-[40vh]">
+            <h2 className="text-2xl font-medium text-gray-700 mb-6">
+              No Designs Yet
+            </h2>
 
-        {/* Description Box */}
-        <div className="w-full max-w-3xl mt-5 sm:mt-6 bg-[#dcdada] rounded-xl py-4 sm:py-6 px-5 sm:px-8 text-center text-gray-800 text-sm sm:text-base">
-          Description
-        </div>
-
-        {/* 🔹 Vertical Social Icons (Right Side) */}
-        <div className="absolute right-4 sm:right-10 top-[50%] translate-y-[-50%] hidden md:flex flex-col items-center space-y-4">
-          {/* Facebook */}
-          <a
-            href="#"
-            className="w-9 h-9 rounded-full bg-white/50 backdrop-blur-md border border-[#1a1a1a]/10 flex justify-center items-center hover:bg-[#202020] transition-all duration-300 hover:scale-110"
-          >
-            <img src="assets/facebook.svg" alt="Facebook" className="h-4 w-4" />
-          </a>
-
-          {/* Instagram */}
-          <a
-            href="#"
-            className="w-9 h-9 rounded-full bg-white/50 backdrop-blur-md border border-[#1a1a1a]/10 flex justify-center items-center hover:bg-[#202020] transition-all duration-300 hover:scale-110"
-          >
-            <img
-              src="assets/instagram.svg"
-              alt="Instagram"
-              className="h-4 w-4"
-            />
-          </a>
-
-          {/* LinkedIn */}
-          <a
-            href="#"
-            className="w-9 h-9 rounded-full bg-white/50 backdrop-blur-md border border-[#1a1a1a]/10 flex justify-center items-center hover:bg-[#202020] transition-all duration-300 hover:scale-110"
-          >
-            <img src="assets/linkedin.svg" alt="LinkedIn" className="h-4 w-4" />
-          </a>
-        </div>
-      </div>
-
-      {/* 🔹 Section Buttons (Always Horizontal) */}
-      <div className="w-full max-w-3xl mt-10 sm:mt-12 flex justify-between items-center px-2">
-        {["Section 1", "Section 2", "Section 3"].map((section) => (
-          <button
-            key={section}
-            onClick={() => setActiveSection(section)}
-            className={`text-sm sm:text-base md:text-lg font-medium py-2 px-6 rounded-full transition-all duration-300 ${
-              activeSection === section
-                ? "bg-[#202020] text-white shadow-md"
-                : "bg-transparent text-gray-600 hover:text-[#1a1a1a]"
-            }`}
-          >
-            {section}
-          </button>
-        ))}
-      </div>
-
-      {/* 🔹 Image Grid */}
-      <div className="w-full max-w-6xl px-4 sm:px-6 mt-8 sm:mt-10 pb-16 sm:pb-24 transition-all duration-500 ease-in-out">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 justify-items-center">
-          {getImages().map((src, index) => (
-            <div
-              key={index}
-              className="w-full max-w-[420px] aspect-square bg-[#e2e2e2] rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300"
+            <button
+              onClick={() => navigate("/design-studio")}
+              className="px-10 py-4 bg-[#555555] hover:bg-[#000000] text-white rounded-full text-sm shadow-sm transition cursor-pointer"
             >
-              <img
-                src={src}
-                alt={`Design ${index + 1}`}
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-              />
+              Add Some Designs
+            </button>
+          </div>
+        )}
+
+        {/* Designs Grid */}
+        {designs.length > 0 && (
+          <section>
+            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-10 gap-y-16">
+              {designs.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex flex-col items-center text-center"
+                >
+                  <div className="w-full bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 p-4 cursor-pointer">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-full h-56 object-cover rounded-xl"
+                    />
+                  </div>
+
+                  <h2 className="text-sm font-semibold mt-4 tracking-wide text-gray-800 uppercase">
+                    {item.name}
+                  </h2>
+
+                  <p className="text-gray-600 text-sm mt-1">${item.price}</p>
+
+                  <button
+                    onClick={() => navigate(`/product/${item.id}`)}
+                    className="mt-3 px-5 py-2 text-sm rounded-full transition-all bg-[#2E4B45] hover:bg-[#1f332e] text-white"
+                  >
+                    View
+                  </button>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
+          </section>
+        )}
+      </main>
     </div>
   );
+
 }

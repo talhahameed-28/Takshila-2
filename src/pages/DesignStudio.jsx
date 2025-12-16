@@ -111,49 +111,7 @@ export default function DesignStudio() {
   // -----------------------------------
   // PRICE CALCULATOR
   // -----------------------------------
-  const calculatePrice = (mode) => {
-    let base = 2000;
 
-    const gold = mode === "ai" ? aiGoldType : upGoldType;
-    const karat = mode === "ai" ? aiKarat : upKarat;
-    const shape = mode === "ai" ? aiShape : upShape;
-    const quality = mode === "ai" ? aiQuality : upQuality;
-    const centerCarat = mode === "ai" ? aiCenterCarat : upCenterCarat;
-    const totalCarat = mode === "ai" ? aiTotalCarat : upTotalCarat;
-
-    if (gold === "rose") base += 50;
-    if (gold === "yellow") base += 30;
-    if (gold === "white") base += 70;
-
-    if (karat === "10K") base += 20;
-    if (karat === "14K") base += 40;
-    if (karat === "18K") base += 80;
-
-    if (shape === "Oval") base += 100;
-    if (shape === "Princess") base += 150;
-    if (shape === "Emerald") base += 120;
-    if (shape === "Marquise") base += 140;
-    if (shape === "Cushion") base += 130;
-    if (shape === "Radiant") base += 135;
-    if (shape === "Pear") base += 125;
-    if (shape === "Asscher") base += 145;
-    if (shape === "Heart") base += 160;
-
-    if (quality === "good") base += 20;
-    if (quality === "premium") base += 60;
-    if (quality === "excellent") base += 120;
-
-    base += (Number(centerCarat) || 0) * 200;
-    base += (Number(totalCarat) || 0) * 150;
-
-    if (mode === "ai") {
-      setAiPrice(base);
-      setAiCommission((base * 0.035).toFixed(2));
-    } else {
-      setUpPrice(base);
-      setUpCommission((base * 0.035).toFixed(2));
-    }
-  };
 
   // useEffect(() => {
   //   calculatePrice("ai");
@@ -273,7 +231,7 @@ export default function DesignStudio() {
 
     if (data.success) {
       toast.success("Design saved!");
-      navigate("/my-activity");
+      navigate("/community");
     }
 
     /*if (data.success) {

@@ -6,6 +6,11 @@ import { useNavigate } from "react-router-dom";
 
 export default function MyActivity() {
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+    const cardsPerPage = 12;
+   
+    const [totalProducts, setTotalProducts] = useState()
+    const totalPages = Math.ceil(totalProducts / cardsPerPage);
   const [designs, setDesigns] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -16,7 +21,7 @@ export default function MyActivity() {
         axios.defaults.withCredentials = true;
 
         const { data } = await axios.get(
-          `${import.meta.env.VITE_BASE_URL}/api/my-activity`,
+          `${import.meta.env.VITE_BASE_URL}/api/my-activity?per_page=12&page=${currentPage}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -26,6 +31,7 @@ export default function MyActivity() {
 
         if (data.success) {
           setDesigns(data.data.products);
+          setTotalProducts(data.data.pagination.total)
         }
       } catch (err) {
         console.log(err);
@@ -35,10 +41,17 @@ export default function MyActivity() {
     };
 
     getMyDesigns();
-  }, []);
+  }, [currentPage]);
+
+
+    const goToPage = (p) => {
+        if (p >= 1 && p <= totalPages) setCurrentPage(p);
+      };
+
 
   return (
     <div className="bg-[#e5e2df] min-h-screen flex flex-col text-[#1a1a1a]">
+      
       <main className="flex-grow pt-40 px-6 md:px-12 lg:px-20 pb-24 transition-all duration-500">
         {/* Header */}
         <section className="text-center mb-12">
@@ -74,6 +87,45 @@ export default function MyActivity() {
         {/* Designs Grid */}
         {designs.length > 0 && (
           <section>
+            <div className="flex justify-center items-center gap-3 mb-14">
+          <button
+            onClick={() => goToPage(currentPage - 1)}
+            disabled={currentPage === 1}
+            className={`w-10 h-10 rounded-full text-lg font-bold ${
+              currentPage === 1
+                ? "text-gray-400"
+                : "text-[#1a1a1a] hover:text-[#2E4B45]"
+            }`}
+          >
+            &lt;
+          </button>
+
+          {Array.from({ length: totalPages }, (_, p) => (
+            <button
+              key={p}
+              onClick={() => goToPage(p + 1)}
+              className={`w-9 h-9 rounded-full text-sm flex items-center justify-center ${
+                currentPage === p + 1
+                  ? "bg-[#2E4B45] text-white"
+                  : "bg-white text-[#1a1a1a] hover:bg-[#d8d6d3]"
+              }`}
+            >
+              {p + 1}
+            </button>
+          ))}
+
+          <button
+            onClick={() => goToPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className={`w-10 h-10 rounded-full text-lg font-bold ${
+              currentPage === totalPages
+                ? "text-gray-400"
+                : "text-[#1a1a1a] hover:text-[#2E4B45]"
+            }`}
+          >
+            &gt;
+          </button>
+        </div>
             <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-10 gap-y-16">
               {designs.map((item) => (
                 <div

@@ -16,7 +16,7 @@ export default function MyActivity() {
         axios.defaults.withCredentials = true;
 
         const { data } = await axios.get(
-          `${import.meta.env.VITE_BASE_URL}/api/product/my-designs`,
+          `${import.meta.env.VITE_BASE_URL}/api/my-activity`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -25,7 +25,7 @@ export default function MyActivity() {
         );
 
         if (data.success) {
-          setDesigns(data.designs);
+          setDesigns(data.data.products);
         }
       } catch (err) {
         console.log(err);

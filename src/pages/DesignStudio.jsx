@@ -3,12 +3,73 @@ import React, { useState, useEffect, useRef,useLayoutEffect } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
+//diamond shapes options
+  const DIAMOND_SHAPES = [
+    { name: "Round", icon: "/assets/shapes/round.png" },
+    { name: "Princess", icon: "/assets/shapes/princess.png" },
+    { name: "Emerald", icon: "/assets/shapes/emerald.png" },
+    { name: "Oval", icon: "/assets/shapes/oval.png" },
+    { name: "Marquise", icon: "/assets/shapes/marquise.png" },
+    { name: "Cushion", icon: "/assets/shapes/cushion.png" },
+    { name: "Radiant", icon: "/assets/shapes/radiant.png" },
+    { name: "Pear", icon: "/assets/shapes/pear.png" },
+    { name: "Asscher", icon: "/assets/shapes/asscher.png" },
+    { name: "Heart", icon: "/assets/shapes/heart.png" },
+  ];
+
+const ShapeDropdown = ({ value, onChange }) => {
+  const [open, setOpen] = useState(false);
+  const selected = DIAMOND_SHAPES.find((s) => s.name === value);
+
+  return (
+    <div className="relative w-52">
+      {/* Selected */}
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="bg-white text-black w-full h-11 px-4 rounded-full
+                   flex items-center justify-between"
+      >
+        <div className="flex items-center gap-3">
+          {selected && (
+            <img src={selected.icon} alt={value} className="w-5 h-5" />
+          )}
+          <span className="text-sm">{value}</span>
+        </div>
+        <span className="text-gray-500 text-xs">▼</span>
+      </button>
+
+      {/* Dropdown */}
+      {open && (
+        <div className="absolute z-50 mt-2 w-full bg-white  text-black rounded-xl shadow-lg overflow-hidden">
+          {DIAMOND_SHAPES.map((shape) => (
+            <button
+              key={shape.name}
+              type="button"
+              onClick={() => {
+                onChange(shape.name);
+                setOpen(false);
+              }}
+              className="w-full px-4 py-2 flex items-center gap-3
+                         hover:bg-gray-100 text-left"
+            >
+              <img src={shape.icon} alt={shape.name} className="w-5 h-5" />
+              <span className="text-sm">{shape.name}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default function DesignStudio() {
   const navigate=useNavigate()
   // ACTIVE TAB
   const [activeTab, setActiveTab] = useState("ai"); // "ai" | "upload"
   const [uploading, setUploading] = useState(false)
-  const scrollRef = useRef(0);
+  
+  
 
 
   // -----------------------------------
@@ -46,14 +107,7 @@ export default function DesignStudio() {
   // -----------------------------------
   const [showBreakdown, setShowBreakdown] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      scrollRef.current = window.scrollY;
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
+  
   // -----------------------------------
   // PRICE CALCULATOR
   // -----------------------------------
@@ -75,8 +129,15 @@ export default function DesignStudio() {
     if (karat === "14K") base += 40;
     if (karat === "18K") base += 80;
 
-    if (shape === "oval") base += 100;
-    if (shape === "princess") base += 150;
+    if (shape === "Oval") base += 100;
+    if (shape === "Princess") base += 150;
+    if (shape === "Emerald") base += 120;
+    if (shape === "Marquise") base += 140;
+    if (shape === "Cushion") base += 130;
+    if (shape === "Radiant") base += 135;
+    if (shape === "Pear") base += 125;
+    if (shape === "Asscher") base += 145;
+    if (shape === "Heart") base += 160;
 
     if (quality === "good") base += 20;
     if (quality === "premium") base += 60;
@@ -324,7 +385,6 @@ export default function DesignStudio() {
     }
     const active = getActiveValues();
     getBreakdown(active)
-    window.scrollTo(0, scrollRef.current);
   }, [aiGoldType,
 aiKarat,
 aiRingSize,
@@ -454,39 +514,84 @@ activeTab])
         <div className="grid grid-cols-2 gap-6">
           <div>
             <p className="text-sm mb-2">Shape</p>
-            <select
-              name="diamondShape"
-              className="bg-white text-black w-52 h-11 px-4 rounded-full"
+            <ShapeDropdown
               value={shape}
-              onChange={(e) => setShapeValue(e.target.value)}
-            >
-              <option>Round</option>
-              <option>Princess</option>
-              <option>Oval</option>
-            </select>
+              onChange={(val) => setShapeValue(val)}
+            />
           </div>
 
           <div>
-            <p className="text-sm mb-3">Quality</p>
+            <p className="text-sm mb-1">Quality</p>
 
-            <div className="flex items-center gap-8">
-              {["good", "premium", "excellent"].map((q) => (
-                <label
-                  key={q}
-                  className="flex flex-col items-center cursor-pointer text-xs tracking-wide"
-                >
-                  <input
-                    type="radio"
-                    value={q}
-                    name="quality"
-                    checked={quality === q}
-                    onChange={() => setQualityValue(q)}
-                    className="w-5 h-5 accent-black" /* Larger selector */
-                  />
+            <div className="w-full max-w-lg">
+              {/* Slider container */}
+              <div className="relative px-0 py-2.5  overflow-hidden">
+                {/* white inner line */}
 
-                  <span className="mt-1 capitalize">{q}</span>
-                </label>
-              ))}
+                <input
+                  type="range"
+                  min="0"
+                  max="2"
+                  step="1"
+                  value={quality === "good" ? 0 : quality === "premium" ? 1 : 2}
+                  onChange={(e) =>
+                    setQualityValue(
+                      e.target.value == 0
+                        ? "good"
+                        : e.target.value == 1
+                        ? "premium"
+                        : "excellent"
+                    )
+                  }
+                  className="
+                        w-full appearance-none bg-transparent cursor-pointer relative z-10
+
+                        [&::-webkit-slider-runnable-track]:h-2
+                        [&::-webkit-slider-runnable-track]:rounded-full
+                        [&::-webkit-slider-runnable-track]:bg-white
+
+                        [&::-webkit-slider-thumb]:appearance-none
+                        [&::-webkit-slider-thumb]:w-8
+                        [&::-webkit-slider-thumb]:h-8
+                        [&::-webkit-slider-thumb]:rounded-full
+                        [&::-webkit-slider-thumb]:bg-gradient-to-br
+                        [&::-webkit-slider-thumb]:from-gray-700
+                        [&::-webkit-slider-thumb]:via-gray-500
+                        [&::-webkit-slider-thumb]:to-gray-800
+                        [&::-webkit-slider-thumb]:border
+                        [&::-webkit-slider-thumb]:border-gray-300
+                        [&::-webkit-slider-thumb]:shadow-lg
+                        [&::-webkit-slider-thumb]:-mt-3
+
+                        [&::-moz-range-track]:h-2
+                        [&::-moz-range-track]:rounded-full
+                        [&::-moz-range-track]:bg-gray-400
+
+                        [&::-moz-range-thumb]:w-4
+                        [&::-moz-range-thumb]:h-4
+                        [&::-moz-range-thumb]:rounded-full
+                        [&::-moz-range-thumb]:border
+                        [&::-moz-range-thumb]:border-gray-300
+                      "
+                />
+              </div>
+
+              {/* Labels */}
+              <div className="mt-1 grid grid-cols-3 text-center text-sm text-white">
+                <div>
+                  
+                  <div>Good</div>
+                </div>
+                <div>
+                  
+                  <div>Premium</div>
+                </div>
+
+                <div>
+                  
+                  <div>Excellent</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

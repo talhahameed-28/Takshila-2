@@ -14,26 +14,26 @@ const fmt = (n) =>
     : n;
 
 
+
 export default function Community() {
-  const {isLoggedIn}=useSelector(state=>state.user)
+  const { isLoggedIn } = useSelector((state) => state.user);
 
   const [currentPage, setCurrentPage] = useState(1);
   const cardsPerPage = 9;
-  const [jewelleryData, setJewelleryData] = useState([])
-  const [totalProducts, setTotalProducts] = useState()
+  const [jewelleryData, setJewelleryData] = useState([]);
+  const [totalProducts, setTotalProducts] = useState();
   const totalPages = Math.ceil(totalProducts / cardsPerPage);
 
-
   const [selectedProductId, setSelectedProductId] = useState(null);
-  const [selectedProductDetails, setSelectedProductDetails] = useState({})
+  const [selectedProductDetails, setSelectedProductDetails] = useState({});
   // Customization states
   const [goldType, setGoldType] = useState("Yellow");
   const [goldKarat, setGoldKarat] = useState("18K");
   const [quality, setQuality] = useState(80);
   const [centerStoneCarat, setCenterStoneCarat] = useState(1);
   const [totalCaratWeight, setTotalCaratWeight] = useState(5);
-const [comment, setComment] = useState("")
-const [rating, setRating] = useState(0)
+  const [comment, setComment] = useState("");
+  const [rating, setRating] = useState(0);
   // ⭐ Wishlist Context
   const { wishlistItems, toggleWishlist } = useWishlist();
 
@@ -44,36 +44,39 @@ const [rating, setRating] = useState(0)
   }, [selectedProductId]);
 
   useEffect(() => {
-    const loadProducts=async()=>{
+    const loadProducts = async () => {
       try {
-        const {data}=await axios.get(`${import.meta.env.VITE_BASE_URL}/api/product?per_page=9&page=${currentPage}`)
-        console.log(data)
-        if(data.success) {
-          setJewelleryData(data.data.products)
-          setTotalProducts(data.data.pagination.total)
-        }
-        else toast.error("Couldn't fetch products")
+        const { data } = await axios.get(
+          `${
+            import.meta.env.VITE_BASE_URL
+          }/api/product?per_page=9&page=${currentPage}`
+        );
+        console.log(data);
+        if (data.success) {
+          setJewelleryData(data.data.products);
+          setTotalProducts(data.data.pagination.total);
+        } else toast.error("Couldn't fetch products");
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
+    };
+    loadProducts();
+  }, [currentPage]);
+
+  const loadProduct = async (id) => {
+    try {
+      axios.defaults.withCredentials = true;
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/api/product/${id}`
+      );
+      console.log(data);
+      setSelectedProductId(id);
+      setSelectedProductDetails(data.data.product);
+    } catch (error) {
+      toast.error("Couldn't fetch details");
+      console.log(error);
     }
-    loadProducts()
-    
-  }, [currentPage])
-  
-  const loadProduct=async(id)=>{
-      try {
-        axios.defaults.withCredentials=true
-        const {data}=await axios.get(`${import.meta.env.VITE_BASE_URL}/api/product/${id}`)
-        console.log(data)
-        setSelectedProductId(id)
-        setSelectedProductDetails(data.data.product)
-      } catch (error) {
-        toast.error("Couldn't fetch details")
-        console.log(error)
-      }
-    }
-  
+  };
 
   const goToPage = (p) => {
     if (p >= 1 && p <= totalPages) setCurrentPage(p);
@@ -128,6 +131,43 @@ const [rating, setRating] = useState(0)
     q >= 76 ? "Excellent" : q >= 41 ? "Premium" : "Good";
 
   /* ------------------------------------------------------------------- */
+  // SHARE POPUP STATE
+  const [showShare, setShowShare] = useState(false);
+
+  // SHARE URL
+  const shareUrl = `${window.location.origin}/product/${selectedProductId}`;
+
+  const [liked, setLiked] = useState(() => {
+    return localStorage.getItem(`liked-${selectedProductId}`) === "true";
+  });
+
+  const [likeCount, setLikeCount] = useState(() => {
+    const baseLikes = selectedProductDetails.likes ?? 0;
+    const wasLiked =
+      localStorage.getItem(`liked-${selectedProductId}`) === "true";
+    return wasLiked ? baseLikes + 1 : baseLikes;
+  });
+
+
+  const handleLike = () => {
+    if (liked) {
+      // UNLIKE
+      setLiked(false);
+      setLikeCount((prev) => Math.max(prev - 1, 0));
+      localStorage.removeItem(`liked-${selectedProductId}`);
+    } else {
+      // LIKE
+      setLiked(true);
+      setLikeCount((prev) => prev + 1);
+      localStorage.setItem(`liked-${selectedProductId}`, "true");
+    }
+
+    // 🔌 API hook later
+    // axios.post(`/api/product/like-toggle/${selectedProductId}`)
+  };
+
+
+
 
   return (
     <div className="bg-[#e5e2df] text-[#1a1a1a] min-h-screen flex flex-col font-serif">
@@ -140,47 +180,47 @@ const [rating, setRating] = useState(0)
           Discover designs crafted by our talented community members.
         </p>
       </section>
-{/* Pagination */}
-        <div className="flex justify-center items-center gap-3 mb-14">
+      {/* Pagination */}
+      <div className="flex justify-center items-center gap-3 mb-14">
+        <button
+          onClick={() => goToPage(currentPage - 1)}
+          disabled={currentPage === 1}
+          className={`w-10 h-10 rounded-full text-lg font-bold ${
+            currentPage === 1
+              ? "text-gray-400"
+              : "text-[#1a1a1a] hover:text-[#2E4B45]"
+          }`}
+        >
+          &lt;
+        </button>
+
+        {Array.from({ length: totalPages }, (_, p) => (
           <button
-            onClick={() => goToPage(currentPage - 1)}
-            disabled={currentPage === 1}
-            className={`w-10 h-10 rounded-full text-lg font-bold ${
-              currentPage === 1
-                ? "text-gray-400"
-                : "text-[#1a1a1a] hover:text-[#2E4B45]"
+            key={p}
+            onClick={() => goToPage(p + 1)}
+            className={`w-9 h-9 rounded-full text-sm flex items-center justify-center ${
+              currentPage === p + 1
+                ? "bg-[#2E4B45] text-white"
+                : "bg-white text-[#1a1a1a] hover:bg-[#d8d6d3]"
             }`}
           >
-            &lt;
+            {p + 1}
           </button>
+        ))}
 
-          {Array.from({ length: totalPages }, (_, p) => (
-            <button
-              key={p}
-              onClick={() => goToPage(p + 1)}
-              className={`w-9 h-9 rounded-full text-sm flex items-center justify-center ${
-                currentPage === p + 1
-                  ? "bg-[#2E4B45] text-white"
-                  : "bg-white text-[#1a1a1a] hover:bg-[#d8d6d3]"
-              }`}
-            >
-              {p + 1}
-            </button>
-          ))}
+        <button
+          onClick={() => goToPage(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className={`w-10 h-10 rounded-full text-lg font-bold ${
+            currentPage === totalPages
+              ? "text-gray-400"
+              : "text-[#1a1a1a] hover:text-[#2E4B45]"
+          }`}
+        >
+          &gt;
+        </button>
+      </div>
 
-          <button
-            onClick={() => goToPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className={`w-10 h-10 rounded-full text-lg font-bold ${
-              currentPage === totalPages
-                ? "text-gray-400"
-                : "text-[#1a1a1a] hover:text-[#2E4B45]"
-            }`}
-          >
-            &gt;
-          </button>
-        </div>
-     
       {/* Grid */}
       <main className="flex-grow px-6 md:px-12 lg:px-20 pb-24">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
@@ -305,324 +345,359 @@ const [rating, setRating] = useState(0)
         </div> */}
       </main>
 
-      {/* MODAL (unchanged except Buy Now removed) */}
       {/* MODAL */}
       {selectedProductId && (
-        <div className="fixed inset-0 flex items-end md:items-center justify-center z-[50]">
-          {/* BACKDROP */}
-          <div
-            className="absolute inset-0 bg-black/40 backdrop-blur-md animate-blurFade z-[40]"
-            onClick={() => setSelectedProductId(null)}
-          />
-
-          {/* MODAL PANEL */}
-          <div
-            className="relative w-full overflow-y-auto max-h-[90vh]
-            max-w-6xl mx-auto rounded-t-3xl md:rounded-3xl
-          bg-[#f7f6f5] text-[#1a1a1a] font-serif
-            border border-[#dcdcdc] shadow-2xl p-6 md:p-10 mt-24 mb-24 overflow-hidden
-            z-[45] animate-slideUp"
-            role="dialog"
-            aria-modal="true"
-          >
-            {/* CLOSE BUTTON */}
-            <button
+        <>
+          <div className="fixed inset-0 flex items-end md:items-center justify-center z-[50]">
+            {/* BACKDROP */}
+            <div
+              className="absolute inset-0 bg-black/40 backdrop-blur-md animate-blurFade z-[40]"
               onClick={() => setSelectedProductId(null)}
-              className="absolute top-6 right-6 text-black/50 hover:text-black text-2xl font-bold"
+            />
+
+            {/* MODAL PANEL */}
+            <div
+              className="
+          relative w-full max-w-7xl mx-auto
+          max-h-[85vh] overflow-y-auto
+          rounded-t-3xl md:rounded-3xl
+          bg-[#E5E1DA] text-[#1a1a1a] font-serif
+          border border-[#dcdcdc] shadow-2xl
+          p-6 md:p-10 mt-32 mb-20
+          z-[45] animate-slideUp
+        "
             >
-              ✕
-            </button>
-
-            {/* ROW 1 — DETAILS LEFT + PRICE / COMMISSION / IMAGE RIGHT */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-              {/* LEFT DETAILS */}
-              <div>
-                <h2 className="text-3xl font-light">{selectedProductDetails.name}</h2>
-                <p className="text-sm text-gray-600 mt-1 flex items-center gap-2">
-                  <img src={selectedProductDetails.user.avatar} className="w-4 opacity-70" />
-                  {selectedProductDetails.user.name}
-                </p>
-
-                <div className="mt-6 text-sm leading-7">
-                  <div className="flex justify-between">
-                    <span>Gold Type</span>
-                    <span>{selectedProductDetails.meta_data.goldType}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Gold Karat</span>
-                    <span>{selectedProductDetails.meta_data.goldKarat}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Ring Size</span>
-                    <span>{selectedProductDetails.meta_data.ringSize}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Diamond Shape</span>
-                    <span>{selectedProductDetails.meta_data.diamondShape}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Quality</span>
-                    <span>{selectedProductDetails.meta_data.quality}</span>
-                    
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Center Stone Carat</span>
-                    <span>{selectedProductDetails.meta_data.centerStoneCarat}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Total Carat Weight</span>
-                    <span>{selectedProductDetails.meta_data.totalCaratWeight}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* RIGHT — PRICE, COMMISSION, IMAGE */}
-              <div className="flex flex-col items-end">
-                {/* PRICE BLOCK */}
-                <div className="text-right mb-6">
-                  {/* Total Price */}
-                  <div className="flex items-center gap-3 justify-end">
-                    <img
-                      src="/assets/price-icon.svg"
-                      className="w-6 h-6 opacity-80"
-                    />
-                    <span className="text-3xl font-semibold tracking-wide">
-                      {selectedProductDetails.price}
-                    </span>
-                  </div>
-
-                  {/* Divider */}
-                  <div className="w-32 h-px bg-gray-400/50 my-3 ml-auto"></div>
-
-                  {/* Commission (5%) */}
-                  <div className="flex items-center gap-3 justify-end">
-                    <img
-                      src="/assets/commission-icon.svg"
-                      className="w-6 h-6 opacity-80"
-                    />
-                    <span className="text-2xl font-medium">
-                      {selectedProductDetails.meta_data.commission}
-                    </span>
-                  </div>
-                </div>
-
-                {/* IMAGE */}
-                <div className="rounded-xl overflow-hidden border shadow-md w-full max-w-md">
-                  <img src={selectedProductDetails.image} className="w-full object-cover" />
-                </div>
-
-                <p className="text-xs italic mt-4 text-gray-600 leading-relaxed text-right">
-                  Wanna fine-tune your design? Checkout and work with our CAD
-                  team for a 3D preview before casting.
-                </p>
-              </div>
-            </div>
-
-            {/* ROW 2 — ATTRIBUTES */}
-            <div className="mt-12 bg-white rounded-2xl shadow-lg p-6 border">
-              <h3 className="text-lg font-semibold mb-4">Attributes</h3>
-
-              {/* Gold Type + Gold Karat (Side by Side) */}
-              <div className="grid grid-cols-2 gap-6 mb-6">
-                {/* Gold Type */}
-                <div>
-                  <label className="font-medium">Gold Type</label>
-                  <div className="flex flex-row gap-2 mt-2">
-                    {["Rose", "Yellow", "White"].map((t) => (
-                      <label
-                        key={t}
-                        className="flex items-center gap-2 cursor-pointer"
-                      >
-                        <input
-                          type="radio"
-                          checked={goldType === t}
-                          onChange={() => setGoldType(t)}
-                        />
-                        {t}
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Gold Karat */}
-                <div>
-                  <label className="font-medium">Gold Karat</label>
-                  <div className="flex flex-row gap-2 mt-2">
-                    {["10K", "14K", "18K"].map((k) => (
-                      <label
-                        key={k}
-                        className="flex items-center gap-2 cursor-pointer"
-                      >
-                        <input
-                          type="radio"
-                          checked={goldKarat === k}
-                          onChange={() => setGoldKarat(k)}
-                        />
-                        {k}
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Quality Slider */}
-              {/* Quality Slider */}
-              <div className="mb-6">
-                <label className="font-medium block mb-2">Quality</label>
-
-                <div className="w-full">
-                  <input
-                    type="range"
-                    min={0}
-                    max={100}
-                    value={quality}
-                    onChange={(e) => setQuality(Number(e.target.value))}
-                    className="w-3/4" /* smaller but aligned left */
-                  />
-
-                  {/* Checkpoint labels */}
-                  <div className="w-3/4 flex justify-between text-xs text-gray-600 mt-1 px-1">
-                    <span>Good</span>
-                    <span>Premium</span>
-                    <span>Excellent</span>
-                  </div>
-                </div>
-
-                {/* Selected Quality Text */}
-                <p className="text-sm mt-2 font-semibold ">
-                  {qualityLabel(quality)}
-                </p>
-              </div>
-
-              {/* Carat Inputs */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="font-medium">Center Stone Carat</label>
-                  <input
-                    type="number"
-                    step="0.01" // ⭐ increments in 0.01
-                    className="w-full border mt-2 rounded-lg p-2"
-                    value={centerStoneCarat}
-                    onChange={(e) =>
-                      setCenterStoneCarat(Number(e.target.value))
-                    }
-                  />
-                </div>
-
-                <div>
-                  <label className="font-medium">Total Carat Weight</label>
-                  <input
-                    type="number"
-                    step="0.01" // ⭐ increments in 0.01
-                    className="w-full border mt-2 rounded-lg p-2"
-                    value={totalCaratWeight}
-                    onChange={(e) =>
-                      setTotalCaratWeight(Number(e.target.value))
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* BUY NOW BUTTON BELOW ATTRIBUTES */}
-            <div className="w-full flex justify-end mt-6">
+              {/* CLOSE */}
               <button
-                onClick={() => {
-                  // addToCart({
-                  //   ...selected,
-                  //   finalPrice: pricing.total,
-                  //   goldType,
-                  //   goldKarat,
-                  //   quality,
-                  //   centerStoneCarat,
-                  //   totalCaratWeight,
-                  // });
-                  setSelectedProductId(null);
-                  navigate("/wishlist");
-                }}
-                className="px-10 py-3 bg-[#2E4B45] hover:bg-[#1d5049] text-white text-lg rounded-full shadow-md transition"
+                onClick={() => setSelectedProductId(null)}
+                className="absolute top-6 right-6 text-black/50 hover:text-black text-2xl"
               >
-                Buy Now 
+                ✕
               </button>
-            </div>
 
-            {/* ROW 3 — COMMENTS */}
-            <div className="mt-12 border-t border-gray-300 pt-10 w-full">
-              {!isLoggedIn && (
-                <div>
-                  <p className="text-gray-700 text-lg">
-                    Please{" "}
-                    <a
-                      href="/login"
-                      className="text-[#6ac7c2] underline hover:text-[#2E4B45]"
-                    >
-                      login
-                    </a>{" "}
-                    to leave a comment.
-                  </p>
-                  <p className="text-gray-600 mt-4 italic">No comments yet.</p>
-                </div>
-              )}
+              {/* ===== GRID ===== */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-stretch">
+                {/* ================= TOP LEFT ================= */}
+                <div className="bg-[#6C6C6C] rounded-3xl p-8 text-white">
+                  <h2 className="text-center text-xl tracking-[0.2em] font-semibold mb-6">
+                    Customizing Tools
+                  </h2>
 
-              {isLoggedIn && (
-                <div className="w-full">
-                  {/* Stars */}
-                  <div className="flex items-center gap-2 mb-6">
-                    {[1, 2, 3, 4, 5].map((s) => (
-                      <span
-                        key={s}
-                        onClick={() => setRating(s)}
-                        className={`text-2xl cursor-pointer transition ${
-                          rating >= s ? "text-[#2E4B45]" : "text-gray-400"
-                        }`}
-                      >
-                        ★
-                      </span>
-                    ))}
-                    <span className="text-gray-600">{rating}/5</span>
+                  <h3 className="font-semibold tracking-wide mb-3">
+                    Gold Options
+                  </h3>
+
+                  <div className="grid grid-cols-2 gap-6">
+                    <div>
+                      <p className="text-sm mb-2">Type</p>
+                      <div className="flex gap-10 text-xs capitalize">
+                        {["rose", "yellow", "white"].map((t) => (
+                          <span key={t}>
+                            {selectedProductDetails.meta_data.goldType === t &&
+                              "● "}
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="text-sm mb-2">Karat</p>
+                      <div className="flex gap-10 text-xs">
+                        {["10K", "14K", "18K"].map((k) => (
+                          <span key={k}>
+                            {selectedProductDetails.meta_data.goldKarat === k &&
+                              "● "}
+                            {k}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Comment Box */}
-                  <textarea
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    className="w-full h-32 border border-gray-300 rounded-xl p-4 text-gray-700 bg-white/40 placeholder-gray-500 outline-none focus:border-[#2E4B45]"
-                    placeholder="Write your comment here..."
-                  ></textarea>
+                  <p className="text-sm mt-4 mb-2">Ring Size</p>
+                  <div className="bg-[#D9D9D9] text-black w-52 h-11 px-4 rounded-full flex items-center">
+                    {selectedProductDetails.meta_data.ringSize}
+                  </div>
 
-                  <div className="w-full flex justify-end mt-4">
+                  <h3 className="font-semibold tracking-wide mt-6 mb-3">
+                    Diamond Options
+                  </h3>
+
+                  <div className="grid grid-cols-2 gap-6">
+                    <div>
+                      <p className="text-sm mb-2">Shape</p>
+                      <div className="bg-[#D9D9D9] text-black w-52 h-11 px-4 rounded-full flex items-center">
+                        {selectedProductDetails.meta_data.diamondShape}
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="text-sm mb-1">Quality</p>
+                      <input
+                        type="range"
+                        min="0"
+                        max="2"
+                        disabled
+                        value={
+                          selectedProductDetails.meta_data.quality === "good"
+                            ? 0
+                            : selectedProductDetails.meta_data.quality ===
+                              "premium"
+                            ? 1
+                            : 2
+                        }
+                        className="w-full opacity-70"
+                      />
+                      <div className="grid grid-cols-3 text-center text-xs mt-1">
+                        <span>Good</span>
+                        <span>Premium</span>
+                        <span>Excellent</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6 mt-4">
+                    <div>
+                      <p className="text-sm mb-2">Center Stone Carat</p>
+                      <div className="bg-[#D9D9D9] text-black h-11 px-4 rounded-full flex items-center">
+                        {selectedProductDetails.meta_data.centerStoneCarat}
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="text-sm mb-2">Total Carat Weight</p>
+                      <div className="bg-[#D9D9D9] text-black h-11 px-4 rounded-full flex items-center">
+                        {selectedProductDetails.meta_data.totalCaratWeight}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between bg-[#D9D9D9] text-black p-4 rounded-lg text-xs mt-6">
+                    <p>Price: ${selectedProductDetails.price}</p>
+                    <p>
+                      Commission: ${selectedProductDetails.meta_data.commission}
+                    </p>
+                  </div>
+                </div>
+
+                {/* ================= TOP RIGHT ================= */}
+                <div className="relative bg-white rounded-3xl shadow-md overflow-hidden group">
+                  {/* IMAGE */}
+                  <img
+                    src={selectedProductDetails.image}
+                    className="
+      w-full h-full object-cover
+      transition duration-300
+      group-hover:brightness-75
+    "
+                  />
+
+                  {/* LIKE BUTTON — BOTTOM RIGHT */}
+                  <button
+                    onClick={handleLike}
+                    className="
+    absolute bottom-4 right-4
+    flex items-center gap-2
+    px-3 py-1.5
+    rounded-full
+    text-sm
+    bg-black/70 text-white
+    backdrop-blur
+    shadow-lg
+    transition
+    opacity-0 group-hover:opacity-100
+    hover:bg-black/80
+  "
+                  >
+                    <img
+                      src="/assets/heart.svg"
+                      alt="Like"
+                      className={`w-4 h-4 transition ${
+                        liked ? "scale-110 opacity-100" : "opacity-70"
+                      }`}
+                    />
+                    <span>{likeCount}</span>
+                  </button>
+                </div>
+
+                {/* ================= BOTTOM LEFT — COMMENTS ================= */}
+                <div className="bg-[#6C6C6C] rounded-3xl p-6 text-white h-[200px]">
+                  <p className="tracking-widest text-sm mb-2">COMMENTS</p>
+
+                  {!isLoggedIn && (
+                    <p className="text-sm opacity-80">
+                      Please{" "}
+                      <a href="/login" className="underline">
+                        login
+                      </a>{" "}
+                      to leave a comment.
+                    </p>
+                  )}
+
+                  {isLoggedIn && (
+                    <>
+                      <div className="flex gap-2 mb-1">
+                        {[1, 2, 3, 4, 5].map((s) => (
+                          <span
+                            key={s}
+                            onClick={() => setRating(s)}
+                            className={`text-xl cursor-pointer ${
+                              rating >= s ? "text-yellow-400" : "text-white/40"
+                            }`}
+                          >
+                            ★
+                          </span>
+                        ))}
+                      </div>
+
+                      <div className="relative">
+                        <textarea
+                          value={comment}
+                          onChange={(e) => setComment(e.target.value)}
+                          placeholder="Comments..."
+                          className="w-full h-[90px] rounded-xl p-3 pb-8 bg-black/10 text-white text-sm resize-none outline-none"
+                        />
+
+                        <button
+                          disabled={!rating || !comment.trim()}
+                          className={`absolute bottom-2 left-1/2 -translate-x-1/2 px-6 py-1.5 rounded-full text-xs ${
+                            !rating || !comment.trim()
+                              ? "bg-gray-400 cursor-not-allowed"
+                              : "bg-black hover:opacity-90"
+                          }`}
+                        >
+                          Publish
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* ================= BOTTOM RIGHT ================= */}
+                <div className="flex flex-col justify-between">
+                  <div>
+                    <h2 className="text-2xl font-semibold tracking-wide">
+                      {selectedProductDetails.name}
+                    </h2>
+                    <p className="text-sm text-gray-600 mt-3 leading-relaxed">
+                      {selectedProductDetails.description}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-4 mt-10">
+                    {/* SHARE */}
                     <button
-                      className="px-8 py-3 bg-gradient-to-r from-[#1E5F57] to-[#2E4B45] text-white text-lg rounded-full shadow-lg hover:opacity-90 transition"
-                      onClick={() => {
-                        console.log({ rating, likes, comment });
-                        setComment("");
-                      }}
+                      onClick={() => setShowShare(true)}
+                      className="w-12 h-12 bg-[#C3C3C3] rounded-full flex items-center justify-center hover:bg-[#b5b5b5]"
                     >
-                      Publish
+                      <img src="/assets/Share.svg" className="w-5 h-5" />
+                    </button>
+
+                    {/* WISHLIST (NO LOGIC YET) */}
+                    <button className="w-12 h-12 bg-[#C3C3C3] rounded-full flex items-center justify-center hover:bg-[#b5b5b5]">
+                      <img src="/assets/wishlist.svg" className="w-5 h-5" />
+                    </button>
+
+                    <button
+                      onClick={() => navigate("/wishlist")}
+                      className="ml-auto px-12 py-3 bg-[#6B6B6B] text-white rounded-full text-xs tracking-widest"
+                    >
+                      BUY NOW
                     </button>
                   </div>
                 </div>
-              )}
+              </div>
+
+              {/* ANIMATIONS */}
+              <style>{`
+          @keyframes slideUp {
+            0% { opacity: 0; transform: translateY(40px) scale(0.97); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+          }
+          @keyframes blurFade {
+            0% { opacity: 0; backdrop-filter: blur(0px); }
+            100% { opacity: 1; backdrop-filter: blur(10px); }
+          }
+          .animate-slideUp { animation: slideUp .6s both ease-out; }
+          .animate-blurFade { animation: blurFade .6s both; }
+        `}</style>
             </div>
-
-            {/* ANIMATIONS */}
-            <style>{`
-        @keyframes slideUp {
-          0% { opacity: 0; transform: translateY(40px) scale(0.97); }
-          100% { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        @keyframes blurFade {
-          0% { opacity: 0; backdrop-filter: blur(0px); }
-          100% { opacity: 1; backdrop-filter: blur(10px); }
-        }
-        .animate-slideUp { animation: slideUp .6s both ease-out; }
-        .animate-blurFade { animation: blurFade .6s both; }
-      `}</style>
           </div>
-        </div>
+
+          {/* ================= SHARE POPUP ================= */}
+          {showShare && (
+            <div className="fixed inset-0 z-[60] flex items-center justify-center">
+              <div
+                className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+                onClick={() => setShowShare(false)}
+              />
+
+              <div className="relative bg-white rounded-2xl w-[360px] p-6 shadow-xl">
+                <h3 className="text-lg font-semibold mb-4 text-center">
+                  Share this design
+                </h3>
+
+                <div className="flex items-center bg-gray-100 rounded-lg px-3 py-2 mb-4">
+                  <input
+                    readOnly
+                    value={shareUrl}
+                    className="flex-1 bg-transparent text-sm outline-none"
+                  />
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(shareUrl);
+                      toast.success("Link copied!");
+                    }}
+                    className="text-sm font-medium text-[#2E4B45]"
+                  >
+                    Copy
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4 text-xs text-center">
+                  <a href="https://www.instagram.com" target="_blank">
+                    <img
+                      src="/assets/instagram.svg"
+                      className="w-8 mx-auto"
+                    />
+                    Instagram
+                  </a>
+
+                  <a
+                    href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
+                    target="_blank"
+                  >
+                    <img
+                      src="/assets/facebook.svg"
+                      className="w-8 mx-auto"
+                    />
+                    Facebook
+                  </a>
+
+                  <a
+                    href={`https://wa.me/?text=${encodeURIComponent(shareUrl)}`}
+                    target="_blank"
+                  >
+                    <img
+                      src="/assets/whatsapp.svg"
+                      className="w-8 mx-auto"
+                    />
+                    WhatsApp
+                  </a>
+                </div>
+
+                <button
+                  onClick={() => setShowShare(false)}
+                  className="absolute top-3 right-3 text-gray-400"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+          )}
+        </>
       )}
-
-
     </div>
   );
 }

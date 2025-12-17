@@ -1,8 +1,16 @@
-import React from "react";
+
 
 export default function OurStory() {
   return (
     <div className="bg-[#e5e2df] min-h-screen font-serif text-[#1a1a1a]">
+
+        <section className="text-center pt-30 mb-12">
+        <h1 className="text-5xl font-normal tracking-wide text-[#1a1a1a]">
+          Our Story
+        </h1>
+         
+      </section>
+
       {/* Hero Section */}
       <section className="relative w-full h-[80vh] overflow-hidden">
         <div
@@ -15,42 +23,44 @@ export default function OurStory() {
       </section>
 
       {/* About Us Section */}
-      <section className="max-w-5xl mx-auto px-6 md:px-10 py-20 leading-relaxed text-[#1a1a1a]/90">
-        <h2 className="text-3xl md:text-4xl font-light mb-6">About Us</h2>
+      <section className="max-w-[800px] mx-auto px-6 md:px-10 py-20 leading-relaxed text-[#1a1a1a]/90">
+          <div class="container">
+              <h2 className="text-3xl md:text-4xl font-normal mb-6 w-full text-center"> About Takshila </h2>
 
-        <p className="mb-5">
-          Takshila is a company focused on creating decentralized shared P2P
-          economic systems, to enable true freedom in digital business
-          environments for all its stakeholders. We are re-engineering luxury
-          commerce with a Client-to-Manufacturing™ model that links customers,
-          independent designers, and master artisans in a single transparent
-          loop—eliminating mark-ups, middlemen, and creative gatekeepers.
-        </p>
+              <p className="mb-5 font-inter text-[17px] leading-[1.4] font-normal">
+                Takshila is a company focused on creating decentralized shared P2P
+                economic systems, to enable true freedom in digital business
+                environments for all its stakeholders. We are re-engineering luxury
+                commerce with a Client-to-Manufacturing™ model that links customers,
+                independent designers, and master artisans in a single transparent
+                loop—eliminating mark-ups, middlemen, and creative gatekeepers.
+              </p>
 
-        <p className="mb-5">
-          Customers can co-design ultra-personalized pieces in minutes through
-          generative AI, visualize them in real time, and receive museum-grade
-          craftsmanship at breakthrough prices. Designers gain a zero-risk
-          launchpad where their ideas are published, manufactured, and shipped
-          worldwide while they earn lifetime royalties and retain creative
-          ownership. Artisans finally step into the spotlight, enjoying fair
-          pay, steady demand, and global recognition for heritage skills that
-          technology now amplifies rather than replaces.
-        </p>
+              <p className="mb-5 font-inter text-[17px] leading-[1.4] font-normal">
+                Customers can co-design ultra-personalized pieces in minutes through
+                generative AI, visualize them in real time, and receive museum-grade
+                craftsmanship at breakthrough prices. Designers gain a zero-risk
+                launchpad where their ideas are published, manufactured, and shipped
+                worldwide while they earn lifetime royalties and retain creative
+                ownership. Artisans finally step into the spotlight, enjoying fair
+                pay, steady demand, and global recognition for heritage skills that
+                technology now amplifies rather than replaces.
+              </p>
 
-        <p>
-          Under the hood, Takshila is a high-growth platform fusing generative
-          AI, 3-D printing, and real-time provenance to unlock a trillion-dollar
-          creator economy. By turning every imagination into a masterpiece and
-          every transaction into a shared win, we are transforming luxury into
-          an open, borderless network where creativity itself is the primary
-          currency.
-        </p>
+              <p className="font-inter text-[17px] leading-[1.4] font-normal">
+                Under the hood, Takshila is a high-growth platform fusing generative
+                AI, 3-D printing, and real-time provenance to unlock a trillion-dollar
+                creator economy. By turning every imagination into a masterpiece and
+                every transaction into a shared win, we are transforming luxury into
+                an open, borderless network where creativity itself is the primary
+                currency.
+              </p>
+            </div>
       </section>
 
       {/* Mission & Vision Overlay Section */}
-      <section className="relative w-full min-h-[90vh] flex items-center justify-center overflow-hidden text-[#1a1a1a]">
-        {/* Background Image */}
+      {/* <section className="relative w-full min-h-[90vh] flex items-center justify-center overflow-hidden text-[#1a1a1a]">
+ 
         <div
           className="absolute inset-0 bg-cover bg-center scale-105"
           style={{
@@ -58,10 +68,9 @@ export default function OurStory() {
           }}
         ></div>
 
-        {/* Soft Overlay */}
+ 
         <div className="absolute inset-0 bg-[#e5e2df]/60"></div>
-
-        {/* Text Content */}
+ 
         <div className="relative z-10 max-w-4xl mx-auto px-6 md:px-10 text-center md:text-left space-y-12">
           <div>
             <h3 className="text-3xl md:text-4xl font-semibold mb-3">
@@ -93,16 +102,93 @@ export default function OurStory() {
             </p>
           </div>
         </div>
-      </section>
+      </section> */}
+
+
+
+        <section className="pt-10 pb-10 bg-[#D9D9D9]">
+          <div class="container max-w-lg mx-auto">
+              <div className="w-full text-center">
+                    <h3 className="text-3xl md:text-6xl font-normal mb-0"> Our Team </h3>
+              </div>
+          </div>
+        </section>
+
+
+
+        <section className="pt-10 pb-14">
+          <div className="container w-full overflow-hidden px-1 flex flex-wrap">
+                  
+                    <div className="text-center w-full">
+                       <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" width={'180'} className="rounded-full mx-auto border border-zinc-400 mb-2 object-cover" />
+                        <h4 className="uppercase tracking-wider text-2xl font-normal"> Aikansh Tyagi </h4>
+                        <p className="text-[15px] font-light tracking-wider"> Founder & CEO </p>
+                    </div>
+
+                    <div className="text-center basis-1/2 mt-5">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" width={'180'} className="rounded-full mx-auto border border-zinc-400 mb-2" />
+                        <h4 className="uppercase tracking-wider text-2xl font-normal"> Hemant Patil </h4>
+                        <p className="text-[15px] font-light tracking-wider"> Executive Technical Contributor </p>
+                    </div>
+
+                    <div className="text-center basis-1/2 mt-5">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" width={'180'} className="rounded-full mx-auto border border-zinc-400 mb-2" />
+                        <h4 className="uppercase tracking-wider text-2xl font-normal"> Gaurangi Tyagi </h4>
+                        <p className="text-[15px] font-light tracking-wider"> Head of Analytics & Testing </p>
+                    </div>
+                   
+          </div>
+        </section>
+
+
+
+         <section className="pt-14 pb-14 bg-white">
+          <div class="container max-w-lg mx-auto">
+              <div className="w-full text-center">
+                    <h3 className="text-3xl md:text-6xl font-normal mb-0"> Developer </h3>
+              </div>
+          </div>
+        </section>
+
+
+
+        <section className="pt-10 pb-14">
+          <div className="container w-full overflow-hidden px-1 flex flex-wrap">
+                  
+                
+                    <div className="text-center basis-1/4 mt-5">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" width={'180'} className="rounded-full mx-auto border border-zinc-400 mb-2" />
+                        <h4 className="uppercase tracking-wider text-2xl font-normal"> Hasnat Khan </h4>
+                        <p className="text-[15px] font-light tracking-wider"> Director Of Technology </p>
+                    </div>
+                    <div className="text-center basis-1/4 mt-5">
+                       <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" width={'180'} className="rounded-full mx-auto border border-zinc-400 mb-2" />
+                        <h4 className="uppercase tracking-wider text-2xl font-normal"> Muhamaad Saad </h4>
+                        <p className="text-[15px] font-light tracking-wider"> Sr. Analyst SEO and Front End Development</p>
+                    </div>
+                    <div className="text-center basis-1/4 mt-5">
+                      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" width={'180'} className="rounded-full mx-auto border border-zinc-400 mb-2" />
+                        <h4 className="uppercase tracking-wider text-2xl font-normal"> Manav Sharma </h4>
+                        <p className="text-[15x] font-light tracking-wider"> Full Stack Developer </p>
+                    </div>
+
+                    <div className="text-center basis-1/4 mt-5">
+                      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" width={'180'} className="rounded-full mx-auto border border-zinc-400 mb-2" />
+                        <h4 className="uppercase tracking-wider text-2xl font-normal"> Talha Hameed </h4>
+                        <p className="text-[15px] font-light tracking-wider"> Lead of User Experince </p>
+                    </div>
+          </div>
+        </section>
+
+
 
       {/* How The Platform Works Section */}
-      <section className="bg-[#e5e2df] py-24 px-6 md:px-12 lg:px-24 font-serif text-[#1a1a1a]">
+      {/* <section className="bg-[#e5e2df] py-24 px-6 md:px-12 lg:px-24 font-serif text-[#1a1a1a]">
         <h1 className="text-4xl md:text-4xl font-light text-center mb-16 tracking-wide">
           How The Platform Works
         </h1>
 
         <div className="w-full max-w-6xl mx-auto bg-white/60 backdrop-blur-sm shadow-[0_8px_32px_rgba(0,0,0,0.05)] rounded-3xl border border-[#d8d6d3] overflow-hidden">
-          {/* Step 1 */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-0 px-6 md:px-10 py-12 border-b border-[#d8d6d3]/70">
             <h2 className="text-2xl md:text-3xl font-light text-center md:text-left">
               Create
@@ -118,7 +204,7 @@ export default function OurStory() {
             </div>
           </div>
 
-          {/* Step 2 */}
+          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-0 px-6 md:px-10 py-12 border-b border-[#d8d6d3]/70">
             <h2 className="text-2xl md:text-3xl font-light text-center md:text-left">
               Visualize
@@ -132,7 +218,7 @@ export default function OurStory() {
             </div>
           </div>
 
-          {/* Step 3 */}
+   
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-0 px-6 md:px-10 py-12 border-b border-[#d8d6d3]/70">
             <h2 className="text-2xl md:text-3xl font-light text-center md:text-left">
               Craft
@@ -146,7 +232,6 @@ export default function OurStory() {
             </div>
           </div>
 
-          {/* Step 4 */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-0 px-6 md:px-10 py-12">
             <h2 className="text-2xl md:text-3xl font-light text-center md:text-left">
               Deliver & Celebrate
@@ -164,7 +249,7 @@ export default function OurStory() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 }

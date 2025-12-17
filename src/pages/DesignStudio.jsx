@@ -21,6 +21,7 @@ const ShapeDropdown = ({ value, onChange }) => {
   const [open, setOpen] = useState(false);
   const selected = DIAMOND_SHAPES.find((s) => s.name === value);
 
+
   return (
     <div className="relative w-52">
       {/* Selected */}
@@ -69,8 +70,23 @@ export default function DesignStudio() {
   const [activeTab, setActiveTab] = useState("ai"); // "ai" | "upload"
   const [uploading, setUploading] = useState(false)
   
-  
+  const handleScroll=()=>{
+    const y = window.scrollY;
+    scrollRef.current = y;}
 
+const scrollRef = useRef(0); 
+useLayoutEffect(() => { 
+  // store current scroll before render paints 
+  window.addEventListener("scroll",handleScroll)
+
+  return ()=>{window.removeEventListener("scroll",handleScroll)}
+    
+});
+  
+useLayoutEffect(() => { // restore after DOM updates
+
+ window.scrollTo(0, scrollRef.current); 
+});
 
   // -----------------------------------
   // AI DESIGNER STATES
@@ -80,7 +96,7 @@ export default function DesignStudio() {
   const [aiRingSize, setAiRingSize] = useState(3);
   const [aiShape, setAiShape] = useState("Round");
   const [aiQuality, setAiQuality] = useState("good");
-  const [aiCenterCarat, setAiCenterCarat] = useState(0.5);
+  const [aiCenterCarat, setAiCenterCarat] = useState(1.0);
   const [aiTotalCarat, setAiTotalCarat] = useState(1.0);
   const [aiPrice, setAiPrice] = useState(2186.33);
   const [aiCommission, setAiCommission] = useState(76.52);
@@ -715,7 +731,7 @@ activeTab])
         }
 
         <button
-          type="button"
+          type="submit"
           onClick={() => navigate("/community")}
           className="cursor-pointer flex-1 mx-2 py-3 bg-[#6B6B6B] text-white rounded-full text-center text-xs tracking-widest"
         >

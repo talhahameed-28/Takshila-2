@@ -149,23 +149,50 @@ export default function Community() {
   });
 
 
-  const handleLike = () => {
-    if (liked) {
-      // UNLIKE
-      setLiked(false);
-      setLikeCount((prev) => Math.max(prev - 1, 0));
-      localStorage.removeItem(`liked-${selectedProductId}`);
-    } else {
-      // LIKE
-      setLiked(true);
-      setLikeCount((prev) => prev + 1);
-      localStorage.setItem(`liked-${selectedProductId}`, "true");
+  const handleLike = async() => {
+    try {
+     
+        axios.defaults.withCredentials=true
+        const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/${selectedProductId}/like`,
+         {},
+        {
+        headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`
+    },withCredentials: true
+  })
+  console.log(data)
+  if(data.success){ 
+    toast.success("Thanks for liking the product")
+    setSelectedProductDetails({...selectedProductDetails,user_liked:true})
+  }
+    else toast.error("Couldn't process request")
+    } catch (error) {
+      console.log(error)
+      toast.error("Some error occurred")
     }
 
-    // 🔌 API hook later
-    // axios.post(`/api/product/like-toggle/${selectedProductId}`)
   };
 
+    const handleComment=async()=>{
+      try {
+        axios.defaults.withCredentials=true
+        const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/${selectedProductId}/review`,
+          {review:comment,
+            rating:rating
+          },
+        {
+        headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`
+    },withCredentials: true
+  })
+  console.log(data)
+  if(data.success) toast.success("Review added successfully")
+    else toast.error("Couldn't process request")
+      } catch (error) {
+        console.log(error)
+        toast.error("Some error occurred")
+      }
+    }
 
 
 
@@ -303,50 +330,11 @@ export default function Community() {
           })}
         </div>
 
-        {/* Pagination */}
-        {/* <div className="flex justify-center items-center gap-3 mt-14">
-          <button
-            onClick={() => goToPage(currentPage - 1)}
-            disabled={currentPage === 1}
-            className={`w-10 h-10 rounded-full text-lg font-bold ${
-              currentPage === 1
-                ? "text-gray-400"
-                : "text-[#1a1a1a] hover:text-[#2E4B45]"
-            }`}
-          >
-            &lt;
-          </button>
-
-          {Array.from({ length: totalPages }, (_, p) => (
-            <button
-              key={p}
-              onClick={() => goToPage(p + 1)}
-              className={`w-9 h-9 rounded-full text-sm flex items-center justify-center ${
-                currentPage === p + 1
-                  ? "bg-[#2E4B45] text-white"
-                  : "bg-white text-[#1a1a1a] hover:bg-[#d8d6d3]"
-              }`}
-            >
-              {p + 1}
-            </button>
-          ))}
-
-          <button
-            onClick={() => goToPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className={`w-10 h-10 rounded-full text-lg font-bold ${
-              currentPage === totalPages
-                ? "text-gray-400"
-                : "text-[#1a1a1a] hover:text-[#2E4B45]"
-            }`}
-          >
-            &gt;
-          </button>
-        </div> */}
       </main>
 
       {/* MODAL */}
       {selectedProductId && (
+        
         <>
           <div className="fixed inset-0 flex items-end md:items-center justify-center z-[50]">
             {/* BACKDROP */}
@@ -510,13 +498,24 @@ export default function Community() {
     hover:bg-black/80
   "
                   >
-                    <img
+                    {/* <img
                       src="/assets/heart.svg"
                       alt="Like"
-                      className={`w-4 h-4 transition ${
-                        liked ? "scale-110 opacity-100" : "opacity-70"
-                      }`}
-                    />
+                      className={`w-4 h-4 text-red-700  transition ${
+                        selectedProductDetails.user_liked ? "scale-110 opacity-100" : "opacity-70"
+                      }`
+                    }
+                    /> */}
+                    <svg  xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="24" 
+                    height="24" viewBox="0 0 24 24"  stroke="white"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                      class="lucide lucide-heart-icon lucide-heart"
+                       className={`  transition ${
+                        selectedProductDetails.user_liked ? " text-red-700 opacity-100" : "text-black opacity-70"
+                      }`}>
+                        <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" fill="currentColor"/>                    </svg>
+
+
                     <span>{likeCount}</span>
                   </button>
                 </div>
@@ -560,6 +559,7 @@ export default function Community() {
                         />
 
                         <button
+                          onClick={handleComment}
                           disabled={!rating || !comment.trim()}
                           className={`absolute bottom-2 left-1/2 -translate-x-1/2 px-6 py-1.5 rounded-full text-xs ${
                             !rating || !comment.trim()

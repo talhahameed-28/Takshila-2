@@ -16,6 +16,7 @@ import PrivacyPolicy from "../pages/Privacypolicy"
 import Refundpolicy from "../pages/Refundpolicy"
 import Shippingpolicy from "../pages/Shippingpolicy"
 import TermConditions from "../pages/TermsConditions"
+import Faqs from "../pages/Faqs";
 import ScrollToTop from "../utils/ScrollToTop";
 const MainRoutes = ({setIsMobileMenuOpen,setModalOpen,setModalType,setShowProfileMenu}) => {
     const handleOpenModal = (type) => {
@@ -34,8 +35,8 @@ const MainRoutes = ({setIsMobileMenuOpen,setModalOpen,setModalType,setShowProfil
                 <Route path={ROUTES.CATALOGUE} element={<Catalogue />} />
                 <Route path={ROUTES.ABOUT} element={<OurStory />} />
                 <Route path={ROUTES.BLOG} element={<Blogs />} />
-                {/* <Route path={ROUTES.EMAILVERIFY} element={<EmailVerify />} /> */}
-            <Route path={ROUTES.EMAILVERIFY} element={<EmailVerify />} />
+                <Route path={ROUTES.FAQS} element={<Faqs />} /> 
+                <Route path={ROUTES.EMAILVERIFY} element={<EmailVerify />} />
                 <Route path={ROUTES.RESETPASSWORD} element={<VerifyOtp />} />
                 <Route path={ROUTES.PRIVACYPOLICY} element={<PrivacyPolicy />} />
                 <Route path={ROUTES.TERMSCONDITIONS} element={<TermConditions />} />

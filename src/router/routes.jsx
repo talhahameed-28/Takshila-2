@@ -17,4 +17,5 @@ export const ROUTES = {
     TERMSCONDITIONS: '/terms-&-conditions',
     REFUNDPOLICY: '/refund-policy',
     SHIPPINGPOLICY: '/shipping-policy',
+    FAQS:'/faqs',
 }

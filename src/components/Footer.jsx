@@ -80,15 +80,19 @@ export default function Footer() {
                 CUSTOMER SERVICES
               </h3>
               <ul className="space-y-2 text-sm text-gray-400">
-                {["Our Story", "FAQ's", "Contact us", "Blogs"].map((item) => (
-                  <li key={item}>
-                    <a
-                      href="#"
-                      className="hover:underline hover:text-white transition"
-                    >
-                      {item}
-                    </a>
+                {[{name:"Our Story",path:'/our-story'},
+                 {name:"FAQ's",path:'/faqs'},
+                  {name:"Contact us",path:""},
+                   {name:"Blogs",path:"/blogs"}
+                  ].map((item) => (
+                  
+                    <li key={item.name}>
+                    <NavLink
+                        to={item.path}
+                        className={({isActive})=>`${isActive?"underline":""} transition-all text-gray-300 hover:text-white` }
+                      >{item.name}</NavLink>
                   </li>
+               
                 ))}
               </ul>
             </div>

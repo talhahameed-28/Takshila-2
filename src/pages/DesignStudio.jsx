@@ -69,7 +69,13 @@ export default function DesignStudio() {
   // ACTIVE TAB
   const [activeTab, setActiveTab] = useState("ai"); // "ai" | "upload"
   const [uploading, setUploading] = useState(false)
-  
+  const [updating, setUpdating] = useState(false)
+
+//--------USED FOR PRODUCT DETAILS UPDATION-------------//
+  const nameRef = useRef(null)
+  const descriptionRef = useRef(null)
+//-----------------------------------------------------//
+
   const handleScroll=()=>{
     const y = window.scrollY;
     scrollRef.current = y;}
@@ -102,7 +108,8 @@ useLayoutEffect(() => { // restore after DOM updates
   const [aiCommission, setAiCommission] = useState(76.52);
   const [aiPreviewimage, setAiPreviewimage] = useState(null)
   const [loadingDesign, setLoadingDesign] = useState(false)
-  const promptRef=useRef()
+  const [receivedAiImageId, setReceivedAiImageId] = useState(null)
+  const promptRef=useRef(null)
   // -----------------------------------
   // UPLOAD MODE STATES
   // -----------------------------------
@@ -111,38 +118,28 @@ useLayoutEffect(() => { // restore after DOM updates
   const [upRingSize, setUpRingSize] = useState(3);
   const [upShape, setUpShape] = useState("Round");
   const [upQuality, setUpQuality] = useState("good");
-  const [upCenterCarat, setUpCenterCarat] = useState(0.5);
+  const [upCenterCarat, setUpCenterCarat] = useState(1.0);
   const [upTotalCarat, setUpTotalCarat] = useState(1.0);
   const [upPrice, setUpPrice] = useState(2186.33);
   const [upCommission, setUpCommission] = useState(76.52);
   const [upPreviewImage,setUpPreviewImage]= useState(null)
+  const [upPreviewImageFile,setUpPreviewImageFile] =useState(null)
   const [royalty, setRoyalty] = useState(0)
+  
   const uploadRef = useRef()
   // -----------------------------------
   // PRICE BREAKDOWN POPUP
   // -----------------------------------
   const [showBreakdown, setShowBreakdown] = useState(false);
 
-  
-  // -----------------------------------
-  // PRICE CALCULATOR
-  // -----------------------------------
 
-
-  // useEffect(() => {
-  //   calculatePrice("ai");
-  // }, [aiGoldType, aiKarat, aiShape, aiQuality, aiCenterCarat, aiTotalCarat]);
-
-  // useEffect(() => {
-  //   calculatePrice("upload");
-  // }, [upGoldType, upKarat, upShape, upQuality, upCenterCarat, upTotalCarat]);
 
   const handleClick = () => uploadRef.current.click();
 
   const handleChange=(e) => {
     const file = e.target.files[0];
     if (!file) return;
-
+    setUpPreviewImageFile(file)
     // Create a local preview URL
     const imageUrl = URL.createObjectURL(file);
     setUpPreviewImage(imageUrl);
@@ -200,7 +197,7 @@ useLayoutEffect(() => { // restore after DOM updates
 
     // ---- SEND AS FORM DATA ----
     const sendData = new FormData();
-
+    sendData.append("is_community_uploaded",1)
     // Append simple text fields
     sendData.append("name", name);
     sendData.append("description", description);
@@ -297,7 +294,7 @@ useLayoutEffect(() => { // restore after DOM updates
     if(data.success){
       setAiPreviewimage(data.data.product.image)
       
-
+      setReceivedAiImageId(data.data.product.id)
       toast.success("Image generated successfully")
     }else{
       toast.error(data.message)
@@ -309,11 +306,102 @@ useLayoutEffect(() => { // restore after DOM updates
     }
   }
 
-  const handleAiDesignUpload=async()=>{
-    
+  const handleAiDesignUpload=async(e)=>{
+    try {
+      e.preventDefault()
+      axios.defaults.withCredentials=true
+      const formData = new FormData(e.target);
+      const values = Object.fromEntries(formData.entries());
+      const {name}=values
+      if(!receivedAiImageId || !name){ 
+        toast.error("Could not process your request")
+        return
+      }
+      const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/upload`,
+        {product_id:receivedAiImageId,
+          name:name
+        },
+      {headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`
+      },withCredentials: true})
+      console.log(data)
+      if(data.success){
+        toast.success("Your design has been posted to community")
+          navigate("/community")
+      }else{ 
+        toast.error("Couldn't process your request")
+      }
+    } catch (error) {
+      console.log(error)
+      toast.error("Some error occurred")
+    }
   }
 
-
+  const handleUpdateDetails=async()=>{
+    
+      try {
+        if(!nameRef.current.value.trim() || !descriptionRef.current.value.trim()){
+          toast.error("Both name and description are needed")
+          return
+        }
+        axios.defaults.withCredentials=true
+        if(activeTab==="ai"){
+          console.log(nameRef.current.value,descriptionRef.current.value)
+          const {data}=await axios.put(`${import.meta.env.VITE_BASE_URL}/api/product/${receivedAiImageId}/update`,
+            {name:nameRef.current.value.trim(),
+              description:descriptionRef.current.value.trim()
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+              withCredentials: true,
+            }
+          )
+          console.log(data)
+          if(data.success) toast.success("Product updated succesfully")
+          else toast.error("Couldn't process your request")
+        }
+        else if(activeTab==="upload"){
+          console.log("updating")
+          const payload={
+            name:nameRef.current.value.trim(),
+            description:descriptionRef.current.value.trim(),
+            price:upPriceBreakdown.totalPriceWithRoyalties,
+            "images[]":[upPreviewImageFile],
+            // is_community_uploaded:false,
+            meta_data:{
+              centerStoneCarat:upCenterCarat,
+                    description:descriptionRef.current.value.trim(),
+                    diamondShape:upShape,
+                    goldKarat:upKarat,
+                    goldType:upGoldType,
+                    name:nameRef.current.value.trim(),
+                    quality:upQuality,
+                    ringSize:upRingSize,
+                    royalties:royalty,
+                    totalCaratWeight:upTotalCarat,
+            }
+          }
+          const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/post-design`,
+            payload,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+                "Content-Type": "multipart/form-data",
+              },
+              withCredentials: true,
+            }
+          )
+          console.log(data)
+          if(data.success) toast.success("Product updated succesfully")
+          else toast.error("Couldn't process your request")
+        }
+      } catch (error) {
+        console.log(error)
+        toast.error("Some error occurred")
+      }
+  }
   // -----------------------------------
   // HELPERS FOR PRICE BREAKDOWN POPUP
   // -----------------------------------
@@ -689,6 +777,8 @@ activeTab])
       </div>
 
       <input
+        ref={nameRef}
+        required
         name="name"
         type="text"
         placeholder="Name Your Design..."
@@ -697,6 +787,7 @@ activeTab])
 
       <div className="relative mt-4">
         <textarea
+        ref={descriptionRef}
           required
           name="description"
           placeholder="Add your product's description..."
@@ -704,7 +795,9 @@ activeTab])
         />
         <button
           disabled={uploading}
-          type="submit"
+          type="button"
+          value="update-details"
+          onClick={handleUpdateDetails}
           className={`${
             uploading
               ? "bg-gray-600 cursor-not-allowed px-8"
@@ -731,8 +824,8 @@ activeTab])
         }
 
         <button
+          value="post-on-community"
           type="submit"
-          onClick={() => navigate("/community")}
           className="cursor-pointer flex-1 mx-2 py-3 bg-[#6B6B6B] text-white rounded-full text-center text-xs tracking-widest"
         >
           POST ON COMMUNITY
@@ -787,7 +880,7 @@ activeTab])
 
       {/* AI DESIGNER MODE */}
       {activeTab === "ai" && (
-        <form onSubmit={handleMyDesignUpload} encType="multipart/form-data" accept="image/*" className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-10 mt-10 px-6">
+        <form onSubmit={handleAiDesignUpload} encType="multipart/form-data" accept="image/*" className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-10 mt-10 px-6">
           <div className="bg-[#6C6C6C] rounded-3xl p-8 text-white">
             <LeftPanelTop mode="ai" />
 

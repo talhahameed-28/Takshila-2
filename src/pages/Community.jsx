@@ -27,11 +27,8 @@ export default function Community() {
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [selectedProductDetails, setSelectedProductDetails] = useState({});
   // Customization states
-  const [goldType, setGoldType] = useState("Yellow");
-  const [goldKarat, setGoldKarat] = useState("18K");
-  const [quality, setQuality] = useState(80);
-  const [centerStoneCarat, setCenterStoneCarat] = useState(1);
-  const [totalCaratWeight, setTotalCaratWeight] = useState(5);
+  const [customData, setCustomData] = useState(null);
+
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(0);
   // ⭐ Wishlist Context
@@ -42,6 +39,21 @@ export default function Community() {
     document.body.style.overflow = selectedProductId ? "hidden" : "";
     return () => (document.body.style.overflow = "");
   }, [selectedProductId]);
+
+  // INITIALIZE CUSTOMDATA FROM PRODUCT
+  useEffect(() => {
+    if (selectedProductDetails?.meta_data) {
+      setCustomData({
+        goldType: selectedProductDetails.meta_data.goldType,
+        goldKarat: selectedProductDetails.meta_data.goldKarat,
+        ringSize: selectedProductDetails.meta_data.ringSize,
+        diamondShape: selectedProductDetails.meta_data.diamondShape,
+        quality: selectedProductDetails.meta_data.quality,
+        centerStoneCarat: selectedProductDetails.meta_data.centerStoneCarat,
+        totalCaratWeight: selectedProductDetails.meta_data.totalCaratWeight,
+      });
+    }
+  }, [selectedProductDetails]);
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -155,53 +167,58 @@ export default function Community() {
     return wasLiked ? baseLikes + 1 : baseLikes;
   });
 
-
-  const handleLike = async() => {
+  const handleLike = async () => {
     try {
-     
-        axios.defaults.withCredentials=true
-        const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/${selectedProductId}/like`,
-         {},
+      axios.defaults.withCredentials = true;
+      const { data } = await axios.post(
+        `${
+          import.meta.env.VITE_BASE_URL
+        }/api/product/${selectedProductId}/like`,
+        {},
         {
-        headers: {
-    Authorization: `Bearer ${localStorage.getItem("token")}`
-    },withCredentials: true
-  })
-  console.log(data)
-  if(data.success){ 
-    toast.success("Thanks for liking the product")
-    setSelectedProductDetails({...selectedProductDetails,user_liked:true})
-  }
-    else toast.error("Couldn't process request")
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          withCredentials: true,
+        }
+      );
+      console.log(data);
+      if (data.success) {
+        toast.success("Thanks for liking the product");
+        setSelectedProductDetails({
+          ...selectedProductDetails,
+          user_liked: true,
+        });
+      } else toast.error("Couldn't process request");
     } catch (error) {
-      console.log(error)
-      toast.error("Some error occurred")
+      console.log(error);
+      toast.error("Some error occurred");
     }
-
   };
 
-    const handleComment=async()=>{
-      try {
-        axios.defaults.withCredentials=true
-        const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/${selectedProductId}/review`,
-          {review:comment,
-            rating:rating
-          },
+  const handleComment = async () => {
+    try {
+      axios.defaults.withCredentials = true;
+      const { data } = await axios.post(
+        `${
+          import.meta.env.VITE_BASE_URL
+        }/api/product/${selectedProductId}/review`,
+        { review: comment, rating: rating },
         {
-        headers: {
-    Authorization: `Bearer ${localStorage.getItem("token")}`
-    },withCredentials: true
-  })
-  console.log(data)
-  if(data.success) toast.success("Review added successfully")
-    else toast.error("Couldn't process request")
-      } catch (error) {
-        console.log(error)
-        toast.error("Some error occurred")
-      }
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          withCredentials: true,
+        }
+      );
+      console.log(data);
+      if (data.success) toast.success("Review added successfully");
+      else toast.error("Couldn't process request");
+    } catch (error) {
+      console.log(error);
+      toast.error("Some error occurred");
     }
-
-
+  };
 
   return (
     <div className="bg-[#e5e2df] text-[#1a1a1a] min-h-screen flex flex-col font-serif">
@@ -336,12 +353,10 @@ export default function Community() {
             );
           })}
         </div>
-
       </main>
 
       {/* MODAL */}
       {selectedProductId && (
-        
         <>
           <div className="fixed inset-0 flex items-end md:items-center justify-center z-[50]">
             {/* BACKDROP */}
@@ -372,7 +387,7 @@ export default function Community() {
 
               {/* ===== GRID ===== */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-stretch">
-                {/* ================= TOP LEFT ================= */}
+                {/* ================= TOP LEFT — CUSTOMIZABLE ================= */}
                 <div className="bg-[#6C6C6C] rounded-3xl p-8 text-white">
                   <h2 className="text-center text-xl tracking-[0.2em] font-semibold mb-6">
                     Customizing Tools
@@ -383,66 +398,136 @@ export default function Community() {
                   </h3>
 
                   <div className="grid grid-cols-2 gap-6">
+                    {/* GOLD TYPE */}
                     <div>
                       <p className="text-sm mb-2">Type</p>
-                      <div className="flex gap-10 text-xs capitalize">
+                      <div className="flex gap-3 text-xs capitalize">
                         {["rose", "yellow", "white"].map((t) => (
-                          <span key={t}>
-                            {selectedProductDetails.meta_data.goldType === t &&
-                              "● "}
+                          <button
+                            key={t}
+                            onClick={() =>
+                              setCustomData((prev) => ({
+                                ...prev,
+                                goldType: t,
+                              }))
+                            }
+                            className={`px-3 py-1 rounded-full ${
+                              customData?.goldType === t
+                                ? "bg-white text-black"
+                                : "bg-white/20"
+                            }`}
+                          >
                             {t}
-                          </span>
+                          </button>
                         ))}
                       </div>
                     </div>
 
+                    {/* GOLD KARAT */}
                     <div>
                       <p className="text-sm mb-2">Karat</p>
-                      <div className="flex gap-10 text-xs">
+                      <div className="flex gap-3 text-xs">
                         {["10K", "14K", "18K"].map((k) => (
-                          <span key={k}>
-                            {selectedProductDetails.meta_data.goldKarat === k &&
-                              "● "}
+                          <button
+                            key={k}
+                            onClick={() =>
+                              setCustomData((prev) => ({
+                                ...prev,
+                                goldKarat: k,
+                              }))
+                            }
+                            className={`px-3 py-1 rounded-full ${
+                              customData?.goldKarat === k
+                                ? "bg-white text-black"
+                                : "bg-white/20"
+                            }`}
+                          >
                             {k}
-                          </span>
+                          </button>
                         ))}
                       </div>
                     </div>
                   </div>
 
+                  {/* RING SIZE */}
                   <p className="text-sm mt-4 mb-2">Ring Size</p>
-                  <div className="bg-[#D9D9D9] text-black w-52 h-11 px-4 rounded-full flex items-center">
-                    {selectedProductDetails.meta_data.ringSize}
-                  </div>
+                  <select
+                    value={customData?.ringSize}
+                    onChange={(e) =>
+                      setCustomData((prev) => ({
+                        ...prev,
+                        ringSize: e.target.value,
+                      }))
+                    }
+                    className="bg-[#D9D9D9] text-black w-52 h-11 px-4 rounded-full"
+                  >
+                    {[...Array(20)].map((_, i) => (
+                      <option key={i}>{i + 4}</option>
+                    ))}
+                  </select>
 
                   <h3 className="font-semibold tracking-wide mt-6 mb-3">
                     Diamond Options
                   </h3>
 
                   <div className="grid grid-cols-2 gap-6">
+                    {/* SHAPE */}
                     <div>
                       <p className="text-sm mb-2">Shape</p>
-                      <div className="bg-[#D9D9D9] text-black w-52 h-11 px-4 rounded-full flex items-center">
-                        {selectedProductDetails.meta_data.diamondShape}
-                      </div>
+                      <select
+                        value={customData?.diamondShape}
+                        onChange={(e) =>
+                          setCustomData((prev) => ({
+                            ...prev,
+                            diamondShape: e.target.value,
+                          }))
+                        }
+                        className="bg-[#D9D9D9] text-black w-52 h-11 px-4 rounded-full"
+                      >
+                        {[
+                          "Round",
+                          "Princess",
+                          "Emerald",
+                          "Oval",
+                          "Marquise",
+                          "Cushion",
+                          "Radiant",
+                          "Pear",
+                          "Asscher",
+                          "Heart",
+                        ].map((shape) => (
+                          <option key={shape}>{shape}</option>
+                        ))}
+                      </select>
                     </div>
 
+                    {/* QUALITY */}
                     <div>
                       <p className="text-sm mb-1">Quality</p>
                       <input
                         type="range"
                         min="0"
                         max="2"
-                        disabled
                         value={
-                          selectedProductDetails.meta_data.quality === "good"
+                          customData?.quality === "good"
                             ? 0
-                            : selectedProductDetails.meta_data.quality ===
-                              "premium"
+                            : customData?.quality === "premium"
                             ? 1
                             : 2
                         }
-                        className="w-full opacity-70"
+                        onChange={(e) => {
+                          const val = Number(e.target.value);
+                          setCustomData((prev) => ({
+                            ...prev,
+                            quality:
+                              val === 0
+                                ? "good"
+                                : val === 1
+                                ? "premium"
+                                : "excellent",
+                          }));
+                        }}
+                        className="w-full opacity-90 cursor-pointer"
                       />
                       <div className="grid grid-cols-3 text-center text-xs mt-1">
                         <span>Good</span>
@@ -452,22 +537,42 @@ export default function Community() {
                     </div>
                   </div>
 
+                  {/* CARAT OPTIONS */}
                   <div className="grid grid-cols-2 gap-6 mt-4">
                     <div>
                       <p className="text-sm mb-2">Center Stone Carat</p>
-                      <div className="bg-[#D9D9D9] text-black h-11 px-4 rounded-full flex items-center">
-                        {selectedProductDetails.meta_data.centerStoneCarat}
-                      </div>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={customData?.centerStoneCarat}
+                        onChange={(e) =>
+                          setCustomData((prev) => ({
+                            ...prev,
+                            centerStoneCarat: e.target.value,
+                          }))
+                        }
+                        className="bg-[#D9D9D9] text-black h-11 px-4 rounded-full w-full"
+                      />
                     </div>
 
                     <div>
                       <p className="text-sm mb-2">Total Carat Weight</p>
-                      <div className="bg-[#D9D9D9] text-black h-11 px-4 rounded-full flex items-center">
-                        {selectedProductDetails.meta_data.totalCaratWeight}
-                      </div>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={customData?.totalCaratWeight}
+                        onChange={(e) =>
+                          setCustomData((prev) => ({
+                            ...prev,
+                            totalCaratWeight: e.target.value,
+                          }))
+                        }
+                        className="bg-[#D9D9D9] text-black h-11 px-4 rounded-full w-full"
+                      />
                     </div>
                   </div>
 
+                  {/* PRICE / COMMISSION */}
                   <div className="flex justify-between bg-[#D9D9D9] text-black p-4 rounded-lg text-xs mt-6">
                     <p>Price: ${selectedProductDetails.price}</p>
                     <p>
@@ -513,15 +618,28 @@ export default function Community() {
                       }`
                     }
                     /> */}
-                    <svg  xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="24" 
-                    height="24" viewBox="0 0 24 24"  stroke="white"
-                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      stroke="white"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
                       class="lucide lucide-heart-icon lucide-heart"
-                       className={`  transition ${
-                        selectedProductDetails.user_liked ? " text-red-700 opacity-100" : "text-black opacity-70"
-                      }`}>
-                        <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" fill="currentColor"/>                    </svg>
-
+                      className={`  transition ${
+                        selectedProductDetails.user_liked
+                          ? " text-red-700 opacity-100"
+                          : "text-black opacity-70"
+                      }`}
+                    >
+                      <path
+                        d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"
+                        fill="currentColor"
+                      />{" "}
+                    </svg>
 
                     <span>{selectedProductDetails.likesCount}</span>
                   </button>
@@ -664,10 +782,7 @@ export default function Community() {
 
                 <div className="grid grid-cols-3 gap-4 text-xs text-center">
                   <a href="https://www.instagram.com" target="_blank">
-                    <img
-                      src="/assets/instagram.svg"
-                      className="w-8 mx-auto"
-                    />
+                    <img src="/assets/instagram.svg" className="w-8 mx-auto" />
                     Instagram
                   </a>
 
@@ -675,10 +790,7 @@ export default function Community() {
                     href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
                     target="_blank"
                   >
-                    <img
-                      src="/assets/facebook.svg"
-                      className="w-8 mx-auto"
-                    />
+                    <img src="/assets/facebook.svg" className="w-8 mx-auto" />
                     Facebook
                   </a>
 
@@ -686,10 +798,7 @@ export default function Community() {
                     href={`https://wa.me/?text=${encodeURIComponent(shareUrl)}`}
                     target="_blank"
                   >
-                    <img
-                      src="/assets/whatsapp.svg"
-                      className="w-8 mx-auto"
-                    />
+                    <img src="/assets/whatsapp.svg" className="w-8 mx-auto" />
                     WhatsApp
                   </a>
                 </div>

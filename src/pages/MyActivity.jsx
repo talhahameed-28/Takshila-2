@@ -15,6 +15,7 @@ export default function MyActivity() {
 
   const [designs, setDesigns] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [uploading,setUploading]=useState(false)
 
   // MODAL STATE
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -49,6 +50,57 @@ export default function MyActivity() {
 
     getMyDesigns();
   }, [currentPage]);
+
+
+  const handleCommunityStatus=async()=>{
+    setUploading(true)
+    try {
+      axios.defaults.withCredentials=true
+      if(selectedProduct.is_community_uploaded){
+        const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/${selectedProduct.id}/remove`,
+          {},
+          {
+          headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            withCredentials: true,
+          }
+        );
+        console.log(data)
+        if(data.success) {
+          setSelectedProduct({...selectedProduct,is_community_uploaded:0})
+          toast.success("Product removed from community")
+
+        }
+        else toast.error("Couldn't process your request")
+      }else{
+        const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/upload`,
+          {
+            product_id:selectedProduct.id,
+            name:selectedProduct.name
+          },
+          {
+          headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            withCredentials: true,
+          }
+        );
+        console.log(data)
+        if(data.success) {
+          setSelectedProduct({...selectedProduct,is_community_uploaded:1})
+          toast.success("Product added to community")
+
+        }
+        else toast.error("Couldn't process your request")
+      }
+    } catch (error) {
+      console.log(error)
+      toast.error("Some error occurred")
+    }finally{
+      setUploading(false)
+    }
+  }
 
   const goToPage = (p) => {
     if (p >= 1 && p <= totalPages) setCurrentPage(p);
@@ -317,6 +369,13 @@ export default function MyActivity() {
                 </div>
 
                 <div className="flex items-center gap-4 mt-10">
+                  <button
+                    disabled={uploading}
+                    onClick={handleCommunityStatus}
+                    className={`${uploading?"bg-gradient-to-r from-red-900/50 via-rose-900/50 to-red-950/50 cursor-not-allowed opacity-70 shadow-none":"cursor-pointer"} ml-auto px-12 py-3 ${selectedProduct.is_community_uploaded?"bg-gradient-to-r from-red-800 via-rose-800 to-red-900":"bg-gradient-to-r from-emerald-500 via-teal-500 to-green-500"} text-white rounded-full text-xs tracking-widest`}
+                  >
+                    {selectedProduct.is_community_uploaded?"REMOVE FROM COMMUNITY":"UPLOAD TO COMMUNITY"}
+                  </button>
                   <button
                     onClick={() => navigate("/wishlist")}
                     className="ml-auto px-12 py-3 bg-[#6B6B6B] text-white rounded-full text-xs tracking-widest"

@@ -40,7 +40,7 @@ export default function Community() {
     return () => (document.body.style.overflow = "");
   }, [selectedProductId]);
 
-  // ⭐ INITIALIZE CUSTOMDATA FROM PRODUCT
+  // INITIALIZE CUSTOMDATA FROM PRODUCT
   useEffect(() => {
     if (selectedProductDetails?.meta_data) {
       setCustomData({

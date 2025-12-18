@@ -46,11 +46,15 @@ export default function Community() {
   useEffect(() => {
     const loadProducts = async () => {
       try {
+        axios.defaults.withCredentials=true
         const { data } = await axios.get(
           `${
             import.meta.env.VITE_BASE_URL
-          }/api/product?per_page=9&page=${currentPage}`
-        );
+          }/api/product?per_page=9&page=${currentPage}`,{
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
         console.log(data);
         if (data.success) {
           setJewelleryData(data.data.products);
@@ -67,8 +71,11 @@ export default function Community() {
     try {
       axios.defaults.withCredentials = true;
       const { data } = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/api/product/${id}`
-      );
+        `${import.meta.env.VITE_BASE_URL}/api/product/${id}`,{
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });;
       console.log(data);
       setSelectedProductId(id);
       setSelectedProductDetails(data.data.product);
@@ -516,7 +523,7 @@ export default function Community() {
                         <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" fill="currentColor"/>                    </svg>
 
 
-                    <span>{likeCount}</span>
+                    <span>{selectedProductDetails.likesCount}</span>
                   </button>
                 </div>
 

@@ -30,6 +30,7 @@ export default function MyActivity() {
         );
 
         if (data.success) {
+          console.log(data.data.products)
           setDesigns(data.data.products);
           setTotalProducts(data.data.pagination.total)
         }

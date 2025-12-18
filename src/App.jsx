@@ -27,7 +27,7 @@ import VideoLoader from "./components/VideoLoader";
 
 
 export default function App() {
-  const [loading, setLoading] = useState(true); // loader state
+  const [loading, setLoading] = useState(false); // loader state
   const dispatch = useDispatch();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
     const [showAboutMenu, setShowAboutMenu] = useState(false);

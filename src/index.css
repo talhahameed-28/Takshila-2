@@ -1,13 +1,16 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 /* Custom fonts, animations, etc. */
 
 body {
   font-family: 'Inter', sans-serif;
 }
-
+p{  font-family: "Montserrat", sans-serif; }
+h1,h2,h3,h4,h5,h6{ font-family: "Montserrat", sans-serif; }
+a, span, button{ font-family: "Montserrat", sans-serif; }
 /* Shared styles (your custom CSS) */
-
+.font-inter {  font-family: 'Inter', sans-serif; }
 .hero-bg-image {
   opacity: 0;
   z-index: 0;
@@ -40,6 +43,21 @@ body {
   transform: translateY(0) scale(1);
   opacity: 1;
 }
+.slick-slider .slick-prev {
+    left: -20px;
+    opacity: 1;
+    width: 32px;
+    height: 32px;
+}
+.slick-slider .slick-next{
+    right: 0px;
+    opacity: 1;
+    width: 32px;
+    height: 32px;
+}
+.slick-slider .slick-arrow:before { font-size: 35px; }
+
+
 
 @keyframes modal-pop {
   0% { transform: translateY(12px) scale(.98); opacity: 0 }
@@ -60,6 +78,14 @@ body {
   background: rgba(255, 255, 255, 0.2);
   color: white;
 }
+.terms-content p, .terms-content ul li{
+      color: #4c4a4a;
+    font-size: 16px;
+    margin-bottom: 9px;
+}
+.terms-content ul { padding: 0px 10px; }
+.terms-content ul li { list-style: circle; }
+
 
 .input-style {
   @apply w-full bg-white/30 text-white px-4 py-3 rounded-full placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/40;
@@ -68,6 +94,7 @@ body {
 .otp-input {
   @apply w-12 h-12 text-center text-lg rounded-lg bg-white/20 text-white focus:outline-none focus:ring-2 focus:ring-white/40;
 }
+
 
 @keyframes fadeIn {
   from {

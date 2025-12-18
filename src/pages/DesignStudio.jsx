@@ -202,7 +202,7 @@ useLayoutEffect(() => { // restore after DOM updates
     sendData.append("name", name);
     sendData.append("description", description);
     sendData.append("price", total);
-
+    sendData.append("meta_data[commission]", upPriceBreakdown.commission);
     // Append meta_data fields individually
     sendData.append("meta_data[centerStoneCarat]", centerStoneCarat);
     sendData.append("meta_data[diamondShape]", diamondShape);
@@ -338,7 +338,7 @@ useLayoutEffect(() => { // restore after DOM updates
   }
 
   const handleUpdateDetails=async()=>{
-    
+      setUpdating(true)
       try {
         if(!nameRef.current.value.trim() || !descriptionRef.current.value.trim()){
           toast.error("Both name and description are needed")
@@ -400,6 +400,8 @@ useLayoutEffect(() => { // restore after DOM updates
       } catch (error) {
         console.log(error)
         toast.error("Some error occurred")
+      }finally{
+        setUpdating(false)
       }
   }
   // -----------------------------------
@@ -794,17 +796,17 @@ activeTab])
           className="w-full p-4 rounded-2xl bg-[#D9D9D9] text-black h-32"
         />
         <button
-          disabled={uploading}
+          disabled={updating}
           type="button"
           value="update-details"
           onClick={handleUpdateDetails}
           className={`${
-            uploading
+            updating
               ? "bg-gray-600 cursor-not-allowed px-8"
               : "cursor-pointer  bg-[#3F3F3F] text-white px-6"
           } py-2 rounded-full absolute bottom-3 right-3`}
         >
-          {uploading ? "Uploading, please wait..." : "Submit"}
+          {updating ? "Updating details..." : "Submit"}
         </button>
       </div>
 
@@ -826,9 +828,9 @@ activeTab])
         <button
           value="post-on-community"
           type="submit"
-          className="cursor-pointer flex-1 mx-2 py-3 bg-[#6B6B6B] text-white rounded-full text-center text-xs tracking-widest"
+          className={`${uploading?"bg-gray-600 cursor-not-allowed":"cursor-pointer bg-[#6B6B6B]"} flex-1 mx-2 py-3  text-white rounded-full text-center text-xs tracking-widest`}
         >
-          POST ON COMMUNITY
+          {uploading?"POSTING":"POST ON COMMUNITY"}
         </button>
 
         <button className="cursor-pointer flex-1 mx-2 py-3 bg-[#6B6B6B] text-white rounded-full text-center text-xs tracking-widest">

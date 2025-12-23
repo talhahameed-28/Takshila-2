@@ -156,16 +156,6 @@ export default function Community() {
   // SHARE URL
   const shareUrl = `${window.location.origin}/product/${selectedProductId}`;
 
-  const [liked, setLiked] = useState(() => {
-    return localStorage.getItem(`liked-${selectedProductId}`) === "true";
-  });
-
-  const [likeCount, setLikeCount] = useState(() => {
-    const baseLikes = selectedProductDetails.likes ?? 0;
-    const wasLiked =
-      localStorage.getItem(`liked-${selectedProductId}`) === "true";
-    return wasLiked ? baseLikes + 1 : baseLikes;
-  });
 
   const handleLike = async () => {
     try {
@@ -184,10 +174,11 @@ export default function Community() {
       );
       console.log(data);
       if (data.success) {
-        toast.success("Thanks for liking the product");
+        toast.success(data.message);
         setSelectedProductDetails({
           ...selectedProductDetails,
-          user_liked: true,
+          user_liked: data.liked,
+          likes_count:data.likes_count
         });
       } else toast.error("Couldn't process request");
     } catch (error) {
@@ -641,7 +632,7 @@ export default function Community() {
                       />{" "}
                     </svg>
 
-                    <span>{selectedProductDetails.likesCount}</span>
+                    <span>{selectedProductDetails.likes_count}</span>
                   </button>
                 </div>
 
@@ -726,7 +717,7 @@ export default function Community() {
 
                     <button
                       onClick={() => navigate("/wishlist")}
-                      className="ml-auto px-12 py-3 bg-[#6B6B6B] text-white rounded-full text-xs tracking-widest"
+                      className="cursor-pointer ml-auto px-12 py-3 bg-[#6B6B6B] text-white rounded-full text-xs tracking-widest"
                     >
                       BUY NOW
                     </button>

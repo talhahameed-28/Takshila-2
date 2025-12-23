@@ -4,6 +4,67 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 
+// ================= DIAMOND SHAPE OPTIONS =================
+const DIAMOND_SHAPES = [
+  { name: "Round", icon: "/assets/shapes/round.png" },
+  { name: "Princess", icon: "/assets/shapes/princess.png" },
+  { name: "Emerald", icon: "/assets/shapes/emerald.png" },
+  { name: "Oval", icon: "/assets/shapes/oval.png" },
+  { name: "Marquise", icon: "/assets/shapes/marquise.png" },
+  { name: "Cushion", icon: "/assets/shapes/cushion.png" },
+  { name: "Radiant", icon: "/assets/shapes/radiant.png" },
+  { name: "Pear", icon: "/assets/shapes/pear.png" },
+  { name: "Asscher", icon: "/assets/shapes/asscher.png" },
+  { name: "Heart", icon: "/assets/shapes/heart.png" },
+];
+
+// ================= DROPDOWN COMPONENT =================
+const ShapeDropdown = ({ value, onChange }) => {
+  const [open, setOpen] = useState(false);
+  const selected = DIAMOND_SHAPES.find((s) => s.name === value);
+
+  return (
+    <div className="relative w-52">
+      {/* Selected button */}
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="bg-[#D9D9D9] text-black w-full h-11 px-4 rounded-full
+                   flex items-center justify-between"
+      >
+        <div className="flex items-center gap-3">
+          {selected && (
+            <img src={selected.icon} alt={value} className="w-5 h-5" />
+          )}
+          <span className="text-sm">{value}</span>
+        </div>
+        <span className="text-gray-500 text-xs">▼</span>
+      </button>
+
+      {/* Dropdown list */}
+      {open && (
+        <div className="absolute z-50 mt-2 w-full bg-white text-black rounded-xl shadow-lg overflow-hidden">
+          {DIAMOND_SHAPES.map((shape) => (
+            <button
+              key={shape.name}
+              type="button"
+              onClick={() => {
+                onChange(shape.name);
+                setOpen(false);
+              }}
+              className="w-full px-4 py-2 flex items-center gap-3 hover:bg-gray-100 text-left"
+            >
+              <img src={shape.icon} alt={shape.name} className="w-5 h-5" />
+              <span className="text-sm">{shape.name}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+
 /* Helpers */
 const parsePrice = (p) =>
   typeof p === "string" ? Number(p.replace(/[^0-9.-]+/g, "")) : Number(p || 0);
@@ -40,33 +101,29 @@ export default function Community() {
     return () => (document.body.style.overflow = "");
   }, [selectedProductId]);
 
-  // INITIALIZE CUSTOMDATA FROM PRODUCT
-  useEffect(() => {
-    if (selectedProductDetails?.meta_data) {
-      setCustomData({
-        goldType: selectedProductDetails.meta_data.goldType,
-        goldKarat: selectedProductDetails.meta_data.goldKarat,
-        ringSize: selectedProductDetails.meta_data.ringSize,
-        diamondShape: selectedProductDetails.meta_data.diamondShape,
-        quality: selectedProductDetails.meta_data.quality,
-        centerStoneCarat: selectedProductDetails.meta_data.centerStoneCarat,
-        totalCaratWeight: selectedProductDetails.meta_data.totalCaratWeight,
-      });
-    }
-  }, [selectedProductDetails]);
+  // ⭐ INITIALIZE CUSTOMDATA FROM PRODUCT
+useEffect(() => {
+  if (selectedProductDetails?.meta_data) {
+    setCustomData({
+      goldType: selectedProductDetails.meta_data.goldType,
+      goldKarat: selectedProductDetails.meta_data.goldKarat,
+      ringSize: selectedProductDetails.meta_data.ringSize,
+      diamondShape: selectedProductDetails.meta_data.diamondShape,
+      quality: selectedProductDetails.meta_data.quality,
+      centerStoneCarat: selectedProductDetails.meta_data.centerStoneCarat,
+      totalCaratWeight: selectedProductDetails.meta_data.totalCaratWeight,
+    });
+  }
+}, [selectedProductDetails]);
 
   useEffect(() => {
     const loadProducts = async () => {
       try {
-        axios.defaults.withCredentials=true
         const { data } = await axios.get(
           `${
             import.meta.env.VITE_BASE_URL
-          }/api/product?per_page=9&page=${currentPage}`,{
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+          }/api/product?per_page=9&page=${currentPage}`
+        );
         console.log(data);
         if (data.success) {
           setJewelleryData(data.data.products);
@@ -83,11 +140,8 @@ export default function Community() {
     try {
       axios.defaults.withCredentials = true;
       const { data } = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/api/product/${id}`,{
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });;
+        `${import.meta.env.VITE_BASE_URL}/api/product/${id}`
+      );
       console.log(data);
       setSelectedProductId(id);
       setSelectedProductDetails(data.data.product);
@@ -157,14 +211,13 @@ export default function Community() {
   const shareUrl = `${window.location.origin}/product/${selectedProductId}`;
 
 
-  const handleLike = async () => {
+
+  const handleLike = async() => {
     try {
-      axios.defaults.withCredentials = true;
-      const { data } = await axios.post(
-        `${
-          import.meta.env.VITE_BASE_URL
-        }/api/product/${selectedProductId}/like`,
-        {},
+     
+        axios.defaults.withCredentials=true
+        const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/${selectedProductId}/like`,
+         {},
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -182,34 +235,34 @@ export default function Community() {
         });
       } else toast.error("Couldn't process request");
     } catch (error) {
-      console.log(error);
-      toast.error("Some error occurred");
+      console.log(error)
+      toast.error("Some error occurred")
     }
+
   };
 
-  const handleComment = async () => {
-    try {
-      axios.defaults.withCredentials = true;
-      const { data } = await axios.post(
-        `${
-          import.meta.env.VITE_BASE_URL
-        }/api/product/${selectedProductId}/review`,
-        { review: comment, rating: rating },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+    const handleComment=async()=>{
+      try {
+        axios.defaults.withCredentials=true
+        const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/${selectedProductId}/review`,
+          {review:comment,
+            rating:rating
           },
-          withCredentials: true,
-        }
-      );
-      console.log(data);
-      if (data.success) toast.success("Review added successfully");
-      else toast.error("Couldn't process request");
-    } catch (error) {
-      console.log(error);
-      toast.error("Some error occurred");
+        {
+        headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`
+    },withCredentials: true
+  })
+  console.log(data)
+  if(data.success) toast.success("Review added successfully")
+    else toast.error("Couldn't process request")
+      } catch (error) {
+        console.log(error)
+        toast.error("Some error occurred")
+      }
     }
-  };
+
+
 
   return (
     <div className="bg-[#e5e2df] text-[#1a1a1a] min-h-screen flex flex-col font-serif">
@@ -465,31 +518,15 @@ export default function Community() {
                     {/* SHAPE */}
                     <div>
                       <p className="text-sm mb-2">Shape</p>
-                      <select
+                      <ShapeDropdown
                         value={customData?.diamondShape}
-                        onChange={(e) =>
+                        onChange={(val) =>
                           setCustomData((prev) => ({
                             ...prev,
-                            diamondShape: e.target.value,
+                            diamondShape: val,
                           }))
                         }
-                        className="bg-[#D9D9D9] text-black w-52 h-11 px-4 rounded-full"
-                      >
-                        {[
-                          "Round",
-                          "Princess",
-                          "Emerald",
-                          "Oval",
-                          "Marquise",
-                          "Cushion",
-                          "Radiant",
-                          "Pear",
-                          "Asscher",
-                          "Heart",
-                        ].map((shape) => (
-                          <option key={shape}>{shape}</option>
-                        ))}
-                      </select>
+                      />
                     </div>
 
                     {/* QUALITY */}

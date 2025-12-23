@@ -5,6 +5,64 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
+// ================= DIAMOND SHAPE OPTIONS =================
+const DIAMOND_SHAPES = [
+  { name: "Round", icon: "/assets/shapes/round.png" },
+  { name: "Princess", icon: "/assets/shapes/princess.png" },
+  { name: "Emerald", icon: "/assets/shapes/emerald.png" },
+  { name: "Oval", icon: "/assets/shapes/oval.png" },
+  { name: "Marquise", icon: "/assets/shapes/marquise.png" },
+  { name: "Cushion", icon: "/assets/shapes/cushion.png" },
+  { name: "Radiant", icon: "/assets/shapes/radiant.png" },
+  { name: "Pear", icon: "/assets/shapes/pear.png" },
+  { name: "Asscher", icon: "/assets/shapes/asscher.png" },
+  { name: "Heart", icon: "/assets/shapes/heart.png" },
+];
+
+// ================= DROPDOWN COMPONENT =================
+const ShapeDropdown = ({ value, onChange }) => {
+  const [open, setOpen] = useState(false);
+  const selected = DIAMOND_SHAPES.find((s) => s.name === value);
+
+  return (
+    <div className="relative w-52">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="bg-[#D9D9D9] text-black w-full h-11 px-4 rounded-full
+                   flex items-center justify-between"
+      >
+        <div className="flex items-center gap-3">
+          {selected && (
+            <img src={selected.icon} alt={value} className="w-5 h-5" />
+          )}
+          <span className="text-sm">{value}</span>
+        </div>
+        <span className="text-gray-500 text-xs">▼</span>
+      </button>
+
+      {open && (
+        <div className="absolute z-50 mt-2 w-full bg-white text-black rounded-xl shadow-lg overflow-hidden">
+          {DIAMOND_SHAPES.map((shape) => (
+            <button
+              key={shape.name}
+              type="button"
+              onClick={() => {
+                onChange(shape.name);
+                setOpen(false);
+              }}
+              className="w-full px-4 py-2 flex items-center gap-3 hover:bg-gray-100 text-left"
+            >
+              <img src={shape.icon} alt={shape.name} className="w-5 h-5" />
+              <span className="text-sm">{shape.name}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default function MyActivity() {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
@@ -15,10 +73,26 @@ export default function MyActivity() {
 
   const [designs, setDesigns] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [uploading,setUploading]=useState(false)
+  const [uploading, setUploading] = useState(false);
 
   // MODAL STATE
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [customData, setCustomData] = useState(null);
+
+  // INIT CUSTOM DATA WHEN MODAL OPENS
+  useEffect(() => {
+    if (selectedProduct?.meta_data) {
+      setCustomData({
+        goldType: selectedProduct.meta_data.goldType,
+        goldKarat: selectedProduct.meta_data.goldKarat,
+        ringSize: selectedProduct.meta_data.ringSize,
+        diamondShape: selectedProduct.meta_data.diamondShape,
+        quality: selectedProduct.meta_data.quality,
+        centerStoneCarat: selectedProduct.meta_data.centerStoneCarat,
+        totalCaratWeight: selectedProduct.meta_data.totalCaratWeight,
+      });
+    }
+  }, [selectedProduct]);
 
   // ================== FETCH USER DESIGNS ==================
   useEffect(() => {
@@ -37,7 +111,6 @@ export default function MyActivity() {
         );
 
         if (data.success) {
-          console.log(data.data.products)
           setDesigns(data.data.products);
           setTotalProducts(data.data.pagination.total);
         }
@@ -51,56 +124,56 @@ export default function MyActivity() {
     getMyDesigns();
   }, [currentPage]);
 
-
-  const handleCommunityStatus=async()=>{
-    setUploading(true)
+  const handleCommunityStatus = async () => {
+    setUploading(true);
     try {
-      axios.defaults.withCredentials=true
-      if(selectedProduct.is_community_uploaded){
-        const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/${selectedProduct.id}/remove`,
+      axios.defaults.withCredentials = true;
+
+      if (selectedProduct.is_community_uploaded) {
+        const { data } = await axios.post(
+          `${import.meta.env.VITE_BASE_URL}/api/product/${
+            selectedProduct.id
+          }/remove`,
           {},
           {
-          headers: {
+            headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
             withCredentials: true,
           }
         );
-        console.log(data)
-        if(data.success) {
-          setSelectedProduct({...selectedProduct,is_community_uploaded:0})
-          toast.success("Product removed from community")
 
-        }
-        else toast.error("Couldn't process your request")
-      }else{
-        const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/upload`,
+        if (data.success) {
+          setSelectedProduct({ ...selectedProduct, is_community_uploaded: 0 });
+          toast.success("Product removed from community");
+        } else toast.error("Couldn't process your request");
+      } else {
+        const { data } = await axios.post(
+          `${import.meta.env.VITE_BASE_URL}/api/product/upload`,
           {
-            product_id:selectedProduct.id,
-            name:selectedProduct.name
+            product_id: selectedProduct.id,
+            name: selectedProduct.name,
           },
           {
-          headers: {
+            headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
             withCredentials: true,
           }
         );
-        console.log(data)
-        if(data.success) {
-          setSelectedProduct({...selectedProduct,is_community_uploaded:1})
-          toast.success("Product added to community")
 
-        }
-        else toast.error("Couldn't process your request")
+        if (data.success) {
+          setSelectedProduct({ ...selectedProduct, is_community_uploaded: 1 });
+          toast.success("Product added to community");
+        } else toast.error("Couldn't process your request");
       }
     } catch (error) {
-      console.log(error)
-      toast.error("Some error occurred")
-    }finally{
-      setUploading(false)
+      console.log(error);
+      toast.error("Some error occurred");
+    } finally {
+      setUploading(false);
     }
-  }
+  };
 
   const goToPage = (p) => {
     if (p >= 1 && p <= totalPages) setCurrentPage(p);
@@ -124,13 +197,12 @@ export default function MyActivity() {
           </p>
         )}
 
-        {/* Empty State */}
+        {/* Empty */}
         {!loading && designs.length === 0 && (
           <div className="flex flex-col items-center justify-center text-center mt-20 h-[40vh]">
             <h2 className="text-2xl font-medium text-gray-700 mb-6">
               No Designs Yet
             </h2>
-
             <button
               onClick={() => navigate("/design-studio")}
               className="px-10 py-4 bg-[#555555] hover:bg-[#000000] text-white rounded-full text-sm shadow-sm transition cursor-pointer"
@@ -140,7 +212,7 @@ export default function MyActivity() {
           </div>
         )}
 
-        {/* Designs Grid */}
+        {/* Grid */}
         {designs.length > 0 && (
           <section>
             <div className="flex justify-center items-center gap-3 mb-14">
@@ -205,7 +277,6 @@ export default function MyActivity() {
                   </h2>
 
                   <p className="text-gray-600 text-sm mt-1">${item.price}</p>
-
                 </div>
               ))}
             </div>
@@ -214,15 +285,13 @@ export default function MyActivity() {
       </main>
 
       {/* ======================= MODAL ========================== */}
-      {selectedProduct && (
+      {selectedProduct && customData && (
         <div className="fixed inset-0 flex items-end md:items-center justify-center z-[50]">
-          {/* BACKDROP */}
           <div
             className="absolute inset-0 bg-black/40 backdrop-blur-md animate-blurFade z-[40]"
             onClick={() => setSelectedProduct(null)}
           />
 
-          {/* MODAL PANEL */}
           <div
             className="
               relative w-full max-w-7xl mx-auto
@@ -234,7 +303,6 @@ export default function MyActivity() {
               z-[45] animate-slideUp
             "
           >
-            {/* CLOSE */}
             <button
               onClick={() => setSelectedProduct(null)}
               className="absolute top-6 right-6 text-black/50 hover:text-black text-2xl"
@@ -242,9 +310,8 @@ export default function MyActivity() {
               ✕
             </button>
 
-            {/* ===== GRID ===== */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-stretch">
-              {/* ================= LEFT TOP ================= */}
+              {/* ========== CUSTOMIZATION PANEL ========== */}
               <div className="bg-[#6C6C6C] rounded-3xl p-8 text-white">
                 <h2 className="text-center text-xl tracking-[0.2em] font-semibold mb-6">
                   Customizing Tools
@@ -257,38 +324,90 @@ export default function MyActivity() {
                 <div className="grid grid-cols-2 gap-6">
                   <div>
                     <p className="text-sm mb-2">Type</p>
-                    <div className="flex gap-10 text-xs capitalize">
-                      {[selectedProduct.meta_data.goldType].map((t) => (
-                        <span key={t}>● {t}</span>
+                    <div className="flex gap-3 text-xs capitalize">
+                      {["rose", "yellow", "white"].map((t) => (
+                        <button
+                          key={t}
+                          onClick={() =>
+                            setCustomData((prev) => ({
+                              ...prev,
+                              goldType: t,
+                            }))
+                          }
+                          className={`px-3 py-1 rounded-full ${
+                            customData?.goldType === t
+                              ? "bg-white text-black"
+                              : "bg-white/20"
+                          }`}
+                        >
+                          {t}
+                        </button>
                       ))}
                     </div>
                   </div>
 
                   <div>
                     <p className="text-sm mb-2">Karat</p>
-                    <div className="flex gap-10 text-xs">
-                      {[selectedProduct.meta_data.goldKarat].map((k) => (
-                        <span key={k}>● {k}</span>
+                    <div className="flex gap-3 text-xs">
+                      {["10K", "14K", "18K"].map((k) => (
+                        <button
+                          key={k}
+                          onClick={() =>
+                            setCustomData((prev) => ({
+                              ...prev,
+                              goldKarat: k,
+                            }))
+                          }
+                          className={`px-3 py-1 rounded-full ${
+                            customData?.goldKarat === k
+                              ? "bg-white text-black"
+                              : "bg-white/20"
+                          }`}
+                        >
+                          {k}
+                        </button>
                       ))}
                     </div>
                   </div>
                 </div>
 
                 <p className="text-sm mt-4 mb-2">Ring Size</p>
-                <div className="bg-[#D9D9D9] text-black w-52 h-11 px-4 rounded-full flex items-center">
-                  {selectedProduct.meta_data.ringSize}
-                </div>
+                <select
+                  value={customData.ringSize}
+                  onChange={(e) =>
+                    setCustomData((prev) => ({
+                      ...prev,
+                      ringSize: e.target.value,
+                    }))
+                  }
+                  className="bg-[#D9D9D9] text-black w-52 h-11 px-4 rounded-full"
+                >
+                  {Array.from({ length: 21 }, (_, i) => 3 + i * 0.5).map(
+                    (size) => (
+                      <option key={size} value={size.toFixed(1)}>
+                        {size.toFixed(1)}
+                      </option>
+                    )
+                  )}
+                </select>
 
                 <h3 className="font-semibold tracking-wide mt-6 mb-3">
                   Diamond Options
                 </h3>
 
                 <div className="grid grid-cols-2 gap-6">
+                  {/* 🔥 SHAPE DROPDOWN WITH ICONS HERE */}
                   <div>
                     <p className="text-sm mb-2">Shape</p>
-                    <div className="bg-[#D9D9D9] text-black w-52 h-11 px-4 rounded-full flex items-center">
-                      {selectedProduct.meta_data.diamondShape}
-                    </div>
+                    <ShapeDropdown
+                      value={customData?.diamondShape}
+                      onChange={(val) =>
+                        setCustomData((prev) => ({
+                          ...prev,
+                          diamondShape: val,
+                        }))
+                      }
+                    />
                   </div>
 
                   <div>
@@ -297,15 +416,26 @@ export default function MyActivity() {
                       type="range"
                       min="0"
                       max="2"
-                      disabled
                       value={
-                        selectedProduct.meta_data.quality === "good"
+                        customData.quality === "good"
                           ? 0
-                          : selectedProduct.meta_data.quality === "premium"
+                          : customData.quality === "premium"
                           ? 1
                           : 2
                       }
-                      className="w-full opacity-70"
+                      onChange={(e) => {
+                        const v = Number(e.target.value);
+                        setCustomData((prev) => ({
+                          ...prev,
+                          quality:
+                            v === 0
+                              ? "good"
+                              : v === 1
+                              ? "premium"
+                              : "excellent",
+                        }));
+                      }}
+                      className="w-full opacity-90 cursor-pointer"
                     />
                     <div className="grid grid-cols-3 text-center text-xs mt-1">
                       <span>Good</span>
@@ -318,16 +448,34 @@ export default function MyActivity() {
                 <div className="grid grid-cols-2 gap-6 mt-4">
                   <div>
                     <p className="text-sm mb-2">Center Stone Carat</p>
-                    <div className="bg-[#D9D9D9] text-black h-11 px-4 rounded-full flex items-center">
-                      {selectedProduct.meta_data.centerStoneCarat}
-                    </div>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={customData.centerStoneCarat}
+                      onChange={(e) =>
+                        setCustomData((prev) => ({
+                          ...prev,
+                          centerStoneCarat: e.target.value,
+                        }))
+                      }
+                      className="bg-[#D9D9D9] text-black h-11 px-4 rounded-full w-full"
+                    />
                   </div>
 
                   <div>
                     <p className="text-sm mb-2">Total Carat Weight</p>
-                    <div className="bg-[#D9D9D9] text-black h-11 px-4 rounded-full flex items-center">
-                      {selectedProduct.meta_data.totalCaratWeight}
-                    </div>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={customData.totalCaratWeight}
+                      onChange={(e) =>
+                        setCustomData((prev) => ({
+                          ...prev,
+                          totalCaratWeight: e.target.value,
+                        }))
+                      }
+                      className="bg-[#D9D9D9] text-black h-11 px-4 rounded-full w-full"
+                    />
                   </div>
                 </div>
 
@@ -341,7 +489,7 @@ export default function MyActivity() {
                 </div>
               </div>
 
-              {/* ================= RIGHT IMAGE ================= */}
+              {/* ========== IMAGE PANEL ========== */}
               <div className="relative bg-white rounded-3xl shadow-md overflow-hidden group">
                 <img
                   src={selectedProduct.image}
@@ -349,7 +497,6 @@ export default function MyActivity() {
                 />
               </div>
 
-              {/* ================= BOTTOM LEFT — COMMENTS PLACEHOLDER ================= */}
               <div className="bg-[#6C6C6C] rounded-3xl p-6 text-white h-[200px]">
                 <p className="tracking-widest text-sm mb-2">COMMENTS</p>
                 <p className="text-xs opacity-70">
@@ -357,7 +504,6 @@ export default function MyActivity() {
                 </p>
               </div>
 
-              {/* ================= BOTTOM RIGHT — DETAILS ================= */}
               <div className="flex flex-col justify-between">
                 <div>
                   <h2 className="text-2xl font-semibold tracking-wide">
@@ -372,9 +518,19 @@ export default function MyActivity() {
                   <button
                     disabled={uploading}
                     onClick={handleCommunityStatus}
-                    className={`${uploading?"bg-gradient-to-r from-red-900/50 via-rose-900/50 to-red-950/50 cursor-not-allowed opacity-70 shadow-none":"cursor-pointer"} ml-auto px-12 py-3 ${selectedProduct.is_community_uploaded?"bg-gradient-to-r from-red-800 via-rose-800 to-red-900":"bg-gradient-to-r from-emerald-500 via-teal-500 to-green-500"} text-white rounded-full text-xs tracking-widest`}
+                    className={`${
+                      uploading
+                        ? "bg-gradient-to-r from-red-900/50 via-rose-900/50 to-red-950/50 cursor-not-allowed opacity-70 shadow-none"
+                        : "cursor-pointer"
+                    } ml-auto px-12 py-3 ${
+                      selectedProduct.is_community_uploaded
+                        ? "bg-gradient-to-r from-red-800 via-rose-800 to-red-900"
+                        : "bg-gradient-to-r from-emerald-500 via-teal-500 to-green-500"
+                    } text-white rounded-full text-xs tracking-widest`}
                   >
-                    {selectedProduct.is_community_uploaded?"REMOVE FROM COMMUNITY":"UPLOAD TO COMMUNITY"}
+                    {selectedProduct.is_community_uploaded
+                      ? "REMOVE FROM COMMUNITY"
+                      : "UPLOAD TO COMMUNITY"}
                   </button>
                   <button
                     onClick={() => navigate("/wishlist")}
@@ -386,7 +542,6 @@ export default function MyActivity() {
               </div>
             </div>
 
-            {/* ANIMATIONS */}
             <style>{`
               @keyframes slideUp {
                 0% { opacity: 0; transform: translateY(40px) scale(0.97); }

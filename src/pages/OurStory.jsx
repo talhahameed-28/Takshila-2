@@ -25,9 +25,9 @@ export default function OurStory() {
       {/* About Us Section */}
       <section className="max-w-[800px] mx-auto px-6 md:px-10 py-20 leading-relaxed text-[#1a1a1a]/90">
           <div class="container">
-              <h2 className="text-3xl md:text-4xl font-normal mb-6 w-full text-center"> About Takshila </h2>
+              <h2 className="text-3xl md:text-5xl font-normal mb-6 w-full text-center"> About Takshila </h2>
 
-              <p className="mb-5 font-inter text-[17px] leading-[1.4] font-normal">
+              <p className="mb-5 text-[17px] leading-[1.4] font-normal">
                 Takshila is a company focused on creating decentralized shared P2P
                 economic systems, to enable true freedom in digital business
                 environments for all its stakeholders. We are re-engineering luxury
@@ -36,7 +36,7 @@ export default function OurStory() {
                 loop—eliminating mark-ups, middlemen, and creative gatekeepers.
               </p>
 
-              <p className="mb-5 font-inter text-[17px] leading-[1.4] font-normal">
+              <p className="mb-5 text-[17px] leading-[1.4] font-normal">
                 Customers can co-design ultra-personalized pieces in minutes through
                 generative AI, visualize them in real time, and receive museum-grade
                 craftsmanship at breakthrough prices. Designers gain a zero-risk
@@ -47,7 +47,7 @@ export default function OurStory() {
                 technology now amplifies rather than replaces.
               </p>
 
-              <p className="font-inter text-[17px] leading-[1.4] font-normal">
+              <p className="text-[17px] leading-[1.4] font-normal">
                 Under the hood, Takshila is a high-growth platform fusing generative
                 AI, 3-D printing, and real-time provenance to unlock a trillion-dollar
                 creator economy. By turning every imagination into a masterpiece and
@@ -109,7 +109,7 @@ export default function OurStory() {
         <section className="pt-10 pb-10 bg-[#D9D9D9]">
           <div class="container max-w-lg mx-auto">
               <div className="w-full text-center">
-                    <h3 className="text-3xl md:text-6xl font-normal mb-0"> Our Team </h3>
+                    <h3 className="text-3xl md:text-5xl font-normal mb-0"> Our Team </h3>
               </div>
           </div>
         </section>
@@ -145,7 +145,7 @@ export default function OurStory() {
          <section className="pt-14 pb-14 bg-white">
           <div class="container max-w-lg mx-auto">
               <div className="w-full text-center">
-                    <h3 className="text-3xl md:text-6xl font-normal mb-0"> Developer </h3>
+                    <h3 className="text-3xl md:text-5xl font-normal mb-0"> Developer </h3>
               </div>
           </div>
         </section>
@@ -179,6 +179,48 @@ export default function OurStory() {
                     </div>
           </div>
         </section>
+
+
+
+         <section className="pt-14 pb-14 bg-[#D9D9D9]">
+          <div class="container max-w-lg mx-auto">
+              <div className="w-full text-center">
+                    <h3 className="text-3xl md:text-5xl font-normal mb-0"> Marketing & Designers </h3>
+              </div>
+          </div>
+        </section>
+
+
+
+          <section className="pt-10 pb-16">
+          <div className="container w-full overflow-hidden px-1 flex flex-wrap">
+                  
+                    <div className="text-center basis-1/4 mt-5">
+                      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" width={'180'} className="rounded-full mx-auto border border-zinc-400 mb-2" />
+                        <h4 className="uppercase tracking-wider text-2xl font-normal"> Vranda Tyagi </h4>
+                        <p className="text-[15x] font-light tracking-wider"> Lead Marketing Operation </p>
+                    </div>
+
+                    <div className="text-center basis-1/4 mt-5">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" width={'180'} className="rounded-full mx-auto border border-zinc-400 mb-2" />
+                        <h4 className="uppercase tracking-wider text-2xl font-normal"> Bilal Khan </h4>
+                        <p className="text-[15px] font-light tracking-wider"> Lead Content Edits and  Platform Operation </p>
+                    </div>
+                    <div className="text-center basis-1/4 mt-5">
+                       <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" width={'180'} className="rounded-full mx-auto border border-zinc-400 mb-2" />
+                        <h4 className="uppercase tracking-wider text-2xl font-normal"> Mubashir Ali </h4>
+                        <p className="text-[15px] font-light tracking-wider"> Sr. Graphics Designer </p>
+                    </div>
+                    
+
+                    <div className="text-center basis-1/4 mt-5">
+                      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" width={'180'} className="rounded-full mx-auto border border-zinc-400 mb-2" />
+                        <h4 className="uppercase tracking-wider text-2xl font-normal"> Manthan Gennur </h4>
+                        <p className="text-[15px] font-light tracking-wider"> Graphic Designer & Video Editor (Intern) </p>
+                    </div>
+          </div>
+        </section>
+
 
 
 

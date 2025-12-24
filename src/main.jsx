@@ -12,6 +12,7 @@ import { Toaster } from "react-hot-toast";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Toaster
+      containerClassName="z-1000"
       position="top-right"
       reverseOrder={false}
     />

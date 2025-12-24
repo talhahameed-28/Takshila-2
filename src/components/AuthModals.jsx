@@ -179,7 +179,7 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
     <>
       {/* Overlay */}
       <div
-        className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-40 flex items-center justify-center transition-opacity duration-300 ${
+        className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-1000 flex items-center justify-center transition-opacity duration-300 ${
           isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={onClose}
@@ -187,7 +187,7 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
 
       {/* Centered Modal */}
       <div
-        className={`fixed inset-0 z-50 flex items-center justify-center transition-all duration-300 ${
+        className={`fixed inset-0 z-1000 flex items-center justify-center transition-all duration-300 ${
           isOpen
             ? "opacity-100 scale-100 translate-y-0"
             : "opacity-0 scale-95 translate-y-5 pointer-events-none"

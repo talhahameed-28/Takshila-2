@@ -76,7 +76,7 @@ const fmt = (n) =>
 
 
 
-export default function Community() {
+export default function Community({handleOpenModal}) {
   const { isLoggedIn } = useSelector((state) => state.user);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -614,29 +614,28 @@ useEffect(() => {
                   {/* IMAGE */}
                   <img
                     src={selectedProductDetails.image}
-                    className="
-      w-full h-full object-cover
-      transition duration-300
-      group-hover:brightness-75
-    "
+                    className={`
+                        w-full h-full object-cover
+                        ${isLoggedIn?"transition duration-300 group-hover:brightness-75":""} 
+                      `}
                   />
 
                   {/* LIKE BUTTON — BOTTOM RIGHT */}
-                  <button
+                  {isLoggedIn && (<button
                     onClick={handleLike}
                     className="
-    absolute bottom-4 right-4
-    flex items-center gap-2
-    px-3 py-1.5
-    rounded-full
-    text-sm
-    bg-black/70 text-white
-    backdrop-blur
-    shadow-lg
-    transition
-    opacity-0 group-hover:opacity-100
-    hover:bg-black/80
-  "
+                      absolute bottom-4 right-4
+                      flex items-center gap-2
+                      px-3 py-1.5
+                      rounded-full
+                      text-sm
+                      bg-black/70 text-white
+                      backdrop-blur
+                      shadow-lg
+                      transition
+                      opacity-0 group-hover:opacity-100
+                      hover:bg-black/80
+                    "
                   >
                     {/* <img
                       src="/assets/heart.svg"
@@ -670,7 +669,7 @@ useEffect(() => {
                     </svg>
 
                     <span>{selectedProductDetails.likes_count}</span>
-                  </button>
+                  </button>)}
                 </div>
 
                 {/* ================= BOTTOM LEFT — COMMENTS ================= */}
@@ -680,9 +679,9 @@ useEffect(() => {
                   {!isLoggedIn && (
                     <p className="text-sm opacity-80">
                       Please{" "}
-                      <a href="/login" className="underline">
+                      <span onClick={()=>{handleOpenModal("login")}} className="underline cursor-pointer hover:text-blue-400">
                         login
-                      </a>{" "}
+                      </span>{" "}
                       to leave a comment.
                     </p>
                   )}

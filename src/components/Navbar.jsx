@@ -145,7 +145,7 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
       <header
         className={`fixed top-0 left-0 w-full flex justify-center 
               px-4 sm:px-6 md:px-8 py-4 
-              z-[10000] transition-all duration-500 ${
+              z-[1000] transition-all duration-500 ${
                 isScrolled ? "bg-transparent" : "bg-transparent"
               }`}
       >

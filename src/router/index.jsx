@@ -17,6 +17,8 @@ import Refundpolicy from "../pages/Refundpolicy"
 import Shippingpolicy from "../pages/Shippingpolicy"
 import TermConditions from "../pages/TermsConditions"
 import Faqs from "../pages/Faqs";
+import Checkout from "../pages/Checkout";
+
 import ScrollToTop from "../utils/ScrollToTop";
 const MainRoutes = ({setIsMobileMenuOpen,setModalOpen,setModalType,setShowProfileMenu}) => {
     const handleOpenModal = (type) => {
@@ -31,7 +33,7 @@ const MainRoutes = ({setIsMobileMenuOpen,setModalOpen,setModalType,setShowProfil
 
             <Routes>
                 <Route path={ROUTES.HOME} element={<Home />} />
-                <Route path={ROUTES.COMMUNITY} element={<Community />} />
+                <Route path={ROUTES.COMMUNITY} element={<Community handleOpenModal={handleOpenModal} />} />
                 <Route path={ROUTES.CATALOGUE} element={<Catalogue />} />
                 <Route path={ROUTES.ABOUT} element={<OurStory />} />
                 <Route path={ROUTES.BLOG} element={<Blogs />} />
@@ -47,6 +49,7 @@ const MainRoutes = ({setIsMobileMenuOpen,setModalOpen,setModalType,setShowProfil
                     <Route path={ROUTES.DESIGNSTUDIO} element={<DesignStudio />} />
                     <Route path={ROUTES.WISHLIST} element={<Wishlist />} />
                     <Route path={ROUTES.ORDER} element={<Orders />} />
+                    <Route path={ROUTES.CHECKOUT} element={<Checkout/>}></Route>
                 </Route>
 
             </Routes>

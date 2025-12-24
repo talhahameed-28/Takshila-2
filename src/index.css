@@ -8,9 +8,10 @@ body {
 }
 p{  font-family: "Montserrat", sans-serif; }
 h1,h2,h3,h4,h5,h6{ font-family: "Montserrat", sans-serif; }
-a, span, button{ font-family: "Montserrat", sans-serif; }
+a, span, button, label { font-family: "Montserrat", sans-serif; }
 /* Shared styles (your custom CSS) */
 .font-inter {  font-family: 'Inter', sans-serif; }
+.font-montserrat { font-family: "Montserrat", sans-serif; }
 .hero-bg-image {
   opacity: 0;
   z-index: 0;
@@ -94,8 +95,11 @@ a, span, button{ font-family: "Montserrat", sans-serif; }
 .otp-input {
   @apply w-12 h-12 text-center text-lg rounded-lg bg-white/20 text-white focus:outline-none focus:ring-2 focus:ring-white/40;
 }
-
-
+.table-design tbody tr td:nth-child(2) {
+    text-align: right;
+}
+.table-design tbody tr td {  border-bottom: 1px solid #c7c4c1; padding-top: 5px; padding-bottom: 5px; }
+.table-design tbody tr:last-child td { border-bottom: 0px solid; }
 @keyframes fadeIn {
   from {
     opacity: 0;

@@ -3,6 +3,7 @@ import { useWishlist } from "../context/WishlistContext";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 // ================= DIAMOND SHAPE OPTIONS =================
 const DIAMOND_SHAPES = [
@@ -65,18 +66,10 @@ const ShapeDropdown = ({ value, onChange }) => {
 };
 
 
-/* Helpers */
-const parsePrice = (p) =>
-  typeof p === "string" ? Number(p.replace(/[^0-9.-]+/g, "")) : Number(p || 0);
-
-const fmt = (n) =>
-  typeof n === "number"
-    ? n.toLocaleString("en-US", { style: "currency", currency: "USD" })
-    : n;
-
-
 
 export default function Community({handleOpenModal}) {
+  const navigate=useNavigate()
+
   const { isLoggedIn } = useSelector((state) => state.user);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -92,6 +85,7 @@ export default function Community({handleOpenModal}) {
 
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(0);
+  const [adding, setAdding] = useState(false)
   // ⭐ Wishlist Context
   const { wishlistItems, toggleWishlist } = useWishlist();
 
@@ -241,7 +235,7 @@ useEffect(() => {
 
   };
 
-    const handleComment=async()=>{
+  const handleComment=async()=>{
       try {
         axios.defaults.withCredentials=true
         const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/${selectedProductId}/review`,
@@ -259,6 +253,37 @@ useEffect(() => {
       } catch (error) {
         console.log(error)
         toast.error("Some error occurred")
+      }
+    }
+
+
+    const handleAddToWishlist=async()=>{
+      setAdding(true)
+      try {
+        axios.defaults.withCredentials=true
+        console.log(customData)
+        const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/wishlist/add`,
+            {product_id:selectedProductId,
+              ...customData
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+                "Content-Type": "application/json",
+              },
+              withCredentials: true,
+            }
+          );
+          console.log(data)
+          if(data.success){
+            toast.success("Proceeding to checkout")
+            navigate("/checkout")
+          }
+      } catch (error) {
+        toast.error("Some error occurred")
+        console.log(error)
+      }finally{
+        setAdding(false)
       }
     }
 
@@ -752,10 +777,10 @@ useEffect(() => {
                     </button>
 
                     <button
-                      onClick={() => navigate("/wishlist")}
-                      className="cursor-pointer ml-auto px-12 py-3 bg-[#6B6B6B] text-white rounded-full text-xs tracking-widest"
+                      onClick={()=>{isLoggedIn?handleAddToWishlist():handleOpenModal("login")}}
+                      className={`${adding?"bg-gray-600 cursor-not-allowed":"cursor-pointer bg-[#6B6B6B]"} ml-auto px-12 py-3  text-white rounded-full text-xs tracking-widest`}
                     >
-                      BUY NOW
+                      {adding?"Processing...":"BUY NOW"}
                     </button>
                   </div>
                 </div>

@@ -69,9 +69,10 @@ export default function DesignStudio() {
   // ACTIVE TAB
   const [activeTab, setActiveTab] = useState("ai"); // "ai" | "upload"
   const [uploading, setUploading] = useState(false)
-  const [updating, setUpdating] = useState(false)
+  
 
 //--------USED FOR PRODUCT DETAILS UPDATION-------------//
+
   const nameRef = useRef(null)
   const descriptionRef = useRef(null)
 //-----------------------------------------------------//
@@ -243,7 +244,7 @@ useLayoutEffect(() => { // restore after DOM updates
     console.log(data);
 
     if (data.success) {
-      toast.success("Design saved!");
+      toast.success("Design Posted on community!");
       navigate("/community");
     }
 
@@ -337,19 +338,23 @@ useLayoutEffect(() => { // restore after DOM updates
     }
   }
 
-  const handleUpdateDetails=async()=>{
+  const handleUpdateDetails=async(setUpdating,designDescription,designName)=>{
       setUpdating(true)
       try {
-        if(!nameRef.current.value.trim() || !descriptionRef.current.value.trim()){
+        // if(!nameRef.current.value.trim() || !descriptionRef.current.value.trim()){
+        //   toast.error("Both name and description are needed")
+        //   return
+        // }
+        if(designDescription.trim()=="" || designName.trim()==""){
           toast.error("Both name and description are needed")
           return
-        }
+         }
         axios.defaults.withCredentials=true
         if(activeTab==="ai"){
-          console.log(nameRef.current.value,descriptionRef.current.value)
+          // console.log(nameRef.current.value,descriptionRef.current.value)
           const {data}=await axios.put(`${import.meta.env.VITE_BASE_URL}/api/product/${receivedAiImageId}/update`,
-            {name:nameRef.current.value.trim(),
-              description:descriptionRef.current.value.trim()
+            {name:designName.trim(),
+              description:designDescription.trim()
             },
             {
               headers: {
@@ -365,18 +370,18 @@ useLayoutEffect(() => { // restore after DOM updates
         else if(activeTab==="upload"){
           console.log("updating")
           const payload={
-            name:nameRef.current.value.trim(),
-            description:descriptionRef.current.value.trim(),
+            name:designName.trim(),
+            description:designDescription.trim(),
             price:upPriceBreakdown.totalPriceWithRoyalties,
             "images[]":[upPreviewImageFile],
             // is_community_uploaded:false,
             meta_data:{
               centerStoneCarat:upCenterCarat,
-                    description:descriptionRef.current.value.trim(),
+                    description:designDescription.trim(),
                     diamondShape:upShape,
                     goldKarat:upKarat,
                     goldType:upGoldType,
-                    name:nameRef.current.value.trim(),
+                    name:designName.trim(),
                     quality:upQuality,
                     ringSize:upRingSize,
                     royalties:royalty,
@@ -582,6 +587,7 @@ activeTab])
               value={shape}
               onChange={(val) => setShapeValue(val)}
             />
+            <input type="hidden" value={shape} />
           </div>
 
           <div>
@@ -757,88 +763,7 @@ activeTab])
   // -----------------------------------
   // RIGHT PANEL (shared)
   // -----------------------------------
-  const RightPanel = () => (
-    <div className="flex flex-col">
-      <div className="w-full h-[520px] bg-white rounded-3xl shadow-md">
-        {loadingDesign ? (
-          <div className="flex flex-col items-center justify-center py-10">
-            <div className="h-10 w-10 border-4 border-gray-300 border-t-gray-700 rounded-full animate-spin"></div>
-
-            <p className="mt-4 text-sm text-gray-600 text-center max-w-xs">
-              Generating design, please do not refresh/switch tabs to view it
-              here
-            </p>
-          </div>
-        ) : (
-          <img
-            className="w-full rounded-3xl h-full"
-            src={activeTab == "upload" ? upPreviewImage : aiPreviewimage}
-            alt="imagePreview"
-          />
-        )}
-      </div>
-
-      <input
-        ref={nameRef}
-        required
-        name="name"
-        type="text"
-        placeholder="Name Your Design..."
-        className="w-full mt-6 p-3 rounded-full bg-[#D9D9D9] text-black"
-      />
-
-      <div className="relative mt-4">
-        <textarea
-        ref={descriptionRef}
-          required
-          name="description"
-          placeholder="Add your product's description..."
-          className="w-full p-4 rounded-2xl bg-[#D9D9D9] text-black h-32"
-        />
-        <button
-          disabled={updating}
-          type="button"
-          value="update-details"
-          onClick={handleUpdateDetails}
-          className={`${
-            updating
-              ? "bg-gray-600 cursor-not-allowed px-8"
-              : "cursor-pointer  bg-[#3F3F3F] text-white px-6"
-          } py-2 rounded-full absolute bottom-3 right-3`}
-        >
-          {updating ? "Updating details..." : "Submit"}
-        </button>
-      </div>
-
-      <div className="flex justify-between items-center mt-10 mx-2">
-        <button className="cursor-pointer w-12 h-12 flex items-center justify-center bg-[#C3C3C3] rounded-full">
-          <img src="/assets/Share.svg" className="w-6 h-6" />
-        </button>
-
-        <button className="cursor-pointer w-12 h-12 flex items-center justify-center bg-[#C3C3C3] rounded-full mx-2">
-          <img src="/assets/wishlist.svg" className="w-6 h-6" />
-        </button>
-
-        {
-          /* BUY & POST BUTTONS  <button className="cursor-pointer flex-1 mx-2 py-3 bg-[#6B6B6B] text-white rounded-full text-center text-xs tracking-widest">
-            POST ON COMMUNITY
-          </button>*/
-        }
-
-        <button
-          value="post-on-community"
-          type="submit"
-          className={`${uploading?"bg-gray-600 cursor-not-allowed":"cursor-pointer bg-[#6B6B6B]"} flex-1 mx-2 py-3  text-white rounded-full text-center text-xs tracking-widest`}
-        >
-          {uploading?"POSTING":"POST ON COMMUNITY"}
-        </button>
-
-        <button className="cursor-pointer flex-1 mx-2 py-3 bg-[#6B6B6B] text-white rounded-full text-center text-xs tracking-widest">
-          BUY NOW
-        </button>
-      </div>
-    </div>
-  );
+  
 
   // -----------------------------------
   // PAGE RETURN
@@ -890,7 +815,13 @@ activeTab])
             
           </div>
 
-          <RightPanel />
+          <RightPanel 
+          loadingDesign={loadingDesign}
+          activeTab={activeTab}
+          upPreviewImage={upPreviewImage}
+           aiPreviewimage={aiPreviewimage}
+           handleUpdateDetails={handleUpdateDetails}
+           uploading={uploading}/>
         </form>
       )}
 
@@ -912,7 +843,12 @@ activeTab])
             </div>
           </div>
 
-          <RightPanel />
+          <RightPanel loadingDesign={loadingDesign}
+          activeTab={activeTab}
+          upPreviewImage={upPreviewImage}
+           aiPreviewimage={aiPreviewimage}
+           handleUpdateDetails={handleUpdateDetails}
+           uploading={uploading}/>
         </form>
       )}
 
@@ -951,3 +887,96 @@ activeTab])
     </div>
   );
 }
+
+const RightPanel = ({loadingDesign,activeTab,upPreviewImage,aiPreviewimage,handleUpdateDetails,uploading}) => {
+    const [designName, setDesignName] = useState("")
+    const [designDescription, setDesignDescription] = useState("")
+    const [updating, setUpdating] = useState(false) 
+
+    return(
+    
+    <div className="flex flex-col">
+      <div className="w-full h-[520px] bg-white rounded-3xl shadow-md">
+        {loadingDesign ? (
+          <div className="flex flex-col items-center justify-center py-10">
+            <div className="h-10 w-10 border-4 border-gray-300 border-t-gray-700 rounded-full animate-spin"></div>
+
+            <p className="mt-4 text-sm text-gray-600 text-center max-w-xs">
+              Generating design, please do not refresh/switch tabs to view it
+              here
+            </p>
+          </div>
+        ) : (
+          <img
+            className="w-full rounded-3xl h-full"
+            src={activeTab == "upload" ? upPreviewImage : aiPreviewimage}
+            alt="imagePreview"
+          />
+        )}
+      </div>
+
+      <input
+        // ref={nameRef}
+        onChange={(e)=>{setDesignName(e.target.value);console.log(designName)}}
+        defaultValue={designName}
+        required
+        name="name"
+        type="text"
+        placeholder="Name Your Design..."
+        className="w-full mt-6 p-3 rounded-full bg-[#D9D9D9] text-black"
+      />
+
+      <div className="relative mt-4">
+        <textarea
+         onChange={(e)=>setDesignDescription(e.target.value)}
+        // ref={descriptionRef}
+        defaultValue={designDescription}
+          required
+          name="description"
+          placeholder="Add your product's description..."
+          className="w-full p-4 rounded-2xl bg-[#D9D9D9] text-black h-32"
+        />
+        <button
+          disabled={updating}
+          type="button"
+          value="update-details"
+          onClick={()=>handleUpdateDetails(setUpdating,designDescription,designName)}
+          className={`${
+            updating
+              ? "bg-gray-600 cursor-not-allowed px-8"
+              : "cursor-pointer  bg-[#3F3F3F] text-white px-6"
+          } py-2 rounded-full absolute bottom-3 right-3`}
+        >
+          {updating ? "Updating details..." : "Submit"}
+        </button>
+      </div>
+
+      <div className="flex justify-between items-center mt-10 mx-2">
+        <button className="cursor-pointer w-12 h-12 flex items-center justify-center bg-[#C3C3C3] rounded-full">
+          <img src="/assets/Share.svg" className="w-6 h-6" />
+        </button>
+
+        <button className="cursor-pointer w-12 h-12 flex items-center justify-center bg-[#C3C3C3] rounded-full mx-2">
+          <img src="/assets/wishlist.svg" className="w-6 h-6" />
+        </button>
+
+        {
+          /* BUY & POST BUTTONS  <button className="cursor-pointer flex-1 mx-2 py-3 bg-[#6B6B6B] text-white rounded-full text-center text-xs tracking-widest">
+            POST ON COMMUNITY
+          </button>*/
+        }
+
+        <button
+          value="post-on-community"
+          type="submit"
+          className={`${uploading?"bg-gray-600 cursor-not-allowed":"cursor-pointer bg-[#6B6B6B]"} flex-1 mx-2 py-3  text-white rounded-full text-center text-xs tracking-widest`}
+        >
+          {uploading?"POSTING":"POST ON COMMUNITY"}
+        </button>
+
+        <button className="cursor-pointer flex-1 mx-2 py-3 bg-[#6B6B6B] text-white rounded-full text-center text-xs tracking-widest">
+          BUY NOW
+        </button>
+      </div>
+    </div>
+  );}

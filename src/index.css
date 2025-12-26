@@ -86,6 +86,49 @@ a, span, button, label { font-family: "Montserrat", sans-serif; }
 }
 .terms-content ul { padding: 0px 10px; }
 .terms-content ul li { list-style: circle; }
+.track-table tbody tr td {
+    background-color: transparent;
+    font-size: 14px;
+    font-weight: 400;
+    border: 0px;
+    padding: 8px 10px;
+    letter-spacing: 0.3px;
+    color: #413e3e;
+}
+.fill-check {
+    background-color: #323131;
+    color: #fff;
+    border-radius: 5px 5px;
+    display: inline-block;
+    padding: 3px 4px;
+    font-size: 20px;
+    line-height: 1;
+    position: relative;
+}
+.fill-check:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 1px;
+    height: 100%;
+    background-color: #222;
+    bottom: -26px;
+    margin: auto;
+}
+.no-fill {
+    background-color: #d8d8d8;
+    border-radius: 5px 5px;
+    display: inline-block;
+    padding: 3px 4px;
+    font-size: 20px;
+    line-height: 1;
+    width: 30px;
+    height: 29px;
+}
+.track-table tbody tr:last-child td:last-child .fill-check:before { background: transparent; }
+
+
 
 
 .input-style {

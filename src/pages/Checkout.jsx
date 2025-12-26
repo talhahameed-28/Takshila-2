@@ -84,7 +84,11 @@ function Checkout(){
                 withCredentials: true,
                 }
             );
-            console.log(data)
+            if(data.success){
+                window.location.href=data.data.payment_session.url;
+            }else{
+                toast.error("Couldn't process your request")
+            }
         } catch (error) {
             toast.error("Some error occurred")
             console.log(error)

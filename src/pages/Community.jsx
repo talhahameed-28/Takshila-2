@@ -116,7 +116,12 @@ useEffect(() => {
         const { data } = await axios.get(
           `${
             import.meta.env.VITE_BASE_URL
-          }/api/product?per_page=9&page=${currentPage}`
+          }/api/product?per_page=9&page=${currentPage}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
         );
         console.log(data);
         if (data.success) {
@@ -134,7 +139,12 @@ useEffect(() => {
     try {
       axios.defaults.withCredentials = true;
       const { data } = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/api/product/${id}`
+        `${import.meta.env.VITE_BASE_URL}/api/product/${id}`,
+        {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
       );
       console.log(data);
       setSelectedProductId(id);

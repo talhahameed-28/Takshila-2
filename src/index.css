@@ -57,6 +57,12 @@ a, span, button, label { font-family: "Montserrat", sans-serif; }
     height: 32px;
 }
 .slick-slider .slick-arrow:before { font-size: 35px; }
+.order-info tr td {
+    padding: 7px 13px;
+    border-bottom: 1px solid #cbcbcb;
+}
+.order-info tr:nth-child(odd) {  background: #d6d1cc; }
+
 
 
 

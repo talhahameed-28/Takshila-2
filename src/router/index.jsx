@@ -18,6 +18,8 @@ import Shippingpolicy from "../pages/Shippingpolicy"
 import TermConditions from "../pages/TermsConditions"
 import Faqs from "../pages/Faqs";
 import Checkout from "../pages/Checkout";
+import OrderSuccess from "../pages/OrderSuccess";
+import OrderCancel from "../pages/OrderCancel";
 
 import ScrollToTop from "../utils/ScrollToTop";
 const MainRoutes = ({setIsMobileMenuOpen,setModalOpen,setModalType,setShowProfileMenu}) => {
@@ -49,7 +51,9 @@ const MainRoutes = ({setIsMobileMenuOpen,setModalOpen,setModalType,setShowProfil
                     <Route path={ROUTES.DESIGNSTUDIO} element={<DesignStudio />} />
                     <Route path={ROUTES.WISHLIST} element={<Wishlist />} />
                     <Route path={ROUTES.ORDER} element={<Orders />} />
-                    <Route path={ROUTES.CHECKOUT} element={<Checkout/>}></Route>
+                    <Route path={ROUTES.CHECKOUT} element={<Checkout/>}/>
+                    <Route path={ROUTES.ORDERSUCCESS} element={<OrderSuccess/>}/>
+                    <Route path={ROUTES.ORDERCANCEL} element={<OrderCancel/>}/>
                 </Route>
 
             </Routes>

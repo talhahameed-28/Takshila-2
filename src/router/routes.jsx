@@ -18,5 +18,7 @@ export const ROUTES = {
     REFUNDPOLICY: '/refund-policy',
     SHIPPINGPOLICY: '/shipping-policy',
     FAQS:'/faqs',
-    CHECKOUT:'/checkout'
+    CHECKOUT:'/checkout',
+    ORDERSUCCESS:'/order-success',
+    ORDERCANCEL:'/order-cancel'
 }

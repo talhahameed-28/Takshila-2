@@ -510,7 +510,7 @@ activeTab])
         {/* GOLD OPTIONS */}
         <h3 className="font-semibold tracking-wide mb-3">Gold Options</h3>
 
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <p className="text-sm mb-2">Type</p>
 
@@ -580,7 +580,7 @@ activeTab])
           Diamond Options
         </h3>
 
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <p className="text-sm mb-2">Shape</p>
             <ShapeDropdown
@@ -649,16 +649,13 @@ activeTab])
               {/* Labels */}
               <div className="mt-1 grid grid-cols-3 text-center text-sm text-white">
                 <div>
-                  
                   <div>Good</div>
                 </div>
                 <div>
-                  
                   <div>Premium</div>
                 </div>
 
                 <div>
-                  
                   <div>Excellent</div>
                 </div>
               </div>
@@ -667,7 +664,7 @@ activeTab])
         </div>
 
         {/* CARATS */}
-        <div className="grid grid-cols-3 gap-6 mt-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <p className="text-sm mb-2">Center Stone Carat</p>
 
@@ -781,25 +778,39 @@ activeTab])
       </section>
 
       {/* TABS */}
-      <div className="flex mt-8 bg-white rounded-full shadow-md overflow-hidden w-[420px] h-[48px]">
+      <div
+        className="
+    flex mt-8 bg-white rounded-full shadow-md overflow-hidden
+    w-[300px] h-[40px]
+    md:w-[420px] md:h-[48px]
+  "
+      >
         <button
           onClick={() => setActiveTab("ai")}
-          className={`flex-1 text-sm tracking-widest ${
-            activeTab === "ai"
-              ? "bg-black text-white"
-              : "bg-white text-gray-500"
-          }`}
+          className={`
+      flex-1
+      text-xs md:text-sm
+      tracking-wide md:tracking-widest
+      transition-colors
+      ${activeTab === "ai" ? "bg-black text-white" : "bg-white text-gray-500"}
+    `}
         >
           AI DESIGNER
         </button>
 
         <button
           onClick={() => setActiveTab("upload")}
-          className={`flex-1 text-sm tracking-widest ${
-            activeTab === "upload"
-              ? "bg-black text-white"
-              : "bg-white text-gray-500"
-          }`}
+          className={`
+      flex-1
+      text-xs md:text-sm
+      tracking-wide md:tracking-widest
+      transition-colors
+      ${
+        activeTab === "upload"
+          ? "bg-black text-white"
+          : "bg-white text-gray-500"
+      }
+    `}
         >
           ADD YOUR DESIGN
         </button>
@@ -807,48 +818,71 @@ activeTab])
 
       {/* AI DESIGNER MODE */}
       {activeTab === "ai" && (
-        <form onSubmit={handleAiDesignUpload} encType="multipart/form-data" accept="image/*" className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-10 mt-10 px-6">
+        <form
+          onSubmit={handleAiDesignUpload}
+          encType="multipart/form-data"
+          accept="image/*"
+          className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-10 mt-10 px-6"
+        >
           <div className="bg-[#6C6C6C] rounded-3xl p-8 text-white">
             <LeftPanelTop mode="ai" />
-
-            
-            
           </div>
 
-          <RightPanel 
-          loadingDesign={loadingDesign}
-          activeTab={activeTab}
-          upPreviewImage={upPreviewImage}
-           aiPreviewimage={aiPreviewimage}
-           handleUpdateDetails={handleUpdateDetails}
-           uploading={uploading}/>
+          <RightPanel
+            loadingDesign={loadingDesign}
+            activeTab={activeTab}
+            upPreviewImage={upPreviewImage}
+            aiPreviewimage={aiPreviewimage}
+            handleUpdateDetails={handleUpdateDetails}
+            uploading={uploading}
+          />
         </form>
       )}
 
       {/* UPLOAD MODE */}
       {activeTab === "upload" && (
-        <form onSubmit={handleMyDesignUpload} encType="multipart/form-data" accept="image/*" className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-10 mt-10 px-6">
+        <form
+          onSubmit={handleMyDesignUpload}
+          encType="multipart/form-data"
+          accept="image/*"
+          className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-10 mt-10 px-6"
+        >
           <div className="bg-[#6C6C6C] rounded-3xl p-8 text-white">
             <LeftPanelTop mode="upload" />
 
             {/* UPLOAD BOX */}
-            <div onClick={handleClick} className="cursor-pointer mt-6 bg-[#4A4A4A] w-full h-48 rounded-2xl flex flex-col items-center justify-center">
-              <input name="images[]" multiple onChange={handleChange} type="file" ref={uploadRef} className="hidden" />
+            <div
+              onClick={handleClick}
+              className="cursor-pointer mt-6 bg-[#4A4A4A] w-full h-48 rounded-2xl flex flex-col items-center justify-center"
+            >
+              <input
+                name="images[]"
+                multiple
+                onChange={handleChange}
+                type="file"
+                ref={uploadRef}
+                className="hidden"
+              />
               <div className="w-12 h-12 bg-[#D9D9D9] rounded-full flex items-center justify-center text-black text-3xl mb-4">
                 +
               </div>
-              <button type="button" className="cursor-pointer px-10 py-2 bg-black text-white rounded-full tracking-wide">
+              <button
+                type="button"
+                className="cursor-pointer px-10 py-2 bg-black text-white rounded-full tracking-wide"
+              >
                 UPLOAD
               </button>
             </div>
           </div>
 
-          <RightPanel loadingDesign={loadingDesign}
-          activeTab={activeTab}
-          upPreviewImage={upPreviewImage}
-           aiPreviewimage={aiPreviewimage}
-           handleUpdateDetails={handleUpdateDetails}
-           uploading={uploading}/>
+          <RightPanel
+            loadingDesign={loadingDesign}
+            activeTab={activeTab}
+            upPreviewImage={upPreviewImage}
+            aiPreviewimage={aiPreviewimage}
+            handleUpdateDetails={handleUpdateDetails}
+            uploading={uploading}
+          />
         </form>
       )}
 
@@ -861,18 +895,63 @@ activeTab])
             </h2>
 
             <div className="space-y-2 text-sm text-gray-700">
-              <p>Quality Cost:+${activeTab==="ai"?aiPriceBreakdown.breakdown.qualityCost:upPriceBreakdown.breakdown.qualityCost}</p>
-              <p>Metal cost: +${activeTab==="ai"?aiPriceBreakdown.breakdown.metalCost:upPriceBreakdown.breakdown.metalCost}</p>
-              <p>Working charges: +${activeTab==="ai"?aiPriceBreakdown.breakdown.workingChargesCost:upPriceBreakdown.breakdown.workingChargesCost}</p>
-              <p>Setting cost: +${activeTab==="ai"?aiPriceBreakdown.breakdown.diamondSettingCost:upPriceBreakdown.breakdown.diamondSettingCost}</p>
-              <p>Certification: +${activeTab==="ai"?aiPriceBreakdown.breakdown.certificationCost:upPriceBreakdown.breakdown.certificationCost}</p>
-              <p>Shipping: +${activeTab==="ai"?aiPriceBreakdown.breakdown.shipmentCost:upPriceBreakdown.breakdown.shipmentCost}</p>
-              <p>Designer royalties: +${activeTab==="ai"?aiPriceBreakdown.royalties:upPriceBreakdown.royalties}</p>
+              <p>
+                Quality Cost:+$
+                {activeTab === "ai"
+                  ? aiPriceBreakdown.breakdown.qualityCost
+                  : upPriceBreakdown.breakdown.qualityCost}
+              </p>
+              <p>
+                Metal cost: +$
+                {activeTab === "ai"
+                  ? aiPriceBreakdown.breakdown.metalCost
+                  : upPriceBreakdown.breakdown.metalCost}
+              </p>
+              <p>
+                Working charges: +$
+                {activeTab === "ai"
+                  ? aiPriceBreakdown.breakdown.workingChargesCost
+                  : upPriceBreakdown.breakdown.workingChargesCost}
+              </p>
+              <p>
+                Setting cost: +$
+                {activeTab === "ai"
+                  ? aiPriceBreakdown.breakdown.diamondSettingCost
+                  : upPriceBreakdown.breakdown.diamondSettingCost}
+              </p>
+              <p>
+                Certification: +$
+                {activeTab === "ai"
+                  ? aiPriceBreakdown.breakdown.certificationCost
+                  : upPriceBreakdown.breakdown.certificationCost}
+              </p>
+              <p>
+                Shipping: +$
+                {activeTab === "ai"
+                  ? aiPriceBreakdown.breakdown.shipmentCost
+                  : upPriceBreakdown.breakdown.shipmentCost}
+              </p>
+              <p>
+                Designer royalties: +$
+                {activeTab === "ai"
+                  ? aiPriceBreakdown.royalties
+                  : upPriceBreakdown.royalties}
+              </p>
 
               <hr className="my-3" />
 
-              <p className="font-semibold">Final Price: ${activeTab==="ai"?aiPriceBreakdown.totalPriceWithRoyalties:upPriceBreakdown.totalPriceWithRoyalties}</p>
-              <p className="font-semibold">Commission: ${activeTab==="ai"?aiPriceBreakdown.commission:upPriceBreakdown.commission}</p>
+              <p className="font-semibold">
+                Final Price: $
+                {activeTab === "ai"
+                  ? aiPriceBreakdown.totalPriceWithRoyalties
+                  : upPriceBreakdown.totalPriceWithRoyalties}
+              </p>
+              <p className="font-semibold">
+                Commission: $
+                {activeTab === "ai"
+                  ? aiPriceBreakdown.commission
+                  : upPriceBreakdown.commission}
+              </p>
             </div>
 
             <button

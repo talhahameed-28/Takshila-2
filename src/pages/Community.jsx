@@ -437,7 +437,7 @@ useEffect(() => {
       {/* MODAL */}
       {selectedProductId && (
         <>
-          <div className="fixed inset-0 flex items-end md:items-center justify-center z-[50]">
+          <div className="fixed inset-0 flex items-end md:items-center justify-center z-[50] pt-[72px] md:pt-0">
             {/* BACKDROP */}
             <div
               className="absolute inset-0 bg-black/40 backdrop-blur-md animate-blurFade z-[40]"
@@ -448,18 +448,18 @@ useEffect(() => {
             <div
               className="
           relative w-full max-w-7xl mx-auto
-          max-h-[85vh] overflow-y-auto
+          h-[calc(100vh-72px)] md:max-h-[85vh] overflow-y-auto
           rounded-t-3xl md:rounded-3xl
           bg-[#E5E1DA] text-[#1a1a1a] font-serif
           border border-[#dcdcdc] shadow-2xl
-          p-6 md:p-10 mt-32 mb-20
+          p-6 pt-10 md:p-10 mt-0 mb-0
           z-[45] animate-slideUp
         "
             >
               {/* CLOSE */}
               <button
                 onClick={() => setSelectedProductId(null)}
-                className="absolute top-6 right-6 text-black/50 hover:text-black text-2xl"
+                className="absolute top-4 right-4 md:top-6 md:right-6 z-50 text-black/50 hover:text-black text-2xl"
               >
                 ✕
               </button>
@@ -476,7 +476,7 @@ useEffect(() => {
                     Gold Options
                   </h3>
 
-                  <div className="grid grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* GOLD TYPE */}
                     <div>
                       <p className="text-sm mb-2">Type</p>
@@ -549,7 +549,7 @@ useEffect(() => {
                     Diamond Options
                   </h3>
 
-                  <div className="grid grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* SHAPE */}
                     <div>
                       <p className="text-sm mb-2">Shape</p>
@@ -651,14 +651,19 @@ useEffect(() => {
                     src={selectedProductDetails.image}
                     className={`
                         w-full h-full object-cover
-                        ${isLoggedIn?"transition duration-300 group-hover:brightness-75":""} 
+                        ${
+                          isLoggedIn
+                            ? "transition duration-300 group-hover:brightness-75"
+                            : ""
+                        } 
                       `}
                   />
 
                   {/* LIKE BUTTON — BOTTOM RIGHT */}
-                  {isLoggedIn && (<button
-                    onClick={handleLike}
-                    className="
+                  {isLoggedIn && (
+                    <button
+                      onClick={handleLike}
+                      className="
                       absolute bottom-4 right-4
                       flex items-center gap-2
                       px-3 py-1.5
@@ -671,8 +676,8 @@ useEffect(() => {
                       opacity-0 group-hover:opacity-100
                       hover:bg-black/80
                     "
-                  >
-                    {/* <img
+                    >
+                      {/* <img
                       src="/assets/heart.svg"
                       alt="Like"
                       className={`w-4 h-4 text-red-700  transition ${
@@ -680,30 +685,31 @@ useEffect(() => {
                       }`
                     }
                     /> */}
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="currentColor"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      stroke="white"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className={` lucide lucide-heart-icon lucide-heart transition ${
-                        selectedProductDetails.user_liked
-                          ? " text-red-700 opacity-100"
-                          : "text-black opacity-70"
-                      }`}
-                    >
-                      <path
-                        d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
                         fill="currentColor"
-                      />{" "}
-                    </svg>
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        stroke="white"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className={` lucide lucide-heart-icon lucide-heart transition ${
+                          selectedProductDetails.user_liked
+                            ? " text-red-700 opacity-100"
+                            : "text-black opacity-70"
+                        }`}
+                      >
+                        <path
+                          d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"
+                          fill="currentColor"
+                        />{" "}
+                      </svg>
 
-                    <span>{selectedProductDetails.likes_count}</span>
-                  </button>)}
+                      <span>{selectedProductDetails.likes_count}</span>
+                    </button>
+                  )}
                 </div>
 
                 {/* ================= BOTTOM LEFT — COMMENTS ================= */}
@@ -713,7 +719,12 @@ useEffect(() => {
                   {!isLoggedIn && (
                     <p className="text-sm opacity-80">
                       Please{" "}
-                      <span onClick={()=>{handleOpenModal("login")}} className="underline cursor-pointer hover:text-blue-400">
+                      <span
+                        onClick={() => {
+                          handleOpenModal("login");
+                        }}
+                        className="underline cursor-pointer hover:text-blue-400"
+                      >
                         login
                       </span>{" "}
                       to leave a comment.
@@ -786,10 +797,18 @@ useEffect(() => {
                     </button>
 
                     <button
-                      onClick={()=>{isLoggedIn?handleAddToWishlist():handleOpenModal("login")}}
-                      className={`${adding?"bg-gray-600 cursor-not-allowed":"cursor-pointer bg-[#6B6B6B]"} ml-auto px-12 py-3  text-white rounded-full text-xs tracking-widest`}
+                      onClick={() => {
+                        isLoggedIn
+                          ? handleAddToWishlist()
+                          : handleOpenModal("login");
+                      }}
+                      className={`${
+                        adding
+                          ? "bg-gray-600 cursor-not-allowed"
+                          : "cursor-pointer bg-[#6B6B6B]"
+                      } ml-auto px-12 py-3  text-white rounded-full text-xs tracking-widest`}
                     >
-                      {adding?"Processing...":"BUY NOW"}
+                      {adding ? "Processing..." : "BUY NOW"}
                     </button>
                   </div>
                 </div>

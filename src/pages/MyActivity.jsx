@@ -286,7 +286,7 @@ export default function MyActivity() {
 
       {/* ======================= MODAL ========================== */}
       {selectedProduct && customData && (
-        <div className="fixed inset-0 flex items-end md:items-center justify-center z-[50]">
+        <div className="fixed inset-0 flex items-end md:items-center justify-center z-[50] pt-[72px] md:pt-0">
           <div
             className="absolute inset-0 bg-black/40 backdrop-blur-md animate-blurFade z-[40]"
             onClick={() => setSelectedProduct(null)}
@@ -295,17 +295,17 @@ export default function MyActivity() {
           <div
             className="
               relative w-full max-w-7xl mx-auto
-              max-h-[85vh] overflow-y-auto
+              h-[calc(100vh-72px)] md:max-h-[85vh] overflow-y-auto
               rounded-t-3xl md:rounded-3xl
               bg-[#E5E1DA] text-[#1a1a1a] font-serif
               border border-[#dcdcdc] shadow-2xl
-              p-6 md:p-10 mt-32 mb-20
+              p-6 md:p-10 mt-0 mb-0
               z-[45] animate-slideUp
             "
           >
             <button
               onClick={() => setSelectedProduct(null)}
-              className="absolute top-6 right-6 text-black/50 hover:text-black text-2xl"
+              className="absolute top-4 right-4 md:top-6 md:right-6 z-50 text-black/50 hover:text-black text-2xl"
             >
               ✕
             </button>
@@ -321,7 +321,7 @@ export default function MyActivity() {
                   Gold Options
                 </h3>
 
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <p className="text-sm mb-2">Type</p>
                     <div className="flex gap-3 text-xs capitalize">
@@ -395,7 +395,7 @@ export default function MyActivity() {
                   Diamond Options
                 </h3>
 
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* 🔥 SHAPE DROPDOWN WITH ICONS HERE */}
                   <div>
                     <p className="text-sm mb-2">Shape</p>

@@ -121,7 +121,7 @@ function OrderSuccess(){
 
                                                         <tr>
                                                             <td> Additional Details </td>
-                                                            <td className="text-end"> {order?.customer_info?.additional_details} </td>
+                                                            <td className="text-end"> {order?.additional_details} </td>
                                                         </tr>
                                                     </table>
                                               </div>

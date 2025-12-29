@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { useWishlist } from "../context/WishlistContext";
+// import { useWishlist } from "../context/WishlistContext";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
@@ -81,13 +81,13 @@ export default function Community({handleOpenModal}) {
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [selectedProductDetails, setSelectedProductDetails] = useState({});
   // Customization states
-  const [customData, setCustomData] = useState(null);
+  const [customData, setCustomData] = useState({});
 
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(0);
   const [adding, setAdding] = useState(false)
   // ⭐ Wishlist Context
-  const { wishlistItems, toggleWishlist } = useWishlist();
+  // const { wishlistItems, toggleWishlist } = useWishlist();
 
   /* Lock scroll when modal opens */
   useEffect(() => {
@@ -106,6 +106,8 @@ useEffect(() => {
       quality: selectedProductDetails.meta_data.quality,
       centerStoneCarat: selectedProductDetails.meta_data.centerStoneCarat,
       totalCaratWeight: selectedProductDetails.meta_data.totalCaratWeight,
+      price:selectedProductDetails.price,
+      commission:selectedProductDetails.meta_data.commission
     });
   }
 }, [selectedProductDetails]);
@@ -204,6 +206,37 @@ useEffect(() => {
   //   };
   // }, [selected, goldType, goldKarat, quality, totalCaratWeight]);
 
+
+    useEffect(() => {
+
+      
+  const getBreakdown = async () => {
+        try {
+          axios.defaults.withCredentials = true;
+          const { data } = await axios.post(
+            `${import.meta.env.VITE_BASE_URL}/api/calculate/price`,
+            customData
+          );
+
+          if (data.success) {
+             setCustomData(prev=>({...prev,commission:data.data.commission,price:data.data.totalPriceWithRoyalties}));            
+          }else{toast.error("Couldn't process your request")}
+        } catch (error) {
+          console.log(error);
+        }
+      };
+
+
+    if( Object.keys(customData).length === 0) return;
+      // debounce
+      const timer = setTimeout(() => {
+        getBreakdown();
+      }, 1000);
+
+  
+  return () => clearTimeout(timer);
+}, [customData]);
+
   const qualityLabel = (q) =>
     q >= 76 ? "Excellent" : q >= 41 ? "Premium" : "Good";
 
@@ -270,6 +303,7 @@ useEffect(() => {
     const handleAddToWishlist=async()=>{
       setAdding(true)
       try {
+        if(customData.totalCaratWeight<customData.centerStoneCarat){toast.error("Center stone weight cant be greater than total weight");return;}
         axios.defaults.withCredentials=true
         console.log(customData)
         const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/wishlist/add`,
@@ -355,7 +389,7 @@ useEffect(() => {
       <main className="flex-grow px-6 md:px-12 lg:px-20 pb-24">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
           {jewelleryData.map((item) => {
-            const isWishlisted = wishlistItems.some((w) => w.id === item.id);
+            // const isWishlisted = wishlistItems.some((w) => w.id === item.id);
 
             return (
               <div
@@ -395,7 +429,7 @@ useEffect(() => {
 
                     <div className="flex items-center gap-3">
                       {/* ❤️ Wishlist Button */}
-                      <button
+                      {/* <button
                         onClick={(e) => {
                           e.stopPropagation();
                           toggleWishlist(item);
@@ -412,7 +446,7 @@ useEffect(() => {
                           alt="wishlist"
                           className="w-5 h-5"
                         />
-                      </button>
+                      </button> */}
 
                       {/* 🛒 Buy Now Button (opens modal only) */}
                       <button
@@ -540,9 +574,11 @@ useEffect(() => {
                     }
                     className="bg-[#D9D9D9] text-black w-52 h-11 px-4 rounded-full"
                   >
-                    {[...Array(20)].map((_, i) => (
-                      <option key={i}>{i + 4}</option>
-                    ))}
+                      {Array.from({ length: 21 }, (_, i) => 3 + i * 0.5).map((size) => (
+                        <option key={size} value={size.toFixed(1)}>
+                          {size.toFixed(1)}
+                        </option>
+                      ))}
                   </select>
 
                   <h3 className="font-semibold tracking-wide mt-6 mb-3">
@@ -637,9 +673,9 @@ useEffect(() => {
 
                   {/* PRICE / COMMISSION */}
                   <div className="flex justify-between bg-[#D9D9D9] text-black p-4 rounded-lg text-xs mt-6">
-                    <p>Price: ${selectedProductDetails.price}</p>
+                    <p>Price: ${customData?.price}</p>
                     <p>
-                      Commission: ${selectedProductDetails.meta_data.commission}
+                      Commission: ${customData?.commission}
                     </p>
                   </div>
                 </div>

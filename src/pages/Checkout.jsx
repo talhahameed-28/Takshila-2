@@ -37,7 +37,8 @@ function Checkout(){
                     withCredentials: true,
                 }
             );
-            if(productData.success){
+            console.log(productData,userData)
+            if(userData.id){
                 setProductInfo(productData.data.wishlist_items[0])
                 setDesignerInfo(userData)
                 toast.success("Product loaded")
@@ -67,9 +68,10 @@ function Checkout(){
             const customer=(({firstName,lastName,email})=>({firstName,lastName,email}))(payload)
             const shipping=(({address,city,state,country,zip})=>({address,city,state,country,zip}))(payload)
             console.log(customer)
+            console.log(productInfo)
             const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/order/place`,
                 { 
-                    product_id:productInfo.product.id,
+                    cart_id:productInfo.id,
                     customer,
                     shipping,
                     same_address:same_address=="on"?true:false,

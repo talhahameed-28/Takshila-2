@@ -1,30 +1,40 @@
+// VideoLoader.jsx
 import { useEffect, useRef } from "react";
 
 const VideoLoader = ({ onFinish }) => {
-  const videoRef = useRef(null);
+  const imgRef = useRef(null);
 
   useEffect(() => {
-    const video = videoRef.current;
+    const hasSeenLoader = localStorage.getItem("hasSeenHomeLoader");
+    if (hasSeenLoader) {
+      onFinish();
+      return;
+    }
 
-    const handleEnded = () => {
-      onFinish(); // hide loader when video ends
+    const img = imgRef.current;
+    const startTime = performance.now();
+
+    const handleLoad = () => {
+      const loadTime = performance.now() - startTime;
+      const minDuration = 1200;
+      const remaining = Math.max(minDuration - loadTime, 0);
+
+      setTimeout(() => {
+        localStorage.setItem("hasSeenHomeLoader", "true");
+        onFinish();
+      }, remaining);
     };
 
-    video.addEventListener("ended", handleEnded);
-
-    return () => {
-      video.removeEventListener("ended", handleEnded);
-    };
+    img.addEventListener("load", handleLoad);
+    return () => img.removeEventListener("load", handleLoad);
   }, [onFinish]);
 
   return (
     <div className="loader-container">
-      <video
-        ref={videoRef}
-        src="/assets/loader.mp4" // 🔥 Updated path
-        autoPlay
-        muted
-        playsInline
+      <img
+        ref={imgRef}
+        src="/assets/loader.gif"
+        alt="Loading..."
         className="loader-video"
       />
     </div>

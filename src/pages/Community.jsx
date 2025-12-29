@@ -67,6 +67,8 @@ const ShapeDropdown = ({ value, onChange }) => {
 
 
 
+
+
 export default function Community({handleOpenModal}) {
   const navigate=useNavigate()
 
@@ -86,6 +88,8 @@ export default function Community({handleOpenModal}) {
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(0);
   const [adding, setAdding] = useState(false)
+  const [commentsList, setCommentsList] = useState([]);
+  const [loadingComments, setLoadingComments] = useState(false);
   // ⭐ Wishlist Context
   // const { wishlistItems, toggleWishlist } = useWishlist();
 
@@ -156,6 +160,41 @@ useEffect(() => {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    if (!selectedProductId) return;
+
+    const fetchComments = async () => {
+      try {
+        setLoadingComments(true);
+
+        const { data } = await axios.get(
+          `${
+            import.meta.env.VITE_BASE_URL
+          }/api/product/${selectedProductId}/reviews`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        if (data.success) {
+          setCommentsList(data.data.reviews || []);
+        } else {
+          setCommentsList([]);
+        }
+      } catch (error) {
+        console.log(error);
+        setCommentsList([]);
+      } finally {
+        setLoadingComments(false);
+      }
+    };
+
+    fetchComments();
+  }, [selectedProductId]);
+
 
   const goToPage = (p) => {
     if (p >= 1 && p <= totalPages) setCurrentPage(p);
@@ -291,8 +330,23 @@ useEffect(() => {
     },withCredentials: true
   })
   console.log(data)
-  if(data.success) toast.success("Review added successfully")
-    else toast.error("Couldn't process request")
+  if (data.success) {
+    toast.success("Review added successfully");
+
+    setCommentsList((prev) => [
+      {
+        id: Date.now(),
+        review: comment,
+        rating,
+        user: { name: "You" },
+        created_at: new Date(),
+      },
+      ...prev,
+    ]);
+
+    setComment("");
+    setRating(0);
+  } else toast.error("Couldn't process request");
       } catch (error) {
         console.log(error)
         toast.error("Some error occurred")
@@ -574,11 +628,13 @@ useEffect(() => {
                     }
                     className="bg-[#D9D9D9] text-black w-52 h-11 px-4 rounded-full"
                   >
-                      {Array.from({ length: 21 }, (_, i) => 3 + i * 0.5).map((size) => (
+                    {Array.from({ length: 21 }, (_, i) => 3 + i * 0.5).map(
+                      (size) => (
                         <option key={size} value={size.toFixed(1)}>
                           {size.toFixed(1)}
                         </option>
-                      ))}
+                      )
+                    )}
                   </select>
 
                   <h3 className="font-semibold tracking-wide mt-6 mb-3">
@@ -674,9 +730,7 @@ useEffect(() => {
                   {/* PRICE / COMMISSION */}
                   <div className="flex justify-between bg-[#D9D9D9] text-black p-4 rounded-lg text-xs mt-6">
                     <p>Price: ${customData?.price}</p>
-                    <p>
-                      Commission: ${customData?.commission}
-                    </p>
+                    <p>Commission: ${customData?.commission}</p>
                   </div>
                 </div>
 
@@ -847,6 +901,54 @@ useEffect(() => {
                       {adding ? "Processing..." : "BUY NOW"}
                     </button>
                   </div>
+                </div>
+              </div>
+
+              {/* ================= COMMENTS LIST ================= */}
+              <div className="mt-14 bg-white rounded-3xl p-8 shadow-md">
+                <h3 className="text-lg font-semibold tracking-wide mb-6">
+                  Community Reviews
+                </h3>
+
+                {loadingComments && (
+                  <p className="text-sm text-gray-500">Loading comments...</p>
+                )}
+
+                {!loadingComments && commentsList.length === 0 && (
+                  <p className="text-sm text-gray-500">
+                    No comments yet. Be the first to review this design.
+                  </p>
+                )}
+
+                <div className="space-y-6">
+                  {commentsList.map((c) => (
+                    <div
+                      key={c.id}
+                      className="border-b border-gray-200 pb-4 last:border-b-0"
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <p className="font-medium text-sm">
+                          {c.user?.name || "Anonymous"}
+                        </p>
+
+                        <div className="flex text-yellow-400 text-sm">
+                          {Array.from({ length: c.rating }).map((_, i) => (
+                            <span key={i}>★</span>
+                          ))}
+                        </div>
+                      </div>
+
+                      <p className="text-sm text-gray-700 leading-relaxed">
+                        {c.review}
+                      </p>
+
+                      {c.created_at && (
+                        <p className="text-xs text-gray-400 mt-1">
+                          {new Date(c.created_at).toLocaleDateString()}
+                        </p>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </div>
 

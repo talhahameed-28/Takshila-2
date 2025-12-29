@@ -19,6 +19,7 @@ const DIAMOND_SHAPES = [
   { name: "Heart", icon: "/assets/shapes/heart.png" },
 ];
 
+
 // ================= DROPDOWN COMPONENT =================
 const ShapeDropdown = ({ value, onChange }) => {
   const [open, setOpen] = useState(false);
@@ -79,6 +80,19 @@ export default function MyActivity() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [customData, setCustomData] = useState(null);
 
+  const [editingField, setEditingField] = useState(null);
+  // possible values: "name" | "description" | null
+  const [editingName, setEditingName] = useState(false);
+  const [editingDescription, setEditingDescription] = useState(false);
+
+  const [editData, setEditData] = useState({
+    name: "",
+    description: "",
+  });
+  const [saving, setSaving] = useState(false);
+  const nameRef = React.useRef(null);
+  const descRef = React.useRef(null);
+
   // INIT CUSTOM DATA WHEN MODAL OPENS
   useEffect(() => {
     if (selectedProduct?.meta_data) {
@@ -93,6 +107,59 @@ export default function MyActivity() {
       });
     }
   }, [selectedProduct]);
+
+  useEffect(() => {
+    if (selectedProduct) {
+      setEditData({
+        name: selectedProduct.name || "",
+        description: selectedProduct.description || "",
+      });
+    }
+  }, [selectedProduct]);
+
+  const handleSaveEdit = async () => {
+    if (!editData.name?.trim()) {
+      toast.error("Product name cannot be empty");
+      return;
+    }
+
+    try {
+      setSaving(true);
+
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/product/${selectedProduct.id}`,
+        {
+          name: editData.name,
+          description: editData.description,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (data.success) {
+        toast.success("Changes saved");
+
+        setSelectedProduct((prev) => ({
+          ...prev,
+          name: editData.name,
+          description: editData.description,
+        }));
+
+        setDesigns((prev) =>
+          prev.map((p) =>
+            p.id === selectedProduct.id ? { ...p, name: editData.name } : p
+          )
+        );
+      }
+    } catch (e) {
+      toast.error("Update failed");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   // ================== FETCH USER DESIGNS ==================
   useEffect(() => {
@@ -506,15 +573,83 @@ export default function MyActivity() {
 
               <div className="flex flex-col justify-between">
                 <div>
-                  <h2 className="text-2xl font-semibold tracking-wide">
-                    {selectedProduct.name}
-                  </h2>
-                  <p className="text-sm text-gray-600 mt-3 leading-relaxed">
-                    {selectedProduct.description}
-                  </p>
+                  {/* NAME */}
+                  <div className="flex items-center gap-3">
+                    {editingName ? (
+                      <input
+                        autoFocus
+                        value={editData.name}
+                        onChange={(e) =>
+                          setEditData((prev) => ({
+                            ...prev,
+                            name: e.target.value,
+                          }))
+                        }
+                        className="text-2xl font-semibold tracking-wide bg-transparent border-b border-gray-400 outline-none"
+                        onBlur={() => setEditingName(false)}
+                      />
+                    ) : (
+                      <h2 className="text-2xl font-semibold tracking-wide">
+                        {editData.name}
+                      </h2>
+                    )}
+
+                    <span
+                      className="text-gray-400 text-lg cursor-pointer"
+                      onClick={() => {
+                        setEditingName(true);
+                        setEditingDescription(false);
+                      }}
+                    >
+                      ✎
+                    </span>
+                  </div>
+
+                  {/* DESCRIPTION */}
+                  <div className="mt-4">
+                    {editingDescription ? (
+                      <textarea
+                        autoFocus
+                        value={editData.description}
+                        onChange={(e) =>
+                          setEditData((prev) => ({
+                            ...prev,
+                            description: e.target.value,
+                          }))
+                        }
+                        className="w-full text-sm text-gray-600 leading-relaxed bg-transparent border border-gray-300 rounded-md p-2 outline-none resize-none"
+                        rows={4}
+                        onBlur={() => setEditingDescription(false)}
+                      />
+                    ) : (
+                      <p className="text-sm text-gray-600 leading-relaxed">
+                        {editData.description}
+                      </p>
+                    )}
+
+                    <span
+                      className="text-gray-400 text-sm cursor-pointer mt-1 inline-block"
+                      onClick={() => {
+                        setEditingDescription(true);
+                        setEditingName(false);
+                      }}
+                    >
+                      ✎ Edit description
+                    </span>
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-4 mt-10">
+                  <button
+                    disabled={saving}
+                    onClick={handleSaveEdit}
+                    className={`px-12 py-3 rounded-full text-xs tracking-widest text-white ${
+                      saving ? "bg-gray-400" : "bg-[#2E4B45]"
+                    }`}
+                  >
+                    {saving ? "SAVING..." : "SAVE CHANGES"}
+                  </button>
+
                   <button
                     disabled={uploading}
                     onClick={handleCommunityStatus}

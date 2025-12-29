@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState, useEffect, useRef,useLayoutEffect } from "react";
+import React, { useState, useEffect, useRef,useLayoutEffect, forwardRef } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -77,23 +77,23 @@ export default function DesignStudio() {
   const descriptionRef = useRef(null)
 //-----------------------------------------------------//
 
-  const handleScroll=()=>{
-    const y = window.scrollY;
-    scrollRef.current = y;}
+//   const handleScroll=()=>{
+//     const y = window.scrollY;
+//     scrollRef.current = y;}
 
-const scrollRef = useRef(0); 
-useLayoutEffect(() => { 
-  // store current scroll before render paints 
-  window.addEventListener("scroll",handleScroll)
+// const scrollRef = useRef(0); 
+// useLayoutEffect(() => { 
+//   // store current scroll before render paints 
+//   window.addEventListener("scroll",handleScroll)
 
-  return ()=>{window.removeEventListener("scroll",handleScroll)}
+//   return ()=>{window.removeEventListener("scroll",handleScroll)}
     
-});
+// });
   
-useLayoutEffect(() => { // restore after DOM updates
+// useLayoutEffect(() => { // restore after DOM updates
 
- window.scrollTo(0, scrollRef.current); 
-});
+//  window.scrollTo(0, scrollRef.current); 
+// });
 
   // -----------------------------------
   // AI DESIGNER STATES
@@ -263,7 +263,7 @@ useLayoutEffect(() => { // restore after DOM updates
 };
 
 
-  const generateAiImage=async(goldType,karat,ringSize,shape,quality,centerCarat,totalCarat,price,commission)=>{
+  const handleGenerateAiImage=async(goldType,karat,ringSize,shape,quality,centerCarat,totalCarat,price,commission)=>{
     console.log(goldType,karat,ringSize,shape,quality,centerCarat,totalCarat,price,commission)
     try {
       if(totalCarat<centerCarat) {
@@ -409,6 +409,111 @@ useLayoutEffect(() => { // restore after DOM updates
         setUpdating(false)
       }
   }
+
+
+  const handleBuy=async(setCheckingOut,designDescription,designName)=>{
+    setCheckingOut(true)
+    try {
+      axios.defaults.withCredentials=true
+      if(!designDescription.trim() || !designName.trim()){toast.error("Both name and description are required");return;}
+      if(activeTab==="ai"){
+        const {data:savedInfo}=await axios.put(`${import.meta.env.VITE_BASE_URL}/api/product/${receivedAiImageId}/update`,
+            {name:designName.trim(),
+              description:designDescription.trim()
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+              withCredentials: true,
+            }
+          )
+         
+          if(!savedInfo.success) {toast.error("Couldn't process your request");return;}
+        const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/wishlist/add`,
+            {product_id:receivedAiImageId,
+               "goldType": aiGoldType,
+                "goldKarat": aiKarat,
+                "ringSize": aiRingSize,
+                "quality": aiQuality,
+                "diamondShape": aiShape,
+                "centerStoneCarat":aiCenterCarat,
+                "totalCaratWeight": aiTotalCarat
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+                "Content-Type": "application/json",
+              },
+              withCredentials: true,
+            }
+          );
+          console.log(data)
+          if(data.success){
+            toast.success("Proceeding to checkout")
+            navigate("/checkout")
+          }
+      }else{
+           const payload={
+                  name:designName.trim(),
+                  description:designDescription.trim(),
+                  price:upPriceBreakdown.totalPriceWithRoyalties,
+                  "images[]":[upPreviewImageFile],
+                  meta_data:{
+                    centerStoneCarat:upCenterCarat,
+                    description:designDescription.trim(),
+                    diamondShape:upShape,
+                    goldKarat:upKarat,
+                    goldType:upGoldType,
+                    name:designName.trim(),
+                    quality:upQuality,
+                    ringSize:upRingSize,
+                    royalties:royalty,
+                    totalCaratWeight:upTotalCarat,
+            }
+          }
+          const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/post-design`,
+            payload,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+                "Content-Type": "multipart/form-data",
+              },
+              withCredentials: true,
+            }
+          )
+          if(!data.success) {toast.error("Couldn't process your request");return;}
+          const {data:orderProcess}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/wishlist/add`,
+            {product_id:data.data.product.id,
+               "goldType": upGoldType,
+                "goldKarat": upKarat,
+                "ringSize": upRingSize,
+                "quality": upQuality,
+                "diamondShape": upShape,
+                "centerStoneCarat":upCenterCarat,
+                "totalCaratWeight": upTotalCarat
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+                "Content-Type": "application/json",
+              },
+              withCredentials: true,
+            }
+          );
+          if(orderProcess.success){
+            toast.success("Proceeding to checkout")
+            navigate("/checkout")
+          }else toast.error("Couldn't process your request")
+      }
+    } catch (error) {
+      console.log(error)
+      toast.error("Some error occurred")
+    }finally{
+      setCheckingOut(false)
+    }
+  }
+
   // -----------------------------------
   // HELPERS FOR PRICE BREAKDOWN POPUP
   // -----------------------------------
@@ -416,90 +521,422 @@ useLayoutEffect(() => { // restore after DOM updates
   const [aiPriceBreakdown, setAiPriceBreakdown] = useState({})
 
  
-  useLayoutEffect(() => {
-    
-    const getActiveValues = () => {
-      if (activeTab === "ai") {
-        return {
-          ringSize: aiRingSize,
-          goldType: aiGoldType,
-          goldKarat: aiKarat,
-          quality: aiQuality,
-          totalCaratWeight: aiTotalCarat,
-        };
-      }
+  useEffect(() => {
+  const getActiveValues = () => {
+    if (activeTab === "ai") {
       return {
-        ringSize:upRingSize,
-        goldType: upGoldType,
-        goldKarat: upKarat,
-        quality: upQuality,
-        totalCaratWeight: upTotalCarat,
-        royalties:royalty
+        ringSize: aiRingSize,
+        goldType: aiGoldType,
+        goldKarat: aiKarat,
+        quality: aiQuality,
+        totalCaratWeight: aiTotalCarat,
       };
-    };
- 
-    const getBreakdown=async(active)=>{
-      try {
-        axios.defaults.withCredentials=true
-        const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/calculate/price`,{...active})
-        console.log(data)
-        if(data.success){
-          if(activeTab==="ai") setAiPriceBreakdown(data.data)
-            else setUpPriceBreakdown(data.data)
-        }
-      } catch (error) {
-        console.log(error)
-      }
-
     }
-    const active = getActiveValues();
-    getBreakdown(active)
-  }, [aiGoldType,
-aiKarat,
-aiRingSize,
-aiQuality,
-aiTotalCarat,
-upGoldType,
-upKarat,
-upRingSize,
-upTotalCarat,
-upQuality,
-royalty,
-activeTab])
+    return {
+      ringSize: upRingSize,
+      goldType: upGoldType,
+      goldKarat: upKarat,
+      quality: upQuality,
+      totalCaratWeight: upTotalCarat,
+      royalties: royalty,
+    };
+  };
+
+  const getBreakdown = async (active) => {
+    try {
+      axios.defaults.withCredentials = true;
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/calculate/price`,
+        { ...active }
+      );
+
+      if (data.success) {
+        if (activeTab === "ai") setAiPriceBreakdown(data.data);
+        else setUpPriceBreakdown(data.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const active = getActiveValues();
+
+  // ⏳ debounce
+  const timer = setTimeout(() => {
+    getBreakdown(active);
+  }, 1000);
+
+  // 🧹 cleanup on dependency change
+  return () => clearTimeout(timer);
+}, [
+  aiGoldType,
+  aiKarat,
+  aiRingSize,
+  aiQuality,
+  aiTotalCarat,
+  upGoldType,
+  upKarat,
+  upRingSize,
+  upTotalCarat,
+  upQuality,
+  royalty,
+  activeTab,
+]);
+
   
 
 
   // -----------------------------------
   // LEFT PANEL (shared)
   // -----------------------------------
-  const LeftPanelTop = ({ mode }) => {
+  
+
+  
+
+  // -----------------------------------
+  // PAGE RETURN
+  // -----------------------------------
+  return (
+    <div className="w-full min-h-screen bg-[#E5E1DA] pt-24 pb-20 flex flex-col items-center">
+      {/* TITLE */}
+      <section className="text-center mt-20 mb-2 ">
+        <h1 className="text-5xl md:text-5xl font-serif font-light tracking-wide text-[#1a1a1a]">
+          TAKSHILA DESIGN STUDIO
+        </h1>
+        <p className="text-sm mt-2 text-gray-600 mb-6">
+          Bring your ideas to life with our AI Designer
+        </p>
+      </section>
+
+      {/* TABS */}
+      <div
+        className="
+    flex mt-8 bg-white rounded-full shadow-md overflow-hidden
+    w-[300px] h-[40px]
+    md:w-[420px] md:h-[48px]
+  "
+      >
+        <button
+          onClick={() => setActiveTab("ai")}
+          className={`
+      flex-1
+      text-xs md:text-sm
+      tracking-wide md:tracking-widest
+      transition-colors
+      ${activeTab === "ai" ? "bg-black text-white" : "bg-white text-gray-500"}
+    `}
+        >
+          AI DESIGNER
+        </button>
+
+        <button
+          onClick={() => setActiveTab("upload")}
+          className={`
+      flex-1
+      text-xs md:text-sm
+      tracking-wide md:tracking-widest
+      transition-colors
+      ${
+        activeTab === "upload"
+          ? "bg-black text-white"
+          : "bg-white text-gray-500"
+      }
+    `}
+        >
+          ADD YOUR DESIGN
+        </button>
+      </div>
+
+      {/* AI DESIGNER MODE */}
+      {activeTab === "ai" && (
+        <form
+          onSubmit={handleAiDesignUpload}
+          encType="multipart/form-data"
+          accept="image/*"
+          className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-10 mt-10 px-6"
+        >
+          <div className="bg-[#6C6C6C] rounded-3xl p-8 text-white">
+            <LeftPanelTop 
+                goldType={aiGoldType}
+                setGold={setAiGoldType}
+                karat={aiKarat}
+                setKaratValue={setAiKarat}
+                ringSize={aiRingSize}
+                setRing={setAiRingSize}
+                shape={aiShape}
+                setShapeValue={setAiShape}
+                quality={aiQuality}
+                setQualityValue={setAiQuality}
+                centerCarat={aiCenterCarat}
+                setCenterCaratValue={setAiCenterCarat}
+                totalCarat={aiTotalCarat}
+                setTotalCaratValue={setAiTotalCarat}
+                price={aiPriceBreakdown.totalPriceWithRoyalties}
+                commission={aiPriceBreakdown.commission}
+                handleGenerateAiImage={handleGenerateAiImage}
+                ref={promptRef}
+                setShowBreakdown={setShowBreakdown}
+                loadingDesign={loadingDesign}
+                mode={"ai"} />
+          </div>
+
+          <RightPanel
+            loadingDesign={loadingDesign}
+            activeTab={activeTab}
+            upPreviewImage={upPreviewImage}
+            aiPreviewimage={aiPreviewimage}
+            handleUpdateDetails={handleUpdateDetails}
+            uploading={uploading}
+            handleBuy={handleBuy}
+          />
+        </form>
+      )}
+
+      {/* UPLOAD MODE */}
+      {activeTab === "upload" && (
+        <form
+          onSubmit={handleMyDesignUpload}
+          encType="multipart/form-data"
+          accept="image/*"
+          className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-10 mt-10 px-6"
+        >
+          <div className="bg-[#6C6C6C] rounded-3xl p-8 text-white">
+            <LeftPanelTop goldType={upGoldType}
+                setGold={setUpGoldType}
+                karat={upKarat}
+                setKaratValue={setUpKarat}
+                ringSize={upRingSize}
+                setRing={setUpRingSize}
+                shape={upShape}
+                setShapeValue={setUpShape}
+                quality={upQuality}
+                setQualityValue={setUpQuality}
+                centerCarat={upCenterCarat}
+                setCenterCaratValue={setUpCenterCarat}
+                totalCarat={upTotalCarat}
+                setTotalCaratValue={setUpTotalCarat}
+                price={upPriceBreakdown.totalPriceWithRoyalties}
+                commission={upPriceBreakdown.commission}
+                royalty={royalty}
+                setRoyalty={setRoyalty}
+                setShowBreakdown={setShowBreakdown}
+                mode={"upload"} />
+
+            {/* UPLOAD BOX */}
+            <div
+              onClick={handleClick}
+              className="cursor-pointer mt-6 bg-[#4A4A4A] w-full h-48 rounded-2xl flex flex-col items-center justify-center"
+            >
+              <input
+                name="images[]"
+                multiple
+                onChange={handleChange}
+                type="file"
+                ref={uploadRef}
+                className="hidden"
+              />
+              <div className="w-12 h-12 bg-[#D9D9D9] rounded-full flex items-center justify-center text-black text-3xl mb-4">
+                +
+              </div>
+              <button
+                type="button"
+                className="cursor-pointer px-10 py-2 bg-black text-white rounded-full tracking-wide"
+              >
+                UPLOAD
+              </button>
+            </div>
+          </div>
+
+          <RightPanel
+            loadingDesign={loadingDesign}
+            activeTab={activeTab}
+            upPreviewImage={upPreviewImage}
+            aiPreviewimage={aiPreviewimage}
+            handleUpdateDetails={handleUpdateDetails}
+            uploading={uploading}
+            handleBuy={handleBuy}
+          />
+        </form>
+      )}
+
+      {/* PRICE BREAKDOWN POPUP */}
+      {showBreakdown && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white w-[340px] rounded-2xl p-6 shadow-xl">
+            <h2 className="text-lg font-semibold mb-4 text-gray-800">
+              Price Breakdown
+            </h2>
+
+            <div className="space-y-2 text-sm text-gray-700">
+              <p>
+                Quality Cost:+$
+                {activeTab === "ai"
+                  ? aiPriceBreakdown.breakdown.qualityCost
+                  : upPriceBreakdown.breakdown.qualityCost}
+              </p>
+              <p>
+                Metal cost: +$
+                {activeTab === "ai"
+                  ? aiPriceBreakdown.breakdown.metalCost
+                  : upPriceBreakdown.breakdown.metalCost}
+              </p>
+              <p>
+                Working charges: +$
+                {activeTab === "ai"
+                  ? aiPriceBreakdown.breakdown.workingChargesCost
+                  : upPriceBreakdown.breakdown.workingChargesCost}
+              </p>
+              <p>
+                Setting cost: +$
+                {activeTab === "ai"
+                  ? aiPriceBreakdown.breakdown.diamondSettingCost
+                  : upPriceBreakdown.breakdown.diamondSettingCost}
+              </p>
+              <p>
+                Certification: +$
+                {activeTab === "ai"
+                  ? aiPriceBreakdown.breakdown.certificationCost
+                  : upPriceBreakdown.breakdown.certificationCost}
+              </p>
+              <p>
+                Shipping: +$
+                {activeTab === "ai"
+                  ? aiPriceBreakdown.breakdown.shipmentCost
+                  : upPriceBreakdown.breakdown.shipmentCost}
+              </p>
+              <p>
+                Designer royalties: +$
+                {activeTab === "ai"
+                  ? aiPriceBreakdown.royalties
+                  : upPriceBreakdown.royalties}
+              </p>
+
+              <hr className="my-3" />
+
+              <p className="font-semibold">
+                Final Price: $
+                {activeTab === "ai"
+                  ? aiPriceBreakdown.totalPriceWithRoyalties
+                  : upPriceBreakdown.totalPriceWithRoyalties}
+              </p>
+              <p className="font-semibold">
+                Commission: $
+                {activeTab === "ai"
+                  ? aiPriceBreakdown.commission
+                  : upPriceBreakdown.commission}
+              </p>
+            </div>
+
+            <button
+              onClick={() => setShowBreakdown(false)}
+              className="mt-6 w-full py-2 bg-black text-white rounded-full"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const RightPanel = ({loadingDesign,activeTab,upPreviewImage,aiPreviewimage,handleUpdateDetails,uploading,handleBuy}) => {
+    const [designName, setDesignName] = useState("")
+    const [designDescription, setDesignDescription] = useState("")
+    const [updating, setUpdating] = useState(false) 
+    const [checkingOut, setCheckingOut] = useState(false)
+    return(
+    
+    <div className="flex flex-col">
+      <div className="w-full h-[520px] bg-white rounded-3xl shadow-md">
+        {loadingDesign ? (
+          <div className="flex flex-col items-center justify-center py-10">
+            <div className="h-10 w-10 border-4 border-gray-300 border-t-gray-700 rounded-full animate-spin"></div>
+
+            <p className="mt-4 text-sm text-gray-600 text-center max-w-xs">
+              Generating design, please do not refresh/switch tabs to view it
+              here
+            </p>
+          </div>
+        ) : (
+          <img
+            className="w-full rounded-3xl h-full"
+            src={activeTab == "upload" ? upPreviewImage : aiPreviewimage}
+            alt="imagePreview"
+          />
+        )}
+      </div>
+
+      <input
+        // ref={nameRef}
+        onChange={(e)=>{setDesignName(e.target.value);console.log(designName)}}
+        defaultValue={designName}
+        required
+        name="name"
+        type="text"
+        placeholder="Name Your Design..."
+        className="w-full mt-6 p-3 rounded-full bg-[#D9D9D9] text-black"
+      />
+
+      <div className="relative mt-4">
+        <textarea
+         onChange={(e)=>setDesignDescription(e.target.value)}
+        // ref={descriptionRef}
+        defaultValue={designDescription}
+          required
+          name="description"
+          placeholder="Add your product's description..."
+          className="w-full p-4 rounded-2xl bg-[#D9D9D9] text-black h-32"
+        />
+        <button
+          disabled={updating}
+          type="button"
+          value="update-details"
+          onClick={()=>handleUpdateDetails(setUpdating,designDescription,designName)}
+          className={`${
+            updating
+              ? "bg-gray-600 cursor-not-allowed px-8"
+              : "cursor-pointer  bg-[#3F3F3F] text-white px-6"
+          } py-2 rounded-full absolute bottom-3 right-3`}
+        >
+          {updating ? "Updating details..." : "Submit"}
+        </button>
+      </div>
+
+      <div className="flex justify-between items-center mt-10 mx-2">
+        <button className="cursor-pointer w-12 h-12 flex items-center justify-center bg-[#C3C3C3] rounded-full">
+          <img src="/assets/Share.svg" className="w-6 h-6" />
+        </button>
+
+        {/* <button className="cursor-pointer w-12 h-12 flex items-center justify-center bg-[#C3C3C3] rounded-full mx-2">
+          <img src="/assets/wishlist.svg" className="w-6 h-6" />
+        </button> */}
+
+        {
+          /* BUY & POST BUTTONS  <button className="cursor-pointer flex-1 mx-2 py-3 bg-[#6B6B6B] text-white rounded-full text-center text-xs tracking-widest">
+            POST ON COMMUNITY
+          </button>*/
+        }
+
+        <button
+          value="post-on-community"
+          type="submit"
+          className={`${uploading?"bg-gray-600 cursor-not-allowed":"cursor-pointer bg-[#6B6B6B]"} flex-1 mx-2 py-3  text-white rounded-full text-center text-xs tracking-widest`}
+        >
+          {uploading?"POSTING":"POST ON COMMUNITY"}
+        </button>
+
+        <button type="button" onClick={()=>handleBuy(setCheckingOut,designDescription,designName)} className={`${checkingOut?"bg-gray-600 cursor-not-allowed":"cursor-pointer bg-[#6B6B6B]"} flex-1 mx-2 py-3  text-white rounded-full text-center text-xs tracking-widest`}>
+          BUY NOW
+        </button>
+      </div>
+    </div>
+  );}
 
 
-    const isAi = mode === "ai";
 
-    const goldType = isAi ? aiGoldType : upGoldType;
-    const setGold = isAi ? setAiGoldType : setUpGoldType;
+  const LeftPanelTop =forwardRef (({ goldType,setGold,karat,setKaratValue,ringSize,setRing,shape,setShapeValue,quality,setQualityValue,centerCarat,setCenterCaratValue,totalCarat,setTotalCaratValue,royalty,setRoyalty,price,commission,mode,setShowBreakdown,handleGenerateAiImage,loadingDesign },promptRef) => {
 
-    const karat = isAi ? aiKarat : upKarat;
-    const setKaratValue = isAi ? setAiKarat : setUpKarat;
-
-    const ringSize = isAi ? aiRingSize : upRingSize;
-    const setRing = isAi ? setAiRingSize : setUpRingSize;
-
-    const shape = isAi ? aiShape : upShape;
-    const setShapeValue = isAi ? setAiShape : setUpShape;
-
-    const quality = isAi ? aiQuality : upQuality;
-    const setQualityValue = isAi ? setAiQuality : setUpQuality;
-
-    const centerCarat = isAi ? aiCenterCarat : upCenterCarat;
-    const setCenterCaratValue = isAi ? setAiCenterCarat : setUpCenterCarat;
-
-    const totalCarat = isAi ? aiTotalCarat : upTotalCarat;
-    const setTotalCaratValue = isAi ? setAiTotalCarat : setUpTotalCarat;
-
-    const price = isAi ? aiPriceBreakdown.totalPriceWithRoyalties : upPriceBreakdown.totalPriceWithRoyalties;
-    const commission = isAi ? aiPriceBreakdown.commission : upPriceBreakdown.commission;
 
     return (
       <>
@@ -716,6 +1153,7 @@ activeTab])
           <div className="flex items-center">
             <p>Price: ${price}</p>
             <button
+              type="button"
               onClick={() => setShowBreakdown(true)}
               className="ml-2 w-4 h-4 bg-black text-white rounded-full text-[10px] flex items-center justify-center"
             >
@@ -735,7 +1173,7 @@ activeTab])
             <button
               type="button"
               onClick={() =>
-                generateAiImage(
+                handleGenerateAiImage(
                   goldType,
                   karat,
                   ringSize,
@@ -747,315 +1185,12 @@ activeTab])
                   commission
                 )
               }
-              className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-[#3A3A3A] text-white px-10 py-2 rounded-full"
+              className={`${loadingDesign?"bg-gray-600 cursor-not-allowed":"cursor-pointer bg-[#3A3A3A]"} absolute bottom-3 left-1/2 -translate-x-1/2  text-white px-10 py-2 rounded-full`}
             >
-              Generate
+              {loadingDesign?"Generating, please wait...":"Generate"}
             </button>
           </div>
         )}
       </>
     );
-  };
-
-  // -----------------------------------
-  // RIGHT PANEL (shared)
-  // -----------------------------------
-  
-
-  // -----------------------------------
-  // PAGE RETURN
-  // -----------------------------------
-  return (
-    <div className="w-full min-h-screen bg-[#E5E1DA] pt-24 pb-20 flex flex-col items-center">
-      {/* TITLE */}
-      <section className="text-center mt-20 mb-2 ">
-        <h1 className="text-5xl md:text-5xl font-serif font-light tracking-wide text-[#1a1a1a]">
-          TAKSHILA DESIGN STUDIO
-        </h1>
-        <p className="text-sm mt-2 text-gray-600 mb-6">
-          Bring your ideas to life with our AI Designer
-        </p>
-      </section>
-
-      {/* TABS */}
-      <div
-        className="
-    flex mt-8 bg-white rounded-full shadow-md overflow-hidden
-    w-[300px] h-[40px]
-    md:w-[420px] md:h-[48px]
-  "
-      >
-        <button
-          onClick={() => setActiveTab("ai")}
-          className={`
-      flex-1
-      text-xs md:text-sm
-      tracking-wide md:tracking-widest
-      transition-colors
-      ${activeTab === "ai" ? "bg-black text-white" : "bg-white text-gray-500"}
-    `}
-        >
-          AI DESIGNER
-        </button>
-
-        <button
-          onClick={() => setActiveTab("upload")}
-          className={`
-      flex-1
-      text-xs md:text-sm
-      tracking-wide md:tracking-widest
-      transition-colors
-      ${
-        activeTab === "upload"
-          ? "bg-black text-white"
-          : "bg-white text-gray-500"
-      }
-    `}
-        >
-          ADD YOUR DESIGN
-        </button>
-      </div>
-
-      {/* AI DESIGNER MODE */}
-      {activeTab === "ai" && (
-        <form
-          onSubmit={handleAiDesignUpload}
-          encType="multipart/form-data"
-          accept="image/*"
-          className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-10 mt-10 px-6"
-        >
-          <div className="bg-[#6C6C6C] rounded-3xl p-8 text-white">
-            <LeftPanelTop mode="ai" />
-          </div>
-
-          <RightPanel
-            loadingDesign={loadingDesign}
-            activeTab={activeTab}
-            upPreviewImage={upPreviewImage}
-            aiPreviewimage={aiPreviewimage}
-            handleUpdateDetails={handleUpdateDetails}
-            uploading={uploading}
-          />
-        </form>
-      )}
-
-      {/* UPLOAD MODE */}
-      {activeTab === "upload" && (
-        <form
-          onSubmit={handleMyDesignUpload}
-          encType="multipart/form-data"
-          accept="image/*"
-          className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-10 mt-10 px-6"
-        >
-          <div className="bg-[#6C6C6C] rounded-3xl p-8 text-white">
-            <LeftPanelTop mode="upload" />
-
-            {/* UPLOAD BOX */}
-            <div
-              onClick={handleClick}
-              className="cursor-pointer mt-6 bg-[#4A4A4A] w-full h-48 rounded-2xl flex flex-col items-center justify-center"
-            >
-              <input
-                name="images[]"
-                multiple
-                onChange={handleChange}
-                type="file"
-                ref={uploadRef}
-                className="hidden"
-              />
-              <div className="w-12 h-12 bg-[#D9D9D9] rounded-full flex items-center justify-center text-black text-3xl mb-4">
-                +
-              </div>
-              <button
-                type="button"
-                className="cursor-pointer px-10 py-2 bg-black text-white rounded-full tracking-wide"
-              >
-                UPLOAD
-              </button>
-            </div>
-          </div>
-
-          <RightPanel
-            loadingDesign={loadingDesign}
-            activeTab={activeTab}
-            upPreviewImage={upPreviewImage}
-            aiPreviewimage={aiPreviewimage}
-            handleUpdateDetails={handleUpdateDetails}
-            uploading={uploading}
-          />
-        </form>
-      )}
-
-      {/* PRICE BREAKDOWN POPUP */}
-      {showBreakdown && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white w-[340px] rounded-2xl p-6 shadow-xl">
-            <h2 className="text-lg font-semibold mb-4 text-gray-800">
-              Price Breakdown
-            </h2>
-
-            <div className="space-y-2 text-sm text-gray-700">
-              <p>
-                Quality Cost:+$
-                {activeTab === "ai"
-                  ? aiPriceBreakdown.breakdown.qualityCost
-                  : upPriceBreakdown.breakdown.qualityCost}
-              </p>
-              <p>
-                Metal cost: +$
-                {activeTab === "ai"
-                  ? aiPriceBreakdown.breakdown.metalCost
-                  : upPriceBreakdown.breakdown.metalCost}
-              </p>
-              <p>
-                Working charges: +$
-                {activeTab === "ai"
-                  ? aiPriceBreakdown.breakdown.workingChargesCost
-                  : upPriceBreakdown.breakdown.workingChargesCost}
-              </p>
-              <p>
-                Setting cost: +$
-                {activeTab === "ai"
-                  ? aiPriceBreakdown.breakdown.diamondSettingCost
-                  : upPriceBreakdown.breakdown.diamondSettingCost}
-              </p>
-              <p>
-                Certification: +$
-                {activeTab === "ai"
-                  ? aiPriceBreakdown.breakdown.certificationCost
-                  : upPriceBreakdown.breakdown.certificationCost}
-              </p>
-              <p>
-                Shipping: +$
-                {activeTab === "ai"
-                  ? aiPriceBreakdown.breakdown.shipmentCost
-                  : upPriceBreakdown.breakdown.shipmentCost}
-              </p>
-              <p>
-                Designer royalties: +$
-                {activeTab === "ai"
-                  ? aiPriceBreakdown.royalties
-                  : upPriceBreakdown.royalties}
-              </p>
-
-              <hr className="my-3" />
-
-              <p className="font-semibold">
-                Final Price: $
-                {activeTab === "ai"
-                  ? aiPriceBreakdown.totalPriceWithRoyalties
-                  : upPriceBreakdown.totalPriceWithRoyalties}
-              </p>
-              <p className="font-semibold">
-                Commission: $
-                {activeTab === "ai"
-                  ? aiPriceBreakdown.commission
-                  : upPriceBreakdown.commission}
-              </p>
-            </div>
-
-            <button
-              onClick={() => setShowBreakdown(false)}
-              className="mt-6 w-full py-2 bg-black text-white rounded-full"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-const RightPanel = ({loadingDesign,activeTab,upPreviewImage,aiPreviewimage,handleUpdateDetails,uploading}) => {
-    const [designName, setDesignName] = useState("")
-    const [designDescription, setDesignDescription] = useState("")
-    const [updating, setUpdating] = useState(false) 
-
-    return(
-    
-    <div className="flex flex-col">
-      <div className="w-full h-[520px] bg-white rounded-3xl shadow-md">
-        {loadingDesign ? (
-          <div className="flex flex-col items-center justify-center py-10">
-            <div className="h-10 w-10 border-4 border-gray-300 border-t-gray-700 rounded-full animate-spin"></div>
-
-            <p className="mt-4 text-sm text-gray-600 text-center max-w-xs">
-              Generating design, please do not refresh/switch tabs to view it
-              here
-            </p>
-          </div>
-        ) : (
-          <img
-            className="w-full rounded-3xl h-full"
-            src={activeTab == "upload" ? upPreviewImage : aiPreviewimage}
-            alt="imagePreview"
-          />
-        )}
-      </div>
-
-      <input
-        // ref={nameRef}
-        onChange={(e)=>{setDesignName(e.target.value);console.log(designName)}}
-        defaultValue={designName}
-        required
-        name="name"
-        type="text"
-        placeholder="Name Your Design..."
-        className="w-full mt-6 p-3 rounded-full bg-[#D9D9D9] text-black"
-      />
-
-      <div className="relative mt-4">
-        <textarea
-         onChange={(e)=>setDesignDescription(e.target.value)}
-        // ref={descriptionRef}
-        defaultValue={designDescription}
-          required
-          name="description"
-          placeholder="Add your product's description..."
-          className="w-full p-4 rounded-2xl bg-[#D9D9D9] text-black h-32"
-        />
-        <button
-          disabled={updating}
-          type="button"
-          value="update-details"
-          onClick={()=>handleUpdateDetails(setUpdating,designDescription,designName)}
-          className={`${
-            updating
-              ? "bg-gray-600 cursor-not-allowed px-8"
-              : "cursor-pointer  bg-[#3F3F3F] text-white px-6"
-          } py-2 rounded-full absolute bottom-3 right-3`}
-        >
-          {updating ? "Updating details..." : "Submit"}
-        </button>
-      </div>
-
-      <div className="flex justify-between items-center mt-10 mx-2">
-        <button className="cursor-pointer w-12 h-12 flex items-center justify-center bg-[#C3C3C3] rounded-full">
-          <img src="/assets/Share.svg" className="w-6 h-6" />
-        </button>
-
-        <button className="cursor-pointer w-12 h-12 flex items-center justify-center bg-[#C3C3C3] rounded-full mx-2">
-          <img src="/assets/wishlist.svg" className="w-6 h-6" />
-        </button>
-
-        {
-          /* BUY & POST BUTTONS  <button className="cursor-pointer flex-1 mx-2 py-3 bg-[#6B6B6B] text-white rounded-full text-center text-xs tracking-widest">
-            POST ON COMMUNITY
-          </button>*/
-        }
-
-        <button
-          value="post-on-community"
-          type="submit"
-          className={`${uploading?"bg-gray-600 cursor-not-allowed":"cursor-pointer bg-[#6B6B6B]"} flex-1 mx-2 py-3  text-white rounded-full text-center text-xs tracking-widest`}
-        >
-          {uploading?"POSTING":"POST ON COMMUNITY"}
-        </button>
-
-        <button className="cursor-pointer flex-1 mx-2 py-3 bg-[#6B6B6B] text-white rounded-full text-center text-xs tracking-widest">
-          BUY NOW
-        </button>
-      </div>
-    </div>
-  );}
+  });

@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import { useWishlist } from "../context/WishlistContext";
+// import { useWishlist } from "../context/WishlistContext";
 
 export default function Wishlist() {
-  const { wishlistItems, removeFromWishlist } = useWishlist();
+  // const { wishlistItems, removeFromWishlist } = useWishlist();
 
   const [showShareModal, setShowShareModal] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const [selectedItems, setSelectedItems] = useState([]); // ⭐ NEW: Selected items
 
-  const shareUrl = `${window.location.origin}/wishlist`;
+  // const shareUrl = `${window.location.origin}/wishlist`;
 
   /* -------------------- SELECT / UNSELECT ITEMS -------------------- */
   const toggleSelect = (id) => {

@@ -3,13 +3,18 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 
-export default function Orders() {
+export default function Orders1() {
   const [tab, setTab] = useState("orders"); // "orders" or "delivered"
    const [activeIndex, setActiveIndex] = useState(null);
   const [orders, setOrders] = useState([])
-  const [selectedOrder, setSelectedOrder] = useState({})
+  const [selectedOrder, setSelectedOrder] = useState(null)
+
   const toggle =async (id) => {
     try {
+      if(id==selectedOrder?.id) {
+        setSelectedOrder(null)
+        return
+      }
       axios.defaults.withCredentials=true
       const {data} = await axios.get(
           `${
@@ -22,7 +27,9 @@ export default function Orders() {
           }
         );
         console.log(data)
-    } catch (error) {
+        if(data.success) setSelectedOrder(data.data.order)
+        else toast.error("Couldn't process your request")
+      } catch (error) {
       console.log(error)
       toast.error("Some error occurred")
     }
@@ -127,7 +134,8 @@ export default function Orders() {
      
         <div className="w-full max-w-4xl space-y-6">
            
-           {orders.map(order=>(
+            {orders.map(order=>(
+              <>
               <div key={order.id} className="w-full bg-[#d8d8d8] rounded-2xl p-5 flex items-center justify-between shadow-sm" onClick={() => toggle(order.id)}>
               {/* Left Side */}
               <div className="flex items-start space-x-4">
@@ -145,155 +153,67 @@ export default function Orders() {
               {/* Right Side */}
               <div className="flex flex-col text-right text-sm">
                 <span className="font-semibold">${order.amount} </span>
-                <span className="mt-1 text-gray-600">{order.payment_status} </span>
+                <span className="mt-1 text-gray-600 capitalize">{order.payment_status} </span>
               </div>
                 
             </div>
-            )
-           )}
-            <div className="w-full bg-[#d8d8d8] rounded-2xl p-5 flex items-center justify-between shadow-sm" onClick={() => toggle(1)}>
-              {/* Left Side */}
-              <div className="flex items-start space-x-4">
-                <div className="w-16 h-16 bg-white rounded-xl"></div>
-
-                <div className="flex flex-col text-sm">
-                  <span className="font-semibold"> The name of the product </span>
-                  <span className="text-gray-600">Ordered on : dd/mm/yy </span>
-                  <span className="text-gray-600">Order id : xx908290320xx </span>
-                </div>
-              </div>
-
-              {/* Right Side */}
-              <div className="flex flex-col text-right text-sm">
-                <span className="font-semibold">$60 </span>
-                <span className="mt-1 text-gray-600"> In Transi </span>
-              </div>
-                
-            </div>
-
-
-             {activeIndex === 1 &&
+             {(selectedOrder && selectedOrder.id==order.id) &&
             <div className="pb-3 border-bottom mb-4 border-dark">
                             <table className="table track-table bg-transparent w-full m-auto max-w-[780px] font-montserrat text-gray-600">
                                 <tbody>
                                     <tr>
                                         <td><strong> Order Status </strong> </td>
                                         <td> Completed on :  12/10/2025 </td>
-                                        <td>  <button className="underline decoration-1 hover:text-zinc-900" command="show-modal" commandfor="dialog"> View Details</button> </td>
+                                        <td>  <button className="underline decoration-1 hover:text-zinc-900" command="show-modal" commandfor="viewdetails"> View Details</button> </td>
                                         <td> <span className="fill-check"><svg xmlns="http://www.w3.org/2000/svg" height="21px" viewBox="0 -960 960 960" width="21px" fill="#fff"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg></span> </td>
                                     </tr>
                                     <tr>
                                         <td><strong> CAD Approved</strong> </td>
                                         <td> Completed on :  14/10/2025 </td>
-                                        <td><button className="underline decoration-1 hover:text-zinc-900" data-bs-toggle="modal" data-bs-target="#cadDetailsModal"> View CAD </button> </td>
+                                        <td><button className="underline decoration-1 hover:text-zinc-900" command="show-modal" commandfor="cadmodal"> View CAD </button> </td>
                                         <td> <span className="fill-check"><svg xmlns="http://www.w3.org/2000/svg" height="21px" viewBox="0 -960 960 960" width="21px" fill="#fff"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg></span> </td>
                                     </tr>
                                     <tr>
                                         <td><strong> Diamond Sourced </strong></td>
                                         <td> Pending... </td>
-                                        <td><button className="underline decoration-1 hover:text-zinc-900" data-bs-toggle="modal" data-bs-target="#diamondDetailsModal">  View Diamond </button> </td>
+                                        <td><button className="underline decoration-1 hover:text-zinc-900" command="show-modal" commandfor="diamondsource">  View Diamond </button> </td>
                                         <td> <span className="fill-check"><svg xmlns="http://www.w3.org/2000/svg" height="21px" viewBox="0 -960 960 960" width="21px" fill="#fff"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg></span> </td>
                                     </tr>
                                     <tr>
                                         <td> <strong> Ring Status </strong> </td>
                                         <td> Completed on :  16/10/2025 </td>
-                                        <td><button className="underline decoration-1 hover:text-zinc-900" data-bs-toggle="modal" data-bs-target="#ringstatusModal">  View Info</button> </td>
+                                        <td><button className="underline decoration-1 hover:text-zinc-900" command="show-modal" commandfor="ringstatus">  View Info</button> </td>
                                         <td> <span className="fill-check"><svg xmlns="http://www.w3.org/2000/svg" height="21px" viewBox="0 -960 960 960" width="21px" fill="#fff"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg></span> </td>
                                     </tr>
                                     <tr>
                                         <td> Certification </td>
                                         <td> Pending</td>
-                                        <td><button className="underline decoration-1 hover:text-zinc-900" data-bs-toggle="modal" data-bs-target="#certificationModal">  View Cart </button> </td>
+                                        <td><button className="underline decoration-1 hover:text-zinc-900" command="show-modal" commandfor="certification">  View Cart </button> </td>
                                         <td> <span className="no-fill"> </span> </td>
                                     </tr>
                                     <tr>
                                         <td> Shipping </td>
                                         <td> Pending</td>
-                                        <td><button className="underline decoration-1 hover:text-zinc-900" data-order-id="18" data-order=''>  View Address </button> </td>
+                                        <td><button className="underline decoration-1 hover:text-zinc-900" data-order-id="18" data-order='' command="show-modal" commandfor="shipping">  View Address </button> </td>
                                         <td> <span className="no-fill"></span> </td>
                                     </tr>
                                     <tr>
                                         <td> Delivered </td>
                                         <td> Pending</td>
-                                        <td><button className="underline decoration-1 hover:text-zinc-900" data-order-id="18" data-order=''>  View Address </button> </td>
+                                        <td><button className="underline decoration-1 hover:text-zinc-900" command="show-modal" commandfor="delivered">  View Address </button> </td>
                                         <td> <span className="no-fill"></span> </td>
                                     </tr>
                                 </tbody>
                             </table>   
                         </div>
                       }
+                      </>
+            )
+           )}
 
 
-            <div className="w-full bg-[#d8d8d8] rounded-2xl p-5 flex items-center justify-between shadow-sm" onClick={() => toggle(2)}>
-              {/* Left Side */}
-              <div className="flex items-start space-x-4">
-                <div className="w-16 h-16 bg-white rounded-xl"></div>
 
-                <div className="flex flex-col text-sm">
-                  <span className="font-semibold"> The name of the product </span>
-                  <span className="text-gray-600">Ordered on : dd/mm/yy </span>
-                  <span className="text-gray-600">Order id : xx908290320xx </span>
-                </div>
-              </div>
-
-              {/* Right Side */}
-              <div className="flex flex-col text-right text-sm">
-                <span className="font-semibold">$60 </span>
-                <span className="mt-1 text-red-600"> Payment Failed </span>
-              </div>
-            </div>
-
-
-           {activeIndex === 2 && 
-            <div className="pb-3 border-bottom mb-4 border-dark">
-                            <table className="table track-table bg-transparent w-full m-auto max-w-[780px] font-montserrat text-gray-600">
-                                <tbody>
-                                    <tr>
-                                        <td><strong> Order Status </strong> </td>
-                                        <td> Completed on :  12/10/2025 </td>
-                                        <td>  <button className="underline decoration-1 hover:text-zinc-900" data-bs-toggle="modal" data-bs-target="#orderDetailsModal"> View Details</button> </td>
-                                        <td> <span className="fill-check"><svg xmlns="http://www.w3.org/2000/svg" height="21px" viewBox="0 -960 960 960" width="21px" fill="#fff"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg></span> </td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong> CAD Approved</strong> </td>
-                                        <td> Completed on :  14/10/2025 </td>
-                                        <td><button className="underline decoration-1 hover:text-zinc-900" data-bs-toggle="modal" data-bs-target="#cadDetailsModal"> View CAD </button> </td>
-                                        <td> <span className="fill-check"><svg xmlns="http://www.w3.org/2000/svg" height="21px" viewBox="0 -960 960 960" width="21px" fill="#fff"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg></span> </td>
-                                    </tr>
-                                    <tr>
-                                        <td> Diamond Sourced </td>
-                                        <td> Pending... </td>
-                                        <td><button className="underline decoration-1 hover:text-zinc-900" data-bs-toggle="modal" data-bs-target="#diamondDetailsModal">  View Diamond </button> </td>
-                                        <td> <span className="no-fill"> </span> </td>
-                                    </tr>
-                                    <tr>
-                                        <td> Ring Status </td>
-                                        <td> Completed on :  16/10/2025 </td>
-                                        <td><button className="underline decoration-1 hover:text-zinc-900" data-bs-toggle="modal" data-bs-target="#ringstatusModal">  View Info</button> </td>
-                                        <td> <span className="no-fill"></span> </td>
-                                    </tr>
-                                    <tr>
-                                        <td> Certification </td>
-                                        <td> Pending</td>
-                                        <td><button className="underline decoration-1 hover:text-zinc-900" data-bs-toggle="modal" data-bs-target="#certificationModal">  View Cart </button> </td>
-                                        <td> <span className="no-fill"> </span> </td>
-                                    </tr>
-                                    <tr>
-                                        <td> Shipping </td>
-                                        <td> Pending</td>
-                                        <td><button className="underline decoration-1 hover:text-zinc-900" data-order-id="18" data-order=''>  View Address </button> </td>
-                                        <td> <span className="no-fill"></span> </td>
-                                    </tr>
-                                    <tr>
-                                        <td> Delivered </td>
-                                        <td> Pending</td>
-                                        <td><button className="underline decoration-1 hover:text-zinc-900" data-order-id="18" data-order=''>  View Address </button> </td>
-                                        <td> <span className="no-fill"></span> </td>
-                                    </tr>
-                                </tbody>
-                            </table>   
-                        </div>
-                      }
+  
           
         </div>
      
@@ -312,34 +232,36 @@ export default function Orders() {
         </div>
       )}
 
+
+      {/* View Details */}
       <el-dialog>
-        <dialog id="dialog" aria-labelledby="dialog-title" class="fixed inset-0 size-auto max-h-none max-w-4xl overflow-y-auto bg-transparent backdrop:bg-transparent mx-auto">
+        <dialog id="viewdetails" aria-labelledby="dialog-title" class="fixed inset-0 size-auto max-h-none max-w-4xl overflow-y-auto bg-transparent backdrop:bg-transparent mx-auto">
           <el-dialog-backdrop class="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
 
           <div tabindex="0" className="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
-            <el-dialog-panel class="relative transform overflow-hidden rounded-lg bg-[#716F6DE0] text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-2lg data-closed:sm:translate-y-0 data-closed:sm:scale-95">
+            <el-dialog-panel class="relative transform overflow-hidden -lg bg-[#716F6DE0] text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-2lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 border rounded-xl border-gray-300">
               <div className="px-6 pt-9 pb-6 sm:p-6 sm:pb-4">
-                            <div className="col-md-12 details-generate text-start">
-                                <h2 className="text-center text-2xl text-bold uppercase text-white"> Order Details </h2>
+                            <div className="col-md-12 details-generate text-start md:px-12 px-4 pt-5">
+                                <h2 className="text-center text-2xl font-bold uppercase text-white pb-5"> Order Details </h2>
                                 <div className="flex flex-row mt-8 w-full justify-center">
-                                    <div className="basis-1/3">
-                                        <h5 className="mb-3 text-white text-uppercase"> Payment Received </h5>
+                                    <div className="basis-1/2">
+                                        <h5 className="mb-3 text-white font-semibold uppercase"> Payment Received </h5>
                                     </div>
-                                    <div className="basis-1/3 text-end">
-                                        <h5 className="text-white mb-0">Order Amount: $<span id="modalOrderAmount">0.00</span>
+                                    <div className="basis-1/2 text-end">
+                                        <h5 className="text-white mb-0">Order Amount: $<strong>{selectedOrder?.amount}</strong>
                                         </h5>
                                     </div>
                                 </div>
-                                <h6 className="mb-3 text-white text-start"> Order Secured </h6>
+                                <h6 className="mb-1 text-white text-start"> Order Secured </h6>
                                 <p className="text-white"> Payment verified and your build slot is reserved. </p>
 
 
-                                <div className="flex flex-row mt-5 w-full">
-                                    <div className="basis-1/3">
-                                        <h5 className="mb-3 text-white text-uppercase"> ORDER CONFIRMED </h5>
+                                <div className="flex flex-row mt-7 w-full">
+                                    <div className="basis-1/2">
+                                        <h5 className="mb-3 text-white uppercase font-semibold"> ORDER CONFIRMED </h5>
                                     </div>
-                                    <div className="basis-1/3 text-end">
-                                        <h5 className="text-white mb-0">Order id: <span id="modalOrderId">-</span></h5>
+                                    <div className="basis-1/2 text-end">
+                                        <h5 className="text-white mb-0">Order id: <strong className="block"> {selectedOrder?.order_number}</strong></h5>
                                     </div>
                                 </div>
                                 <h6 className="mb-3 text-white text-start"> Artisan Assigned </h6>
@@ -351,15 +273,284 @@ export default function Orders() {
                                     </a> */}
                                 </div>
                             </div>
-                         
               </div>
+
               <div className="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                <button type="button" command="close" commandfor="dialog" className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 sm:ml-3 sm:w-auto"> Close </button>
+                <button type="button" command="close" commandfor="viewdetails" className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 sm:ml-3 sm:w-auto"> Close </button>
               </div>
             </el-dialog-panel>
           </div>
         </dialog>
       </el-dialog>
+
+
+
+
+      {/* View CAD */}
+      <el-dialog>
+        <dialog id="cadmodal" aria-labelledby="dialog-title" class="fixed inset-0 size-auto max-h-none max-w-4xl overflow-y-auto bg-transparent backdrop:bg-transparent mx-auto">
+          <el-dialog-backdrop class="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+
+          <div tabindex="0" className="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
+            <el-dialog-panel class="relative transform overflow-hidden bg-[#716F6DE0] text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-2lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 border rounded-xl border-gray-300">
+              <div className="px-6 pt-9 pb-6 sm:p-6 sm:pb-4">
+                            <div className="col-md-12 details-generate text-start md:px-12 px-4 pt-5">
+                                <h2 className="text-center text-2xl font-bold uppercase text-white pb-5"> CAD Details </h2>
+                                
+                                <h6 className="mb-1 text-white text-start"> Review CAD submissions </h6>
+                                  
+                                   <div className="flex flex-row mt-8 w-full justify-center">
+                                    <div className="basis-1/2">
+                                       <p className="text-white pb-2"> Version: V2 </p>
+                                       <p className="text-white pb-2"> Submitted: 12/17/2025, 6:55:23 AM </p>
+                                        <p className="text-white"> Studio notes: submiting glb </p>
+                                    </div>
+                                    <div className="basis-1/2 text-end">
+                                        <h5 className="bg-red-500 px-3 rounded-xl py-2 inline-block text-white mb-3"> Revisions Requested 
+                                        </h5>
+                                        <p className="text-yellow-300"> Your feedback: reject 1 </p>
+                                    </div>
+                                </div>  
+ 
+                                <div className="mt-6 text-center relative flex gap-4">
+                                      <img src="https://img.freepik.com/premium-photo/magic-ring_665280-62586.jpg" className="inline-block border border-gray-300 rounded-xl" width={240} />
+                                       <img src="https://img.freepik.com/premium-photo/magic-ring_665280-62586.jpg" className="inline-block border border-gray-300 rounded-xl" width={240} />
+                                </div>
+                            </div>
+              </div>
+
+              <div className="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                <button type="button" command="close" commandfor="cadmodal" className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 sm:ml-3 sm:w-auto"> Close </button>
+              </div>
+            </el-dialog-panel>
+          </div>
+        </dialog>
+      </el-dialog>
+
+
+
+        {/* Diamond Sourced */}
+      <el-dialog>
+        <dialog id="diamondsource" aria-labelledby="dialog-title" class="fixed inset-0 size-auto max-h-none max-w-4xl overflow-y-auto bg-transparent backdrop:bg-transparent mx-auto">
+          <el-dialog-backdrop class="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+
+          <div tabindex="0" className="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
+            <el-dialog-panel class="relative transform overflow-hidden  bg-[#716F6DE0] text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-2lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 border rounded-xl border-gray-300">
+              <div className="px-6 pt-9 pb-6 sm:p-6 sm:pb-4">
+                            <div className="col-md-12 details-generate text-start md:px-12 px-4 pt-5">
+                                <h2 className="text-center text-2xl font-bold uppercase text-white pb-5"> Diamond Sourced </h2>
+                                <div className="flex flex-row mt-8 w-full justify-center">
+                                    <div className="basis-1/2">
+                                        <h5 className="mb-2 text-white font-semibold uppercase"> Text Content </h5>
+                                        <p className="text-white pb-3"> testing diamond source </p>
+
+                                        <h6 className="mt-3 mb-1 text-white text-start"> Version: <strong> V1 </strong> </h6>
+                                        <h6 className="mb-1 text-white text-start"> Submitted: <strong> 12/17/2025, 6:56:41 AM </strong> </h6>
+                                    </div>
+                                    <div className="basis-1/2 text-end">
+                                        <h6 className="mb-1 text-white text-start"> Files </h6>
+                                        <img src="https://ai-takshila-co-images.s3.eu-north-1.amazonaws.com/orders/82/diamond_sourced/v1/69420dd704b51.png" className="border border-gray-300 rounded-sm" width={230} />
+                                    </div> 
+                                </div>
+                              
+ 
+
+                                <div className="mt-4 text-center">
+                                    {/* <a href="#" id="orderDetailsLink" className="text-white" style="text-decoration: underline;">
+                                        for more details
+                                    </a> */}
+                                </div>
+                            </div>
+              </div>
+
+              <div className="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                <button type="button" command="close" commandfor="diamondsource" className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 sm:ml-3 sm:w-auto"> Close </button>
+              </div>
+            </el-dialog-panel>
+          </div>
+        </dialog>
+      </el-dialog>
+
+
+
+        {/* Ring Status */}
+      <el-dialog>
+        <dialog id="ringstatus" aria-labelledby="dialog-title" class="fixed inset-0 size-auto max-h-none max-w-4xl overflow-y-auto bg-transparent backdrop:bg-transparent mx-auto">
+          <el-dialog-backdrop class="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+
+          <div tabindex="0" className="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
+            <el-dialog-panel class="relative transform overflow-hidden bg-[#716F6DE0] text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-2lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 border rounded-xl border-gray-300">
+              <div className="px-6 pt-9 pb-6 sm:p-6 sm:pb-4">
+                            <div className="col-md-12 details-generate text-start md:px-12 px-4 pt-5">
+                                <h2 className="text-center text-2xl font-bold uppercase text-white pb-5"> Ring Status </h2>
+                                <div className="flex flex-row mt-8 w-full justify-center">
+                                    <div className="basis-1/2">
+                                        <h5 className="mb-2 text-white font-semibold uppercase"> Text Content </h5>
+                                        <p className="text-white pb-3"> testing diamond source </p>
+
+                                        <h6 className="mt-3 mb-1 text-white text-start"> Version: <strong> V1 </strong> </h6>
+                                        <h6 className="mb-1 text-white text-start"> Submitted: <strong> 12/17/2025, 6:56:41 AM </strong> </h6>
+                                    </div>
+                                    <div className="basis-1/2 text-end">
+                                        <h6 className="mb-1 text-white text-start"> Files </h6>
+                                        <img src="https://ai-takshila-co-images.s3.eu-north-1.amazonaws.com/orders/82/diamond_sourced/v1/69420dd704b51.png" className="border border-gray-300 rounded-sm" width={230} />
+                                    </div> 
+                                </div>
+                              
+ 
+
+                                <div className="mt-4 text-center">
+                                    {/* <a href="#" id="orderDetailsLink" className="text-white" style="text-decoration: underline;">
+                                        for more details
+                                    </a> */}
+                                </div>
+                            </div>
+              </div>
+
+              <div className="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                <button type="button" command="close" commandfor="ringstatus" className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 sm:ml-3 sm:w-auto"> Close </button>
+              </div>
+            </el-dialog-panel>
+          </div>
+        </dialog>
+      </el-dialog>
+
+
+
+        
+        {/* Certifications */}
+      <el-dialog>
+        <dialog id="certification" aria-labelledby="dialog-title" class="fixed inset-0 size-auto max-h-none max-w-4xl overflow-y-auto bg-transparent backdrop:bg-transparent mx-auto">
+          <el-dialog-backdrop class="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+
+          <div tabindex="0" className="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
+            <el-dialog-panel class="relative transform overflow-hidden bg-[#716F6DE0] text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-2lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 border rounded-xl border-gray-300">
+              <div className="px-6 pt-9 pb-6 sm:p-6 sm:pb-4">
+                            <div className="col-md-12 details-generate text-start md:px-12 px-4 pt-5">
+                                <h2 className="text-center text-2xl font-bold uppercase text-white pb-5"> Certification </h2>
+                                <div className="flex flex-row mt-8 w-full justify-center">
+                                    <div className="basis-1/2">
+                                        <h5 className="mb-2 text-white font-semibold uppercase"> Text Content </h5>
+                                        <p className="text-white pb-3"> testing diamond source </p>
+
+                                        <h6 className="mt-3 mb-1 text-white text-start"> Version: <strong> V1 </strong> </h6>
+                                        <h6 className="mb-1 text-white text-start"> Submitted: <strong> 12/17/2025, 6:56:41 AM </strong> </h6>
+                                    </div>
+                                    <div className="basis-1/2 text-end">
+                                        <h6 className="mb-1 text-white text-start"> Files </h6>
+                                        <img src="https://ai-takshila-co-images.s3.eu-north-1.amazonaws.com/orders/82/diamond_sourced/v1/69420dd704b51.png" className="border border-gray-300 rounded-sm" width={230} />
+                                    </div> 
+                                </div>
+                              
+ 
+
+                                <div className="mt-4 text-center">
+                                    {/* <a href="#" id="orderDetailsLink" className="text-white" style="text-decoration: underline;">
+                                        for more details
+                                    </a> */}
+                                </div>
+                            </div>
+              </div>
+
+              <div className="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                <button type="button" command="close" commandfor="certification" className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 sm:ml-3 sm:w-auto"> Close </button>
+              </div>
+            </el-dialog-panel>
+          </div>
+        </dialog>
+      </el-dialog>
+
+        
+
+         {/*  Shipping Details */}
+      <el-dialog>
+        <dialog id="shipping" aria-labelledby="dialog-title" class="fixed inset-0 size-auto max-h-none max-w-4xl overflow-y-auto bg-transparent backdrop:bg-transparent mx-auto">
+          <el-dialog-backdrop class="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+
+          <div tabindex="0" className="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
+            <el-dialog-panel class="relative transform overflow-hidden  bg-[#716F6DE0] text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-2lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 border rounded-xl border-gray-300">
+               <div className="px-6 pt-9 pb-6 sm:p-6 sm:pb-4">
+                            <div className="col-md-12 details-generate text-start md:px-12 px-4 pt-5">
+                                <h2 className="text-center text-2xl font-bold uppercase text-white pb-5"> Shipping Details </h2>
+                                <div className="flex flex-row mt-8 mb-5 w-full justify-center">
+                                    <div className="basis-1/2">
+                                        <h5 className="mb-3 text-white font-semibold uppercase"> Shipping Information</h5>
+                                         <p className="text-white"> Tracking and address details will appear here. </p>
+                                    </div>
+                                    <div className="basis-1/2 text-end">
+                                        <h5 className="text-white mb-0"> Tracking: <strong>  {selectedOrder?.order_number} </strong>
+                                        </h5>
+                                    </div>
+                                </div>
+                              
+                               <h6 className="mb-3 text-white uppercase"> Status: <span className="capitalize font-semibold"> Preparing for shipment </span>  </h6> 
+                                <h6 className="mb-3 text-white uppercase"> Estimated arrival: <span className="capitalize font-semibold">  Dec 22, 2025 </span>   </h6>
+                                <h6 className="mb-3 text-white uppercase"> Shipping address: <span className="capitalize font-semibold"> Laborum praesentium, Veritatis exercitati, Explicabo Consequun, CA, 63394, United </span> </h6>
+                                <h6 className="mb-3 text-white uppercase"> Tracking Details: <span className="capitalize font-semibold"> No tracking details available  </span> </h6>
+                                <h6 className="mb-3 text-white uppercase"> Delivery Notes:  <span className="capitalize font-semibold"> No additional notes </span> </h6> 
+
+                                <div className="mt-4 text-center">
+                                    {/* <a href="#" id="orderDetailsLink" className="text-white" style="text-decoration: underline;">
+                                        for more details
+                                    </a> */}
+                                </div>
+                            </div>
+              </div>
+
+              <div className="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                <button type="button" command="close" commandfor="shipping" className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 sm:ml-3 sm:w-auto"> Close </button>
+              </div>
+            </el-dialog-panel>
+          </div>
+        </dialog>
+      </el-dialog>
+
+
+
+        {/*  Delivered Details */}
+      <el-dialog>
+        <dialog id="delivered" aria-labelledby="dialog-title" class="fixed inset-0 size-auto max-h-none max-w-4xl overflow-y-auto bg-transparent backdrop:bg-transparent mx-auto">
+          <el-dialog-backdrop class="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+
+          <div tabindex="0" className="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
+            <el-dialog-panel class="relative transform overflow-hidden  bg-[#716F6DE0] text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-2lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 border rounded-xl border-gray-300">
+               <div className="px-6 pt-9 pb-6 sm:p-6 sm:pb-4">
+                            <div className="col-md-12 details-generate text-start md:px-12 px-4 pt-5">
+                                <h2 className="text-center text-2xl font-bold uppercase text-white pb-5"> Delivered Details </h2>
+                                <div className="flex flex-row mt-8 mb-5 w-full justify-center">
+                                    <div className="basis-1/2">
+                                        <h5 className="mb-3 text-white font-semibold uppercase"> Shipping Information</h5>
+                                         <p className="text-white"> Tracking and address details will appear here. </p>
+                                    </div>
+                                    <div className="basis-1/2 text-end">
+                                        <h5 className="text-white mb-0"> Tracking: <strong>  ORD2025121769420C7EDFDBC </strong>
+                                        </h5>
+                                    </div>
+                                </div>
+                              
+                               <h6 className="mb-3 text-white uppercase"> Status: <span className="capitalize font-semibold"> Preparing for shipment </span>  </h6> 
+                                <h6 className="mb-3 text-white uppercase"> Estimated arrival: <span className="capitalize font-semibold">  Dec 22, 2025 </span>   </h6>
+                                <h6 className="mb-3 text-white uppercase"> Shipping address: <span className="capitalize font-semibold"> Laborum praesentium, Veritatis exercitati, Explicabo Consequun, CA, 63394, United </span> </h6>
+                                <h6 className="mb-3 text-white uppercase"> Tracking Details: <span className="capitalize font-semibold"> No tracking details available  </span> </h6>
+                                <h6 className="mb-3 text-white uppercase"> Delivery Notes:  <span className="capitalize font-semibold"> No additional notes </span> </h6> 
+
+                                <div className="mt-4 text-center">
+                                    {/* <a href="#" id="orderDetailsLink" className="text-white" style="text-decoration: underline;">
+                                        for more details
+                                    </a> */}
+                                </div>
+                            </div>
+              </div>
+
+              <div className="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                <button type="button" command="close" commandfor="delivered" className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 sm:ml-3 sm:w-auto"> Close </button>
+              </div>
+            </el-dialog-panel>
+          </div>
+        </dialog>
+      </el-dialog>
+
+
 
       {/* --- Footer Help Text --- */}
       <div className="w-full max-w-3xl border-t border-gray-400 mt-10 pt-4 text-center text-gray-700 text-sm">

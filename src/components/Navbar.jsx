@@ -305,7 +305,7 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
               )}
             </div>
 
-            <Link
+            {/* <Link
               to="/wishlist"
               className="relative p-2 rounded-full hover:bg-white/10 transition"
             >
@@ -313,7 +313,7 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
               <span className="absolute -top-2 -right-2 bg-red-500 text-xs rounded-full px-1">
                 0
               </span>
-            </Link>
+            </Link> */}
 
             {/* Profile Dropdown */}
             <div ref={profileRef} className="relative z-[9999]">

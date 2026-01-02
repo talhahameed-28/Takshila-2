@@ -45,7 +45,7 @@ export default function Footer() {
             {/* Logo + Info */}
             <div className="space-y-6">
               <img
-                src="assets/logoo.svg"
+                src="/assets/logoo.svg"
                 alt="Takshila Logo"
                 className="h-14 w-14 drop-shadow-[0_0_8px_rgba(255,255,255,0.25)]"
               />
@@ -64,7 +64,7 @@ export default function Footer() {
                       className="flex items-center justify-center w-10 h-10 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition backdrop-blur-md shadow-sm hover:shadow-[0_0_8px_rgba(255,255,255,0.15)]"
                     >
                       <img
-                        src={`assets/${icon}`}
+                        src={`/assets/${icon}`}
                         alt={icon}
                         className="h-4 w-4 invert"
                       />
@@ -135,7 +135,7 @@ export default function Footer() {
                 />
                 <button className="px-4 rounded-r-lg bg-white/10 hover:bg-white/20 transition">
                   <img
-                    src="assets/mail.svg"
+                    src="/assets/mail.svg"
                     alt="Send"
                     className="h-5 w-5 invert"
                   />

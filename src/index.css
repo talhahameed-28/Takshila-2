@@ -198,3 +198,10 @@ a, span, button, label { font-family: "Montserrat", sans-serif; }
   height: 100%;
   object-fit: cover;
 }
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

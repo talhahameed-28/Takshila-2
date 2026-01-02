@@ -62,11 +62,12 @@ function Checkout(){
             setOrderPlacing(true)
             e.preventDefault()
             axios.defaults.withCredentials=true
-            const form=new FormData(e.target)
-            const payload=Object.fromEntries(form.entries())
+            const htmlForm=new FormData(e.target)
+            const payload=Object.fromEntries(htmlForm.entries())
             const {same_address,additional_details,terms_accepted}=payload
             const customer=(({firstName,lastName,email})=>({firstName,lastName,email}))(payload)
             const shipping=(({address,city,state,country,zip})=>({address,city,state,country,zip}))(payload)
+            const billing=(({address,city,state,country,zip})=>({address,city,state,country,zip}))(payload)
             console.log(customer)
             console.log(productInfo)
             const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/order/place`,
@@ -76,6 +77,7 @@ function Checkout(){
                     shipping,
                     same_address:same_address=="on"?true:false,
                     terms_accepted:terms_accepted=="on"?true:false,
+                    ...(same_address!="on" && {billing}),
                     additional_details,
                     create_payment_session: true
                 },
@@ -123,54 +125,54 @@ function Checkout(){
                             
                             <div className="mt-5 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
                                 <div className="sm:col-span-3">
-                                    <label for="firstName" className="block text-sm/7 font-medium text-gray-900">First name</label>
+                                    <label htmlFor="firstName" className="block text-sm/7 font-medium text-gray-900">First name</label>
                                     <div className="mt-1">
-                                        <input type="text" name="firstName" defaultValue={user.user.name.split(" ")[0]} autocomplete="given-name" className="w-full font-montserrat bg-white/40 text-grey px-4 py-3 rounded-full placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/40" />
+                                        <input type="text" name="firstName" defaultValue={user?.user?.name.split(" ")[0]} autoComplete="given-name" className="w-full font-montserrat bg-white/40 text-grey px-4 py-3 rounded-full placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/40" />
                                     </div>
                                 </div>
 
                                 <div className="sm:col-span-3">
-                                    <label for="lastName" className="block text-sm/7 font-medium text-gray-900">Last name</label>
+                                    <label htmlFor="lastName" className="block text-sm/7 font-medium text-gray-900">Last name</label>
                                     <div className="mt-1">
-                                        <input type="text" name="lastName" defaultValue={user.user.name.split(" ")[1]} autocomplete="family-name" className="w-full font-montserrat bg-white/40 text-grey px-4 py-3 rounded-full placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/40" />
-                                    </div>
-                                </div>
-
-                                <div class="sm:col-span-3">
-                                    <label for="email" className="block text-sm/7 font-medium text-gray-900">Email address</label>
-                                    <div className="mt-1">
-                                        <input id="email" type="email" name="email" defaultValue={user.user.email} autocomplete="email" className="w-full font-montserrat bg-white/40 text-grey px-4 py-3 rounded-full placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/40" />
+                                        <input type="text" name="lastName" defaultValue={user?.user?.name.split(" ")[1]} autoComplete="family-name" className="w-full font-montserrat bg-white/40 text-grey px-4 py-3 rounded-full placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/40" />
                                     </div>
                                 </div>
 
                                 <div className="sm:col-span-3">
-                                <label for="country" className="block text-sm/7 font-medium text-gray-900">Country</label>
+                                    <label htmlFor="email" className="block text-sm/7 font-medium text-gray-900">Email address</label>
+                                    <div className="mt-1">
+                                        <input id="email" type="email" name="email" defaultValue={user?.user?.email} autoComplete="email" className="w-full font-montserrat bg-white/40 text-grey px-4 py-3 rounded-full placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/40" />
+                                    </div>
+                                </div>
+
+                                <div className="sm:col-span-3">
+                                <label htmlFor="country" className="block text-sm/7 font-medium text-gray-900">Country</label>
                                 <div className="mt-1 grid grid-cols-1">
-                                    <select id="country" name="country" autocomplete="country-name" className="col-start-1 row-start-1 rounded-full w-full font-montserrat appearance-non bg-white/40 py-3 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-zinc-400">
+                                    <select id="country" name="country" autoComplete="country-name" className="col-start-1 row-start-1 rounded-full w-full font-montserrat appearance-non bg-white/40 py-3 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-zinc-400">
                                         <option>United States</option>
                                     </select>
-                                    <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4">
-                                    <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
+                                    <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4">
+                                    <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" fillRule="evenodd" />
                                     </svg>
                                 </div>
                                 </div>
 
                                 <div className="col-span-full">
-                                <label for="address" className="block text-sm/7 font-medium text-gray-900">Street address</label>
+                                <label htmlFor="address" className="block text-sm/7 font-medium text-gray-900">Street address</label>
                                 <div className="mt-1">
-                                    <input id="address" type="text" name="address" autocomplete="address" className="w-full font-montserrat bg-white/40 text-grey px-4 py-3 rounded-full placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/40" />
+                                    <input id="address" type="text" name="address" autoComplete="address" className="w-full font-montserrat bg-white/40 text-grey px-4 py-3 rounded-full placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/40" />
                                 </div>
                                 </div>
 
                                 <div className="sm:col-span-2 sm:col-start-1">
-                                <label for="city" className="block text-sm/7 font-medium text-gray-900">City</label>
+                                <label htmlFor="city" className="block text-sm/7 font-medium text-gray-900">City</label>
                                 <div className="mt-1">
-                                    <input id="city" type="text" name="city" autocomplete="address-level2" className="w-full font-montserrat bg-white/40 text-grey px-4 py-3 rounded-full placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/40" />
+                                    <input id="city" type="text" name="city" autoComplete="address-level2" className="w-full font-montserrat bg-white/40 text-grey px-4 py-3 rounded-full placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/40" />
                                 </div>
                                 </div>
 
                                 <div className="sm:col-span-2">
-                                <label for="state" className="block text-sm/7 font-medium text-gray-900">State / Province</label>
+                                <label htmlFor="state" className="block text-sm/7 font-medium text-gray-900">State / Province</label>
                                 <div className="mt-1">
                                     <select name="state" className="block w-full rounded-full bg-white/40 font-montserrat px-3 py-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-zinc-400 sm:text-sm/6" id="shipping_state_dropdown" required>
                                         <option value="" selected="">Select a State
@@ -179,7 +181,7 @@ function Checkout(){
                                         <option value="AK">Alaska</option>
                                         <option value="AZ">Arizona</option>
                                         <option value="AR">Arkansas</option>
-                                        <option value="CA">California</option>
+                                        <option value="CA">CalihtmlFornia</option>
                                         <option value="CO">Colorado</option>
                                         <option value="CT">Connecticut</option>
                                         <option value="DE">Delaware</option>
@@ -230,19 +232,19 @@ function Checkout(){
                                 </div>
                                 </div>
 
-                                <div class="sm:col-span-2">
-                                    <label for="zip" class="block text-sm/7 font-medium text-gray-900">ZIP / Postal code</label>
-                                    <div class="mt-1">
-                                        <input id="zip" type="text" name="zip" autocomplete="zip" className="w-full font-montserrat bg-white/40 text-grey px-4 py-3 rounded-full placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/40" />
+                                <div className="sm:col-span-2">
+                                    <label htmlFor="zip" className="block text-sm/7 font-medium text-gray-900">ZIP / Postal code</label>
+                                    <div className="mt-1">
+                                        <input id="zip" type="text" name="zip" autoComplete="zip" className="w-full font-montserrat bg-white/40 text-grey px-4 py-3 rounded-full placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/40" />
                                     </div>
                                 </div>
 
                                 <div className="col-span-full">
-                                <label for="additional_details" class="block text-sm/7 font-medium text-gray-900"> Additional Details </label>
-                                <div class="mt-1">
+                                <label htmlFor="additional_details" className="block text-sm/7 font-medium text-gray-900"> Additional Details </label>
+                                <div className="mt-1">
                                     <textarea id="additional_details" name="additional_details" rows="3" className="block w-full font-montserrat rounded-lg bg-white/40 px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-zinc-400 sm:text-sm/6"></textarea>
                                 </div>
-                                        <p class="mt-3 text-sm/6 text-gray-600"> Any Special Instructions, notes, or additional information.. </p>
+                                        <p className="mt-3 text-sm/6 text-gray-600"> Any Special Instructions, notes, or additional information.. </p>
                                 </div>
 
 
@@ -250,22 +252,22 @@ function Checkout(){
                             </div>
 
                                 
-                            <div class="mt-2 space-y-10">
+                            <div className="mt-2 space-y-10">
                                 <fieldset className="mb-0">
-                                <div class="mt-3 space-y-6">
-                                    <div class="flex gap-3">
-                                    <div class="flex h-6 shrink-0 items-center">
-                                        <div class="group grid size-4 grid-cols-1">
-                                        <input id="same_address" type="checkbox" name="same_address"  aria-describedby="same_address" className="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto" />
+                                <div className="mt-3 space-y-6">
+                                    <div className="flex gap-3">
+                                    <div className="flex h-6 shrink-0 items-center">
+                                        <div className="group grid size-4 grid-cols-1">
+                                        <input id="same_address" type="checkbox" name="same_address"  aria-describedby="same_address" className="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 htmlForced-colors:appearance-auto" />
                                         <svg viewBox="0 0 14 14" fill="none" className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25">
-                                            <path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="opacity-0 group-has-checked:opacity-100" />
-                                            <path d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-indeterminate:opacity-100" />
+                                            <path d="M3 8L6 11L11 3.5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-0 group-has-checked:opacity-100" />
+                                            <path d="M3 7H11" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-0 group-has-indeterminate:opacity-100" />
                                         </svg>
                                         </div>
                                     </div>
-                                    <div class="text-sm/6">
-                                        <label for="comments" className="font-medium text-gray-900"> </label>
-                                        <p id="comments-description" className="text-gray-500"> Save this information for future checkouts </p>
+                                    <div className="text-sm/6">
+                                        <label htmlFor="comments" className="font-medium text-gray-900"> </label>
+                                        <p id="comments-description" className="text-gray-500"> Save this information htmlFor future checkouts </p>
                                     </div>
                                     </div>
                                         
@@ -274,20 +276,20 @@ function Checkout(){
 
 
                                 <fieldset>
-                                <div class="mt-3 space-y-6">
-                                    <div class="flex gap-3">
-                                    <div class="flex h-6 shrink-0 items-center">
-                                        <div class="group grid size-4 grid-cols-1">
-                                        <input id="terms_accepted" type="checkbox" name="terms_accepted"  aria-describedby="terms_accepted" class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto" />
+                                <div className="mt-3 space-y-6">
+                                    <div className="flex gap-3">
+                                    <div className="flex h-6 shrink-0 items-center">
+                                        <div className="group grid size-4 grid-cols-1">
+                                        <input id="terms_accepted" type="checkbox" name="terms_accepted"  aria-describedby="terms_accepted" className="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 htmlForced-colors:appearance-auto" />
                                         <svg viewBox="0 0 14 14" fill="none" className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25">
-                                            <path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" />
-                                            <path d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-indeterminate:opacity-100" />
+                                            <path d="M3 8L6 11L11 3.5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-0 group-has-checked:opacity-100" />
+                                            <path d="M3 7H11" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-0 group-has-indeterminate:opacity-100" />
                                         </svg>
                                         </div>
                                     </div>
                                     
-                                    <div class="text-sm/6">
-                                        <label for="comments" className="font-medium text-gray-900"> </label>
+                                    <div className="text-sm/6">
+                                        <label htmlFor="comments" className="font-medium text-gray-900"> </label>
                                         <p id="comments-description" className="text-gray-500">  I agree to the <Link className="underline hover:text-blue-500" to="/terms-&-conditions"> Terms and Conditions </Link> and <Link className="underline hover:text-blue-500"  to="/privacy-policy"> Privacy Policy </Link> </p>
                                     </div>
                                     </div>
@@ -301,7 +303,7 @@ function Checkout(){
                             </div>
                             
 
-                        <div class="mt-6 flex items-center justify-end gap-x-6">
+                        <div className="mt-6 flex items-center justify-end gap-x-6">
                                 <button type="submit" className={`${orderPlacing?"bg-gray-600 cursor-not-allowed":"cursor-pointer bg-black/80"} w-full text-sm  py-3 rounded-full text-white font-medium hover:bg-black transition`}> Submit </button>
                         </div>
                         </form>
@@ -334,7 +336,7 @@ function Checkout(){
                             </div>
 
                             <h4 className="md:text-2xl font-bold mb-3"> Product Details </h4>
-                            <table class="table-auto font-montserrat table-design md:w-full w-[80%] text-[15px]">
+                            <table className="table-auto font-montserrat table-design md:w-full w-[80%] text-[15px]">
                                     
                                 <tbody>
                                     <tr>
@@ -384,7 +386,7 @@ function Checkout(){
                                 <div className="pt-5 pb-5"></div>
 
                                 <h4 className="md:text-2xl font-bold mb-3"> Costing </h4>
-                            <table class="table-auto font-montserrat table-design md:w-full w-[80%] text-[15px]">
+                            <table className="table-auto font-montserrat table-design md:w-full w-[80%] text-[15px]">
                                     
                                 <tbody>
                                     <tr>

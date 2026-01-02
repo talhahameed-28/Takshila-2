@@ -75,10 +75,11 @@ export default function MyActivity() {
   const [designs, setDesigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [adding, setAdding] = useState(false)
 
   // MODAL STATE
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [customData, setCustomData] = useState(null);
+  const [customData, setCustomData] = useState({});
 
   const [editingField, setEditingField] = useState(null);
   // possible values: "name" | "description" | null
@@ -104,6 +105,8 @@ export default function MyActivity() {
         quality: selectedProduct.meta_data.quality,
         centerStoneCarat: selectedProduct.meta_data.centerStoneCarat,
         totalCaratWeight: selectedProduct.meta_data.totalCaratWeight,
+        price:selectedProduct.price,
+        commission:selectedProduct.meta_data.commission
       });
     }
   }, [selectedProduct]);
@@ -126,8 +129,8 @@ export default function MyActivity() {
     try {
       setSaving(true);
 
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/api/product/${selectedProduct.id}`,
+      const { data } = await axios.put(
+        `${import.meta.env.VITE_BASE_URL}/api/product/${selectedProduct.id}/update`,
         {
           name: editData.name,
           description: editData.description,
@@ -138,7 +141,7 @@ export default function MyActivity() {
           },
         }
       );
-
+      console.log(data)
       if (data.success) {
         toast.success("Changes saved");
 
@@ -155,6 +158,7 @@ export default function MyActivity() {
         );
       }
     } catch (e) {
+      console.log(e)
       toast.error("Update failed");
     } finally {
       setSaving(false);
@@ -176,7 +180,7 @@ export default function MyActivity() {
             },
           }
         );
-
+        console.log(data)
         if (data.success) {
           setDesigns(data.data.products);
           setTotalProducts(data.data.pagination.total);
@@ -190,6 +194,40 @@ export default function MyActivity() {
 
     getMyDesigns();
   }, [currentPage]);
+
+
+   useEffect(() => {
+
+      
+  const getBreakdown = async () => {
+        try {
+          axios.defaults.withCredentials = true;
+          const { data } = await axios.post(
+            `${import.meta.env.VITE_BASE_URL}/api/calculate/price`,
+            customData
+          );
+
+          if (data.success) {
+             setCustomData(prev=>({...prev,commission:data.data.commission,price:data.data.totalPriceWithRoyalties}));            
+          }else{toast.error("Couldn't process your request")}
+        } catch (error) {
+          console.log(error);
+        }
+      };
+
+
+    if( Object.keys(customData).length === 0) return;
+      // debounce
+      const timer = setTimeout(() => {
+        getBreakdown();
+      }, 1000);
+
+  
+  return () => clearTimeout(timer);
+}, [customData]);
+
+
+
 
   const handleCommunityStatus = async () => {
     setUploading(true);
@@ -241,6 +279,39 @@ export default function MyActivity() {
       setUploading(false);
     }
   };
+
+
+  const handleAddToWishlist=async()=>{
+        setAdding(true)
+        try {
+          if(customData.totalCaratWeight<customData.centerStoneCarat){toast.error("Center stone weight cant be greater than total weight");return;}
+          axios.defaults.withCredentials=true
+          console.log(customData)
+          const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/wishlist/add`,
+              {product_id:selectedProduct.id,
+                ...customData
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+                  "Content-Type": "application/json",
+                },
+                withCredentials: true,
+              }
+            );
+            console.log(data)
+            if(data.success){
+              toast.success("Proceeding to checkout")
+              navigate("/checkout")
+            }
+        } catch (error) {
+          toast.error("Some error occurred")
+          console.log(error)
+        }finally{
+          setAdding(false)
+        }
+      }
+  
 
   const goToPage = (p) => {
     if (p >= 1 && p <= totalPages) setCurrentPage(p);
@@ -547,11 +618,10 @@ export default function MyActivity() {
                 </div>
 
                 <div className="flex justify-between bg-[#D9D9D9] text-black p-4 rounded-lg text-xs mt-6">
-                  <p>Price: ${selectedProduct.price}</p>
+                  <p>Price: ${customData.price}</p>
                   <p>
                     Commission: $
-                    {selectedProduct.meta_data.commission ||
-                      selectedProduct.meta_data.Commission}
+                    {customData.commission}
                   </p>
                 </div>
               </div>
@@ -601,7 +671,7 @@ export default function MyActivity() {
                         setEditingDescription(false);
                       }}
                     >
-                      ✎
+                      ✎Edit name
                     </span>
                   </div>
 
@@ -644,7 +714,7 @@ export default function MyActivity() {
                     disabled={saving}
                     onClick={handleSaveEdit}
                     className={`px-12 py-3 rounded-full text-xs tracking-widest text-white ${
-                      saving ? "bg-gray-400" : "bg-[#2E4B45]"
+                      saving ? "bg-gray-400 cursor-not-allowed" : "bg-[#2E4B45] cursor-pointer"
                     }`}
                   >
                     {saving ? "SAVING..." : "SAVE CHANGES"}
@@ -668,8 +738,8 @@ export default function MyActivity() {
                       : "UPLOAD TO COMMUNITY"}
                   </button>
                   <button
-                    onClick={() => navigate("/wishlist")}
-                    className="ml-auto px-12 py-3 bg-[#6B6B6B] text-white rounded-full text-xs tracking-widest"
+                    onClick={handleAddToWishlist}
+                    className={`${adding ? "bg-gray-400 cursor-not-allowed" : "bg-[#6B6B6B] cursor-pointer"} ml-auto px-12 py-3  text-white rounded-full text-xs tracking-widest`}
                   >
                     BUY NOW
                   </button>

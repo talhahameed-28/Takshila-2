@@ -89,7 +89,6 @@ export default function Community({handleOpenModal}) {
   const [rating, setRating] = useState(0);
   const [adding, setAdding] = useState(false)
   const [commentsList, setCommentsList] = useState([]);
-  const [loadingComments, setLoadingComments] = useState(false);
   // ⭐ Wishlist Context
   // const { wishlistItems, toggleWishlist } = useWishlist();
 
@@ -155,45 +154,45 @@ useEffect(() => {
       console.log(data);
       setSelectedProductId(id);
       setSelectedProductDetails(data.data.product);
+      setCommentsList(data.data.product.reviews)
     } catch (error) {
       toast.error("Couldn't fetch details");
       console.log(error);
     }
   };
 
-  useEffect(() => {
-    if (!selectedProductId) return;
+  //   if (!selectedProductId) return;
 
-    const fetchComments = async () => {
-      try {
-        setLoadingComments(true);
+  //   const fetchComments = async () => {
+  //     try {
+  //       setLoadingComments(true);
 
-        const { data } = await axios.get(
-          `${
-            import.meta.env.VITE_BASE_URL
-          }/api/product/${selectedProductId}/reviews`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+  //       const { data } = await axios.get(
+  //         `${
+  //           import.meta.env.VITE_BASE_URL
+  //         }/api/product/${selectedProductId}/reviews`,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //           },
+  //         }
+  //       );
 
-        if (data.success) {
-          setCommentsList(data.data.reviews || []);
-        } else {
-          setCommentsList([]);
-        }
-      } catch (error) {
-        console.log(error);
-        setCommentsList([]);
-      } finally {
-        setLoadingComments(false);
-      }
-    };
+  //       if (data.success) {
+  //         setCommentsList(data.data.reviews || []);
+  //       } else {
+  //         setCommentsList([]);
+  //       }
+  //     } catch (error) {
+  //       console.log(error);
+  //       setCommentsList([]);
+  //     } finally {
+  //       setLoadingComments(false);
+  //     }
+  //   };
 
-    fetchComments();
-  }, [selectedProductId]);
+  //   fetchComments();
+  // }, [selectedProductId]);
 
 
   const goToPage = (p) => {
@@ -338,7 +337,7 @@ useEffect(() => {
         id: Date.now(),
         review: comment,
         rating,
-        user: { name: "You" },
+        user: { name: data?.data?.review?.user?.name },
         created_at: new Date(),
       },
       ...prev,
@@ -462,13 +461,13 @@ useEffect(() => {
                     <h2 className="text-lg font-semibold uppercase">
                       {item.name}
                     </h2>
-                    <p className="text-sm text-[#1a1a1a]/80 flex items-center gap-2 mt-1">
+                    <p className="capitalize text-sm text-[#1a1a1a]/80 flex items-center gap-2 mt-1">
                       <img
-                        src="assets/user.svg"
+                        src={item?.user?.avatar}
                         alt="user"
-                        className="w-4 h-4 opacity-70"
+                        className="w-4 h-4 rounded-full opacity-70"
                       />
-                      {item.designer}
+                      {item?.user?.name}
                     </p>
                     <p className="text-xs text-[#1a1a1a]/60 mt-2 italic">
                       Tap to view details
@@ -478,7 +477,7 @@ useEffect(() => {
                   {/* Price + Wishlist */}
                   <div className="flex justify-between items-center mt-4">
                     <span className="font-medium text-[#1a1a1a]">
-                      {item.price}
+                      ${item.price}
                     </span>
 
                     <div className="flex items-center gap-3">
@@ -882,9 +881,9 @@ useEffect(() => {
                     </button>
 
                     {/* WISHLIST (NO LOGIC YET) */}
-                    <button className="w-12 h-12 bg-[#C3C3C3] rounded-full flex items-center justify-center hover:bg-[#b5b5b5]">
+                    {/* <button className="w-12 h-12 bg-[#C3C3C3] rounded-full flex items-center justify-center hover:bg-[#b5b5b5]">
                       <img src="/assets/wishlist.svg" className="w-5 h-5" />
-                    </button>
+                    </button> */}
 
                     <button
                       onClick={() => {
@@ -910,11 +909,7 @@ useEffect(() => {
                   Community Reviews
                 </h3>
 
-                {loadingComments && (
-                  <p className="text-sm text-gray-500">Loading comments...</p>
-                )}
-
-                {!loadingComments && commentsList.length === 0 && (
+                {commentsList.length === 0 && (
                   <p className="text-sm text-gray-500">
                     No comments yet. Be the first to review this design.
                   </p>
@@ -1005,7 +1000,7 @@ useEffect(() => {
                   </a>
 
                   <a
-                    href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
+                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`${import.meta.env.VITE_BASE_URL}/community/${selectedProductId}`)}`}
                     target="_blank"
                   >
                     <img src="/assets/facebook.svg" className="w-8 mx-auto" />

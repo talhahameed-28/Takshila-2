@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import Home from "../pages/Home";
 import { ROUTES } from "./routes";
 import Community from "../pages/Community";
+import CommunityProduct from "../pages/CommunityProduct";
 import OurStory from "../pages/OurStory";
 import Blogs from "../pages/Blogs";
 import EmailVerify from "../pages/EmailVerify";
@@ -36,6 +37,7 @@ const MainRoutes = ({setIsMobileMenuOpen,setModalOpen,setModalType,setShowProfil
             <Routes>
                 <Route path={ROUTES.HOME} element={<Home />} />
                 <Route path={ROUTES.COMMUNITY} element={<Community handleOpenModal={handleOpenModal} />} />
+                <Route path={ROUTES.COMMUNITYPRODUCT} element={<CommunityProduct handleOpenModal={handleOpenModal} />} />
                 <Route path={ROUTES.CATALOGUE} element={<Catalogue />} />
                 <Route path={ROUTES.ABOUT} element={<OurStory />} />
                 <Route path={ROUTES.BLOG} element={<Blogs />} />

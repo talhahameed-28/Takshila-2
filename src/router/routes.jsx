@@ -3,6 +3,7 @@
 export const ROUTES = {
     HOME: '/',
     COMMUNITY: '/community',
+    COMMUNITYPRODUCT:'/product/:productId',
     CATALOGUE: '/catalogue',
     ACTIVITY: '/my-activity',
     STORE: '/our-story',

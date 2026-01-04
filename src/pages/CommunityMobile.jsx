@@ -1,5 +1,7 @@
 import { useState } from "react";
 import HotMeter from "../components/HotMeter";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function CommunityMobile({ jewelleryData = [], loadProduct }) {
   if (jewelleryData.length === 0) {
@@ -15,9 +17,9 @@ export default function CommunityMobile({ jewelleryData = [], loadProduct }) {
       className="bg-black h-screen overflow-y-scroll snap-y snap-mandatory text-white"
       style={{ WebkitOverflowScrolling: "touch" }}
     >
-      {jewelleryData.map((item) => (
+      {jewelleryData.map((item) =>{ console.log(item);return(
         <ReelItem key={item.id} item={item} loadProduct={loadProduct} />
-      ))}
+      )})}
     </div>
   );
 }
@@ -27,9 +29,42 @@ export default function CommunityMobile({ jewelleryData = [], loadProduct }) {
 /* ------------------------------------------------------------------ */
 
 function ReelItem({ item, loadProduct }) {
-  const [liked, setLiked] = useState(item.user_liked || false);
+  const [liked, setLiked] = useState(item.user_liked);
   const [likes, setLikes] = useState(item.likes_count || 0);
   const [expanded, setExpanded] = useState(false);
+
+   const handleLike = async () => {
+      try {
+        axios.defaults.withCredentials = true;
+        const { data } = await axios.post(
+          `${
+            import.meta.env.VITE_BASE_URL
+          }/api/product/${item.id}/like`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            withCredentials: true,
+          }
+        );
+        console.log(data);
+        if (data.success) {
+          toast.success(data.message);
+          setLiked(data.liked)
+          setLikes(data.likes_count)
+          // item.likes_count=data.likes_count
+          // setSelectedProductDetails({
+          //   ...item,
+          //   user_liked: data.liked,
+          //   likes_count: data.likes_count,
+          // });
+        } else toast.error("Couldn't process request");
+      } catch (error) {
+        console.log(error);
+        toast.error("Some error occurred");
+      }
+    };
 
   const toggleLike = () => {
     setLiked((prev) => !prev);
@@ -125,14 +160,51 @@ function ReelItem({ item, loadProduct }) {
           <img src="/assets/edit.png" alt="Edit" className="w-6 h-6" />
         </button>
 
-        <button onClick={toggleLike} className="flex flex-col items-center">
-          <img
-            src={liked ? "/assets/like2.png" : "/assets/like.png"}
-            alt="Like"
-            className="w-7 h-7"
-          />
-          <span className="text-xs mt-1">{likes}</span>
-        </button>
+          <button
+                      onClick={handleLike}
+                      className="
+
+                      rounded-full
+                      text-sm
+                      backdrop-blur
+                      shadow-lg
+                      transition
+                     
+                     
+                    "
+                    >
+                      {/* <img
+                      src="/assets/heart.svg"
+                      alt="Like"
+                      className={`w-4 h-4 text-red-700  transition ${
+                        selectedProductDetails.user_liked ? "scale-110 opacity-100" : "opacity-70"
+                      }`
+                    }
+                    /> */}
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="currentColor"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        stroke="white"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className={` lucide lucide-heart-icon lucide-heart transition ${
+                          liked
+                            ? " text-red-700 opacity-100"
+                            : "text-black opacity-70"
+                        }`}
+                      >
+                        <path
+                          d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"
+                          fill="currentColor"
+                        />{" "}
+                      </svg>
+
+                      <span>{likes}</span>
+                    </button>
 
         <button
           onClick={() => loadProduct?.(item.id)}

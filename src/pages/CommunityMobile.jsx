@@ -33,7 +33,6 @@ function CommentsSheet({ productId, onClose }) {
   const [loading, setLoading] = useState(true);
   const [posting, setPosting] = useState(false);
 
-  /* ---------------- FETCH COMMENTS ---------------- */
   useEffect(() => {
     const fetchComments = async () => {
       try {
@@ -59,7 +58,6 @@ function CommentsSheet({ productId, onClose }) {
     fetchComments();
   }, [productId]);
 
-  /* ---------------- ADD COMMENT ---------------- */
   const addComment = async () => {
     if (!comment.trim() || posting) return;
 
@@ -77,7 +75,6 @@ function CommentsSheet({ productId, onClose }) {
       );
 
       if (data.success) {
-        // Optimistic UI update
         setComments((prev) => [
           {
             id: Date.now(),
@@ -87,7 +84,6 @@ function CommentsSheet({ productId, onClose }) {
           },
           ...prev,
         ]);
-
         setComment("");
       }
     } catch (err) {
@@ -99,22 +95,15 @@ function CommentsSheet({ productId, onClose }) {
 
   return (
     <>
-      {/* BACKDROP */}
       <div className="fixed inset-0 bg-black/50 z-40" onClick={onClose} />
 
-      {/* BOTTOM SHEET */}
-      <div
-        className="fixed bottom-0 left-0 right-0 z-50 h-[75vh] bg-[#1c1c1e] rounded-t-2xl flex flex-col animate-slideUp"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* HANDLE */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 h-[75vh] bg-[#1c1c1e] rounded-t-2xl flex flex-col animate-slideUp">
         <div className="flex justify-center py-3">
           <div className="w-10 h-1 bg-white/30 rounded-full" />
         </div>
 
         <h3 className="text-center text-sm mb-2">Comments</h3>
 
-        {/* COMMENTS LIST */}
         <div className="flex-1 overflow-y-auto px-4 space-y-5">
           {loading && (
             <p className="text-center text-white/50 text-sm">
@@ -131,18 +120,16 @@ function CommentsSheet({ productId, onClose }) {
               <div className="w-9 h-9 rounded-full bg-gray-600 flex items-center justify-center text-xs">
                 {c.user?.name?.charAt(0) || "U"}
               </div>
-
               <div>
                 <p className="text-sm font-medium">
                   {c.user?.name || "Anonymous"}
                 </p>
-                <p className="text-sm text-white/80 leading-snug">{c.review}</p>
+                <p className="text-sm text-white/80">{c.review}</p>
               </div>
             </div>
           ))}
         </div>
 
-        {/* INPUT */}
         <div className="border-t border-white/10 px-4 py-3 flex gap-3">
           <input
             value={comment}
@@ -150,11 +137,7 @@ function CommentsSheet({ productId, onClose }) {
             placeholder="Add a comment..."
             className="flex-1 bg-[#2c2c2e] rounded-full px-4 py-2 text-sm text-white outline-none"
           />
-          <button
-            onClick={addComment}
-            disabled={posting}
-            className="text-sm opacity-80"
-          >
+          <button onClick={addComment} disabled={posting} className="text-sm">
             {posting ? "..." : "Send"}
           </button>
         </div>
@@ -183,17 +166,11 @@ function ReelItem({ item, loadProduct }) {
     item.user?.callname || item.user?.username || "takshila";
 
   return (
-    <div className="h-screen snap-start relative flex flex-col">
-      {expanded && (
-        <div
-          className="fixed inset-0 bg-black/50 z-40"
-          onClick={() => setExpanded(false)}
-        />
-      )}
-
+    <div className="h-screen snap-start relative flex flex-col pt-24">
       <div className="flex-1" />
 
-      <div className="flex flex-col items-center gap-4 px-4 relative z-30">
+      {/* IMAGE + HEADER */}
+      <div className="flex flex-col items-center gap-4 px-4">
         <div className="flex items-center gap-3 self-start">
           <div className="w-11 h-11 rounded-full border border-white overflow-hidden flex items-center justify-center bg-black">
             {designerAvatar ? (
@@ -207,7 +184,6 @@ function ReelItem({ item, loadProduct }) {
               </span>
             )}
           </div>
-
           <span className="text-sm">@{designerCallname}</span>
         </div>
 
@@ -219,46 +195,67 @@ function ReelItem({ item, loadProduct }) {
             className="w-full object-contain"
           />
         </div>
-      </div>
 
-      <HotMeter
-        average={item.average_rating || 50}
-        userRating={item.user_rating || null}
-        onRate={(rating) => console.log("User rated:", rating)}
-      />
+        {/* ACTION ROW — ALIGNED TO IMAGE WIDTH */}
+        <div className="w-full max-w-[360px] mx-auto px-1 mt-4">
+          <div className="flex items-center justify-between">
+            {/* LEFT — CUSTOMIZE */}
+            <button
+              onClick={() => loadProduct(item.id)}
+              className="
+        px-7 py-3
+        rounded-full
+        text-sm font-semibold
+        bg-white text-black
+        hover:bg-white/90
+        transition
+      "
+            >
+              Customize
+            </button>
+
+            {/* RIGHT — ICONS */}
+            <div className="flex items-center gap-5">
+              {/* LIKE */}
+              <button onClick={toggleLike} className="flex items-center gap-1">
+                <img
+                  src={liked ? "/assets/like2.png" : "/assets/like.png"}
+                  className="w-6 h-6"
+                />
+                <span className="text-xs">{likes}</span>
+              </button>
+
+              {/* COMMENTS */}
+              <button
+                onClick={() => setShowComments(true)}
+                className="flex items-center gap-1"
+              >
+                <img src="/assets/comments.png" className="w-6 h-6" />
+                <span className="text-xs">{item.reviews_count || 0}</span>
+              </button>
+
+              {/* SHARE */}
+              <button>
+                <img src="/assets/Share.svg" className="w-6 h-6" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* HOT METER */}
+        <div className="w-full max-w-[360px] mt-4">
+          <HotMeter
+            average={item.average_rating || 50}
+            userRating={item.user_rating || null}
+            onRate={(rating) => console.log("User rated:", rating)}
+          />
+        </div>
+      </div>
 
       <div className="flex-1" />
 
-      {/* ACTION ICONS */}
-      <div className="absolute right-5 bottom-10 flex flex-col items-center gap-6 z-30">
-        <button onClick={() => loadProduct(item.id)}>
-          <img src="/assets/edit.png" className="w-6 h-6" />
-        </button>
-
-        <button onClick={toggleLike} className="flex flex-col items-center">
-          <img
-            src={liked ? "/assets/like2.png" : "/assets/like.png"}
-            className="w-7 h-7"
-          />
-          <span className="text-xs mt-1">{likes}</span>
-        </button>
-
-        {/* COMMENTS BUTTON */}
-        <button
-          onClick={() => setShowComments(true)}
-          className="flex flex-col items-center"
-        >
-          <img src="/assets/comments.png" className="w-6 h-6" />
-          <span className="text-xs mt-1">{item.reviews_count || 0}</span>
-        </button>
-
-        <button>
-          <img src="/assets/Share.svg" className="w-6 h-6" />
-        </button>
-      </div>
-
       {/* DESCRIPTION */}
-      <div className="relative z-30 px-6 pb-8">
+      <div className="px-6 pb-8">
         <h2 className="text-3xl font-light">{item.name}</h2>
         <p className="text-sm opacity-80 line-clamp-1">
           {item.description || "No description provided"}

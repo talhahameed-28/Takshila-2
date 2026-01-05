@@ -3,6 +3,7 @@ import axios from "axios";
 
 import CommunityDesktop from "./CommunityDesktop";
 import CommunityMobile from "./CommunityMobile";
+import CommunityProductModal from "./CommunityProductModal";
 
 export default function Community(props) {
   const [jewelleryData, setJewelleryData] = useState([]);
@@ -81,6 +82,15 @@ export default function Community(props) {
           closeModal={closeModal}
         />
       </div>
+
+      {selectedProductId && selectedProductDetails && (
+        <CommunityProductModal
+          selectedProductId={selectedProductId}
+          selectedProductDetails={selectedProductDetails}
+          closeModal={closeModal}
+          {...props}
+        />
+      )}
     </>
   );
 }

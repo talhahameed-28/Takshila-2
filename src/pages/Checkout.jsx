@@ -267,7 +267,7 @@ function Checkout(){
                                     </div>
                                     <div className="text-sm/6">
                                         <label htmlFor="comments" className="font-medium text-gray-900"> </label>
-                                        <p id="comments-description" className="text-gray-500"> Save this information htmlFor future checkouts </p>
+                                        <p id="comments-description" className="text-gray-500"> Save this information for future checkouts </p>
                                     </div>
                                     </div>
                                         

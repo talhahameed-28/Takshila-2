@@ -3,31 +3,36 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 
-export default function Orders1() {
+export default function Orders() {
   const [tab, setTab] = useState("orders"); // "orders" or "delivered"
-   const [activeIndex, setActiveIndex] = useState(null);
+   const [loadingTrackingInfo, setLoadingTrackingInfo] = useState(false);
   const [orders, setOrders] = useState([])
   const [selectedOrder, setSelectedOrder] = useState(null)
 
   const toggle =async (id) => {
     try {
-      if(id==selectedOrder?.id) {
+      if(id==selectedOrder?.order_id) {
         setSelectedOrder(null)
         return
       }
+      setLoadingTrackingInfo(false)
+      setSelectedOrder({order_id:id})
       axios.defaults.withCredentials=true
       const {data} = await axios.get(
-          `${
-            import.meta.env.VITE_BASE_URL
-          }/api/order/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        console.log(data)
-        if(data.success) setSelectedOrder(data.data.order)
+        `${
+          import.meta.env.VITE_BASE_URL
+        }/api/order/${id}/stages`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      console.log(data)
+      if(data.success) {
+        setLoadingTrackingInfo(true)
+        setSelectedOrder(data.data)
+      }
         else toast.error("Couldn't process your request")
       } catch (error) {
       console.log(error)
@@ -136,7 +141,7 @@ export default function Orders1() {
            
             {orders.map(order=>(
               <>
-              <div key={order.id} className="w-full bg-[#d8d8d8] rounded-2xl p-5 flex items-center justify-between shadow-sm" onClick={() => toggle(order.id)}>
+              <div  key={order.id} className="w-full cursor-pointer hover:scale-102 transition-all duration-200 hover:bg-[#7e7e7e] bg-[#d8d8d8] rounded-2xl p-5 flex items-center justify-between shadow-sm" onClick={() => toggle(order.id)}>
               {/* Left Side */}
               <div className="flex items-start space-x-4">
                 <div className="w-16 h-16 bg-white rounded-xl">
@@ -157,55 +162,105 @@ export default function Orders1() {
               </div>
                 
             </div>
-             {(selectedOrder && selectedOrder.id==order.id) &&
-            <div className="pb-3 border-bottom mb-4 border-dark">
+             {/* {(selectedOrder && selectedOrder.id==order.id) && */}
+            {(selectedOrder && selectedOrder.order_id==order.id)?
+            loadingTrackingInfo?
+                          <div className="pb-3 border-bottom mb-4 border-dark">
                             <table className="table track-table bg-transparent w-full m-auto max-w-[780px] font-montserrat text-gray-600">
                                 <tbody>
+                                  
                                     <tr>
-                                        <td><strong> Order Status </strong> </td>
-                                        <td> Completed on :  12/10/2025 </td>
+                                        <td > 
+                                          <div className={`${selectedOrder.stages[0].status=="completed"?"font-bold":""}`}> 
+                                            Order Status 
+                                            </div>
+                                        </td>
+                                        <td> {selectedOrder.stages[0].status=="completed"?`Completed on :  ${selectedOrder.stages[0].completed_at.split("T")[0]}`:"Pending..."} </td>
                                         <td>  <button className="underline decoration-1 hover:text-zinc-900" command="show-modal" commandfor="viewdetails"> View Details</button> </td>
-                                        <td> <span className="fill-check"><svg xmlns="http://www.w3.org/2000/svg" height="21px" viewBox="0 -960 960 960" width="21px" fill="#fff"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg></span> </td>
+                                        <td> 
+                                          {selectedOrder.stages[0].status=="completed"?<span className="fill-check"><svg xmlns="http://www.w3.org/2000/svg" height="21px" viewBox="0 -960 960 960" width="21px" fill="#fff"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg></span> 
+                                           :<span className="no-fill"></span>}            
+                                        </td>
                                     </tr>
                                     <tr>
-                                        <td><strong> CAD Approved</strong> </td>
-                                        <td> Completed on :  14/10/2025 </td>
-                                        <td><button className="underline decoration-1 hover:text-zinc-900" command="show-modal" commandfor="cadmodal"> View CAD </button> </td>
-                                        <td> <span className="fill-check"><svg xmlns="http://www.w3.org/2000/svg" height="21px" viewBox="0 -960 960 960" width="21px" fill="#fff"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg></span> </td>
+                                        <td>
+                                          <div className={`${selectedOrder.stages[1].status=="completed"?"font-bold":""}`}> 
+                                            CAD approved 
+                                            </div>
+                                         </td>
+                                        <td> {selectedOrder.stages[1].status=="completed" && selectedOrder.stages[1].completed_at!=null ?`Completed on :  ${selectedOrder.stages[1]?. completed_at.split("T")[0]}`:"Pending..."} </td>
+                                        <td> {selectedOrder.stages[1].status=="completed"?<button className="underline decoration-1 hover:text-zinc-900" command="show-modal" commandfor="cadmodal"> View CAD </button>:""} </td>
+
+                                        <td> 
+                                          {selectedOrder.stages[1].status=="completed"?<span className="fill-check"><svg xmlns="http://www.w3.org/2000/svg" height="21px" viewBox="0 -960 960 960" width="21px" fill="#fff"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg></span> 
+                                           :<span className="no-fill"></span>}            
+                                        </td>
                                     </tr>
                                     <tr>
-                                        <td><strong> Diamond Sourced </strong></td>
-                                        <td> Pending... </td>
-                                        <td><button className="underline decoration-1 hover:text-zinc-900" command="show-modal" commandfor="diamondsource">  View Diamond </button> </td>
-                                        <td> <span className="fill-check"><svg xmlns="http://www.w3.org/2000/svg" height="21px" viewBox="0 -960 960 960" width="21px" fill="#fff"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg></span> </td>
+                                        <td>
+                                          <div className={`${selectedOrder.stages[2].status=="completed"?"font-bold":""}`}> 
+                                            Diamond sourced
+                                          </div>
+                                            </td>
+                                        <td> {selectedOrder.stages[2].status=="completed"  && selectedOrder.stages[2].completed_at!=null?`Completed on :  ${selectedOrder.stages[2].completed_at.split("T")[0]}`:"Pending..."} </td>
+                                        <td>{selectedOrder.stages[2].status=="completed"?<button className="underline decoration-1 hover:text-zinc-900" command="show-modal" commandfor="diamondsource">  View Diamond </button>:"" }</td>
+                                        <td> 
+                                          {selectedOrder.stages[2].status=="completed"?<span className="fill-check"><svg xmlns="http://www.w3.org/2000/svg" height="21px" viewBox="0 -960 960 960" width="21px" fill="#fff"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg></span> 
+                                           :<span className="no-fill"></span>}            
+                                        </td>
+                                      </tr>
+                                    <tr>
+                                        <td>
+                                          <div className={`${selectedOrder.stages[3].status=="completed"?"font-bold":""}`}> 
+                                            Ring status 
+                                          </div>
+                                           </td>
+                                        <td> {selectedOrder.stages[3].status=="completed" && selectedOrder.stages[3].completed_at!=null?`Completed on :  ${selectedOrder.stages[3].completed_at.split("T")[0]}`:"Pending..."} </td>
+                                        <td>{selectedOrder.stages[3].status=="completed"?<button className="underline decoration-1 hover:text-zinc-900" command="show-modal" commandfor="ringstatus">  View Info</button>:""} </td>
+                                        <td> 
+                                          {selectedOrder.stages[3].status=="completed"?<span className="fill-check"><svg xmlns="http://www.w3.org/2000/svg" height="21px" viewBox="0 -960 960 960" width="21px" fill="#fff"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg></span> 
+                                           :<span className="no-fill"></span>}            
+                                        </td>
                                     </tr>
                                     <tr>
-                                        <td> <strong> Ring Status </strong> </td>
-                                        <td> Completed on :  16/10/2025 </td>
-                                        <td><button className="underline decoration-1 hover:text-zinc-900" command="show-modal" commandfor="ringstatus">  View Info</button> </td>
-                                        <td> <span className="fill-check"><svg xmlns="http://www.w3.org/2000/svg" height="21px" viewBox="0 -960 960 960" width="21px" fill="#fff"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg></span> </td>
+                                        <td> <div className={`${selectedOrder.stages[4].status=="completed"?"font-bold":""}`}> 
+                                            Certification
+                                          </div> </td>
+                                        <td> {selectedOrder.stages[4].status=="completed" && selectedOrder.stages[4].completed_at!=null?`Completed on :  ${selectedOrder.stages[4].completed_at.split("T")[0]}`:"Pending..."} </td>
+                                        <td>{selectedOrder.stages[4].status=="completed"?<button className="underline decoration-1 hover:text-zinc-900" command="show-modal" commandfor="certification">  View Cart </button>:""} </td>
+                                        <td> 
+                                          {selectedOrder.stages[4].status=="completed"?<span className="fill-check"><svg xmlns="http://www.w3.org/2000/svg" height="21px" viewBox="0 -960 960 960" width="21px" fill="#fff"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg></span> 
+                                           :<span className="no-fill"></span>}            
+                                        </td>
                                     </tr>
                                     <tr>
-                                        <td> Certification </td>
-                                        <td> Pending</td>
-                                        <td><button className="underline decoration-1 hover:text-zinc-900" command="show-modal" commandfor="certification">  View Cart </button> </td>
-                                        <td> <span className="no-fill"> </span> </td>
+                                        <td> <div className={`${selectedOrder.stages[5].status=="completed"?"font-bold":""}`}> 
+                                            Shipping 
+                                          </div> </td>
+                                        <td> {selectedOrder.stages[5].status=="completed" && selectedOrder.stages[5].completed_at!=null?`Completed on :  ${selectedOrder.stages[5].completed_at.split("T")[0]}`:"Pending..."} </td>
+                                        <td>{selectedOrder.stages[5].status=="completed"?<button className="underline decoration-1 hover:text-zinc-900" data-order-id="18" data-order='' command="show-modal" commandfor="shipping">  View Address </button>:""} </td>
+                                        <td> 
+                                          {selectedOrder.stages[5].status=="completed"?<span className="fill-check"><svg xmlns="http://www.w3.org/2000/svg" height="21px" viewBox="0 -960 960 960" width="21px" fill="#fff"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg></span> 
+                                           :<span className="no-fill"></span>}            
+                                        </td>
                                     </tr>
                                     <tr>
-                                        <td> Shipping </td>
-                                        <td> Pending</td>
-                                        <td><button className="underline decoration-1 hover:text-zinc-900" data-order-id="18" data-order='' command="show-modal" commandfor="shipping">  View Address </button> </td>
-                                        <td> <span className="no-fill"></span> </td>
-                                    </tr>
-                                    <tr>
-                                        <td> Delivered </td>
-                                        <td> Pending</td>
-                                        <td><button className="underline decoration-1 hover:text-zinc-900" command="show-modal" commandfor="delivered">  View Address </button> </td>
-                                        <td> <span className="no-fill"></span> </td>
+                                        <td> <div className={`${selectedOrder.stages[6].status=="completed"?"font-bold":""}`}> 
+                                            Delivered 
+                                          </div> </td>
+                                        <td> {selectedOrder.stages[6].status=="completed"  && selectedOrder.stages[6].completed_at!=null?`Completed on :  ${selectedOrder.stages[6].completed_at.split("T")[0]}`:"Pending..."} </td>
+                                        <td>{ selectedOrder.stages[6].status=="completed"?<button className="underline decoration-1 hover:text-zinc-900" command="show-modal" commandfor="delivered">  View Address </button>:""} </td>
+                                         <td> 
+                                          {selectedOrder.stages[6].status=="completed"?<span className="fill-check"><svg xmlns="http://www.w3.org/2000/svg" height="21px" viewBox="0 -960 960 960" width="21px" fill="#fff"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg></span> 
+                                           :<span className="no-fill"></span>}            
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>   
-                        </div>
+                        </div>:<div className="flex flex-col items-center justify-center py-10">
+            <div className="h-10 w-10 border-4 border-gray-300 border-t-gray-700 rounded-full animate-spin"></div>
+
+          </div>:<div></div>
                       }
                       </>
             )
@@ -235,11 +290,11 @@ export default function Orders1() {
 
       {/* View Details */}
       <el-dialog>
-        <dialog id="viewdetails" aria-labelledby="dialog-title" class="fixed inset-0 size-auto max-h-none max-w-4xl overflow-y-auto bg-transparent backdrop:bg-transparent mx-auto">
-          <el-dialog-backdrop class="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+        <dialog id="viewdetails" aria-labelledby="dialog-title" className="fixed inset-0 size-auto max-h-none max-w-4xl overflow-y-auto bg-transparent backdrop:bg-transparent mx-auto">
+          <el-dialog-backdrop className="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
 
-          <div tabindex="0" className="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
-            <el-dialog-panel class="relative transform overflow-hidden -lg bg-[#716F6DE0] text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-2lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 border rounded-xl border-gray-300">
+          <div tabIndex="0" className="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
+            <el-dialog-panel className="relative transform overflow-hidden -lg bg-[#716F6DE0] text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-2lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 border rounded-xl border-gray-300">
               <div className="px-6 pt-9 pb-6 sm:p-6 sm:pb-4">
                             <div className="col-md-12 details-generate text-start md:px-12 px-4 pt-5">
                                 <h2 className="text-center text-2xl font-bold uppercase text-white pb-5"> Order Details </h2>
@@ -288,11 +343,11 @@ export default function Orders1() {
 
       {/* View CAD */}
       <el-dialog>
-        <dialog id="cadmodal" aria-labelledby="dialog-title" class="fixed inset-0 size-auto max-h-none max-w-4xl overflow-y-auto bg-transparent backdrop:bg-transparent mx-auto">
-          <el-dialog-backdrop class="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+        <dialog id="cadmodal" aria-labelledby="dialog-title" className="fixed inset-0 size-auto max-h-none max-w-4xl overflow-y-auto bg-transparent backdrop:bg-transparent mx-auto">
+          <el-dialog-backdrop className="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
 
-          <div tabindex="0" className="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
-            <el-dialog-panel class="relative transform overflow-hidden bg-[#716F6DE0] text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-2lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 border rounded-xl border-gray-300">
+          <div tabIndex="0" className="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
+            <el-dialog-panel className="relative transform overflow-hidden bg-[#716F6DE0] text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-2lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 border rounded-xl border-gray-300">
               <div className="px-6 pt-9 pb-6 sm:p-6 sm:pb-4">
                             <div className="col-md-12 details-generate text-start md:px-12 px-4 pt-5">
                                 <h2 className="text-center text-2xl font-bold uppercase text-white pb-5"> CAD Details </h2>
@@ -331,11 +386,11 @@ export default function Orders1() {
 
         {/* Diamond Sourced */}
       <el-dialog>
-        <dialog id="diamondsource" aria-labelledby="dialog-title" class="fixed inset-0 size-auto max-h-none max-w-4xl overflow-y-auto bg-transparent backdrop:bg-transparent mx-auto">
-          <el-dialog-backdrop class="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+        <dialog id="diamondsource" aria-labelledby="dialog-title" className="fixed inset-0 size-auto max-h-none max-w-4xl overflow-y-auto bg-transparent backdrop:bg-transparent mx-auto">
+          <el-dialog-backdrop className="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
 
-          <div tabindex="0" className="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
-            <el-dialog-panel class="relative transform overflow-hidden  bg-[#716F6DE0] text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-2lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 border rounded-xl border-gray-300">
+          <div tabIndex="0" className="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
+            <el-dialog-panel className="relative transform overflow-hidden  bg-[#716F6DE0] text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-2lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 border rounded-xl border-gray-300">
               <div className="px-6 pt-9 pb-6 sm:p-6 sm:pb-4">
                             <div className="col-md-12 details-generate text-start md:px-12 px-4 pt-5">
                                 <h2 className="text-center text-2xl font-bold uppercase text-white pb-5"> Diamond Sourced </h2>
@@ -375,11 +430,11 @@ export default function Orders1() {
 
         {/* Ring Status */}
       <el-dialog>
-        <dialog id="ringstatus" aria-labelledby="dialog-title" class="fixed inset-0 size-auto max-h-none max-w-4xl overflow-y-auto bg-transparent backdrop:bg-transparent mx-auto">
-          <el-dialog-backdrop class="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+        <dialog id="ringstatus" aria-labelledby="dialog-title" className="fixed inset-0 size-auto max-h-none max-w-4xl overflow-y-auto bg-transparent backdrop:bg-transparent mx-auto">
+          <el-dialog-backdrop className="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
 
-          <div tabindex="0" className="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
-            <el-dialog-panel class="relative transform overflow-hidden bg-[#716F6DE0] text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-2lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 border rounded-xl border-gray-300">
+          <div tabIndex="0" className="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
+            <el-dialog-panel className="relative transform overflow-hidden bg-[#716F6DE0] text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-2lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 border rounded-xl border-gray-300">
               <div className="px-6 pt-9 pb-6 sm:p-6 sm:pb-4">
                             <div className="col-md-12 details-generate text-start md:px-12 px-4 pt-5">
                                 <h2 className="text-center text-2xl font-bold uppercase text-white pb-5"> Ring Status </h2>
@@ -420,11 +475,11 @@ export default function Orders1() {
         
         {/* Certifications */}
       <el-dialog>
-        <dialog id="certification" aria-labelledby="dialog-title" class="fixed inset-0 size-auto max-h-none max-w-4xl overflow-y-auto bg-transparent backdrop:bg-transparent mx-auto">
-          <el-dialog-backdrop class="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+        <dialog id="certification" aria-labelledby="dialog-title" className="fixed inset-0 size-auto max-h-none max-w-4xl overflow-y-auto bg-transparent backdrop:bg-transparent mx-auto">
+          <el-dialog-backdrop className="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
 
-          <div tabindex="0" className="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
-            <el-dialog-panel class="relative transform overflow-hidden bg-[#716F6DE0] text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-2lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 border rounded-xl border-gray-300">
+          <div tabIndex="0" className="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
+            <el-dialog-panel className="relative transform overflow-hidden bg-[#716F6DE0] text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-2lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 border rounded-xl border-gray-300">
               <div className="px-6 pt-9 pb-6 sm:p-6 sm:pb-4">
                             <div className="col-md-12 details-generate text-start md:px-12 px-4 pt-5">
                                 <h2 className="text-center text-2xl font-bold uppercase text-white pb-5"> Certification </h2>
@@ -464,11 +519,11 @@ export default function Orders1() {
 
          {/*  Shipping Details */}
       <el-dialog>
-        <dialog id="shipping" aria-labelledby="dialog-title" class="fixed inset-0 size-auto max-h-none max-w-4xl overflow-y-auto bg-transparent backdrop:bg-transparent mx-auto">
-          <el-dialog-backdrop class="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+        <dialog id="shipping" aria-labelledby="dialog-title" className="fixed inset-0 size-auto max-h-none max-w-4xl overflow-y-auto bg-transparent backdrop:bg-transparent mx-auto">
+          <el-dialog-backdrop className="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
 
-          <div tabindex="0" className="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
-            <el-dialog-panel class="relative transform overflow-hidden  bg-[#716F6DE0] text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-2lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 border rounded-xl border-gray-300">
+          <div tabIndex="0" className="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
+            <el-dialog-panel className="relative transform overflow-hidden  bg-[#716F6DE0] text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-2lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 border rounded-xl border-gray-300">
                <div className="px-6 pt-9 pb-6 sm:p-6 sm:pb-4">
                             <div className="col-md-12 details-generate text-start md:px-12 px-4 pt-5">
                                 <h2 className="text-center text-2xl font-bold uppercase text-white pb-5"> Shipping Details </h2>
@@ -509,11 +564,11 @@ export default function Orders1() {
 
         {/*  Delivered Details */}
       <el-dialog>
-        <dialog id="delivered" aria-labelledby="dialog-title" class="fixed inset-0 size-auto max-h-none max-w-4xl overflow-y-auto bg-transparent backdrop:bg-transparent mx-auto">
-          <el-dialog-backdrop class="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+        <dialog id="delivered" aria-labelledby="dialog-title" className="fixed inset-0 size-auto max-h-none max-w-4xl overflow-y-auto bg-transparent backdrop:bg-transparent mx-auto">
+          <el-dialog-backdrop className="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
 
-          <div tabindex="0" className="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
-            <el-dialog-panel class="relative transform overflow-hidden  bg-[#716F6DE0] text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-2lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 border rounded-xl border-gray-300">
+          <div tabIndex="0" className="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
+            <el-dialog-panel className="relative transform overflow-hidden  bg-[#716F6DE0] text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-2lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 border rounded-xl border-gray-300">
                <div className="px-6 pt-9 pb-6 sm:p-6 sm:pb-4">
                             <div className="col-md-12 details-generate text-start md:px-12 px-4 pt-5">
                                 <h2 className="text-center text-2xl font-bold uppercase text-white pb-5"> Delivered Details </h2>

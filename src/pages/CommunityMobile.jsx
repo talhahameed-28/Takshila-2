@@ -13,14 +13,23 @@ export default function CommunityMobile({ jewelleryData = [], loadProduct }) {
   }
 
   return (
+    <>
     <div
       className="bg-black h-screen overflow-y-scroll snap-y snap-mandatory text-white"
       style={{ WebkitOverflowScrolling: "touch" }}
-    >
-      {jewelleryData.map((item) =>{ console.log(item);return(
-        <ReelItem key={item.id} item={item} loadProduct={loadProduct} />
+      >
+      {jewelleryData.map((item,idx) =>{
+          return(
+            <>
+            <ReelItem key={item.id} item={item} loadProduct={loadProduct} />
+            
+            </>
+        
       )})}
+      
     </div>
+    
+      </>
   );
 }
 
@@ -83,7 +92,7 @@ function CommentsSheet({ productId, onClose }) {
           {
             id: Date.now(),
             review: comment,
-            user: { name: "You" },
+            user: { name: data?.data?.review?.user?.name },
             created_at: new Date(),
           },
           ...prev,

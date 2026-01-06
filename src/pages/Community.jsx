@@ -3,10 +3,11 @@ import axios from "axios";
 
 import CommunityDesktop from "./CommunityDesktop";
 import CommunityMobile from "./CommunityMobile";
+import CommunityProductModal from "./CommunityProductModal";
 
 export default function Community(props) {
   const [jewelleryData, setJewelleryData] = useState([]);
-
+  const [totalPages, setTotalPages] = useState(1)
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [selectedProductDetails, setSelectedProductDetails] = useState(null);
 
@@ -24,6 +25,7 @@ export default function Community(props) {
 
         if (data.success) {
           setJewelleryData(data.data.products);
+          setTotalPages(data.data.pagination.last_page)
         }
       } catch (err) {
         console.log(err);
@@ -65,7 +67,10 @@ export default function Community(props) {
         <CommunityMobile
           {...props}
           jewelleryData={jewelleryData}
+          setJewelleryData={setJewelleryData}
           loadProduct={loadProduct}
+          totalPages={totalPages}
+          setTotalPages={setTotalPages}
         />
       </div>
 
@@ -81,6 +86,15 @@ export default function Community(props) {
           closeModal={closeModal}
         />
       </div>
+
+      {selectedProductId && selectedProductDetails && (
+        <CommunityProductModal
+          selectedProductId={selectedProductId}
+          selectedProductDetails={selectedProductDetails}
+          closeModal={closeModal}
+          {...props}
+        />
+      )}
     </>
   );
 }

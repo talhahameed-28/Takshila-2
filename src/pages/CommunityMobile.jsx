@@ -1,9 +1,56 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import HotMeter from "../components/HotMeter";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-export default function CommunityMobile({ jewelleryData = [], loadProduct }) {
+export default function CommunityMobile({setJewelleryData,totalPages,setTotalPages, jewelleryData = [], loadProduct }) {
+  const loadMoreDesignRef = useRef(null)
+  const [currentPage, setCurrentPage] = useState(1)
+   useEffect(() => {
+
+    const loadMoreProducts=async()=>{
+      try {
+         const { data } = await axios.get(
+                  `${
+                    import.meta.env.VITE_BASE_URL
+                  }/api/product?per_page=9&page=${currentPage+1}`,
+                  {
+                    headers: {
+                      Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                  }
+                );
+                console.log(data);
+                if (data.success) {
+                  setCurrentPage(prev=>prev+1)
+                  setJewelleryData([...jewelleryData,...data.data.products]);
+                  setTotalPages(data.data.pagination.last_page)
+                } else toast.error("Couldn't fetch products");
+              } catch (error) {
+                console.log(error);
+              }
+    }
+     
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if(entry.isIntersecting){
+          if(currentPage==totalPages) return;
+          loadMoreProducts()
+        };
+      }, 
+      {
+        root:null,
+        rootMargin:"1000px 0px",
+        threshold: 0, // 10% visible
+      }
+    );
+
+    if (loadMoreDesignRef.current) observer.observe(loadMoreDesignRef.current);
+
+    return () => observer.disconnect();
+  }, [jewelleryData]);
+
+
   if (jewelleryData.length === 0) {
     return (
       <div className="bg-black h-screen flex items-center justify-center text-white text-sm opacity-60">
@@ -21,8 +68,16 @@ export default function CommunityMobile({ jewelleryData = [], loadProduct }) {
       {jewelleryData.map((item,idx) =>{
           return(
             <>
-            <ReelItem key={item.id} item={item} loadProduct={loadProduct} />
+            <ReelItem  
             
+            key={item.id} item={item} loadProduct={loadProduct} />
+            {idx==jewelleryData.length-1 && totalPages!=currentPage &&
+            <div ref={loadMoreDesignRef} className="flex flex-col items-center justify-center py-10">
+              <div className="h-10 w-10 border-4 border-gray-300 border-t-gray-700 rounded-full animate-spin"></div>
+              <p className="mt-4 text-sm text-white text-center max-w-xs">
+              Loading more designs...
+            </p>
+            </div>}
             </>
         
       )})}
@@ -37,18 +92,17 @@ export default function CommunityMobile({ jewelleryData = [], loadProduct }) {
 /* COMMENTS BOTTOM SHEET */
 /* ------------------------------------------------------------------ */
 
-function CommentsSheet({ productId, onClose }) {
+function CommentsSheet({productId, onClose }) {
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(true);
   const [posting, setPosting] = useState(false);
 
-  /* ---------------- FETCH COMMENTS ---------------- */
   useEffect(() => {
     const fetchComments = async () => {
       try {
         const { data } = await axios.get(
-          `${import.meta.env.VITE_BASE_URL}/api/product/${productId}`,
+          `${import.meta.env.VITE_BASE_URL}/api/product/${productId}/engagements`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -57,7 +111,7 @@ function CommentsSheet({ productId, onClose }) {
         );
 
         if (data.success) {
-          setComments(data.data.product.reviews || []);
+          setComments(data.data.comments.list || []);
         }
       } catch (err) {
         console.error("Failed to fetch comments", err);
@@ -69,16 +123,15 @@ function CommentsSheet({ productId, onClose }) {
     fetchComments();
   }, [productId]);
 
-  /* ---------------- ADD COMMENT ---------------- */
-  const addComment = async () => {
+  const handleComment = async () => {
     if (!comment.trim() || posting) return;
 
     try {
       setPosting(true);
 
       const { data } = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/api/product/${productId}/review`,
-        { review: comment },
+        `${import.meta.env.VITE_BASE_URL}/api/product/${productId}/engage`,
+        { type:"comment",comment },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -87,17 +140,15 @@ function CommentsSheet({ productId, onClose }) {
       );
 
       if (data.success) {
-        // Optimistic UI update
         setComments((prev) => [
           {
             id: Date.now(),
             review: comment,
-            user: { name: data?.data?.review?.user?.name },
+            user: { name: data?.data?.comment?.user?.name },
             created_at: new Date(),
           },
           ...prev,
         ]);
-
         setComment("");
       }
     } catch (err) {
@@ -109,22 +160,15 @@ function CommentsSheet({ productId, onClose }) {
 
   return (
     <>
-      {/* BACKDROP */}
       <div className="fixed inset-0 bg-black/50 z-40" onClick={onClose} />
 
-      {/* BOTTOM SHEET */}
-      <div
-        className="fixed bottom-0 left-0 right-0 z-50 h-[75vh] bg-[#1c1c1e] rounded-t-2xl flex flex-col animate-slideUp"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* HANDLE */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 h-[75vh] bg-[#1c1c1e] rounded-t-2xl flex flex-col animate-slideUp">
         <div className="flex justify-center py-3">
           <div className="w-10 h-1 bg-white/30 rounded-full" />
         </div>
 
         <h3 className="text-center text-sm mb-2">Comments</h3>
 
-        {/* COMMENTS LIST */}
         <div className="flex-1 overflow-y-auto px-4 space-y-5">
           {loading && (
             <p className="text-center text-white/50 text-sm">
@@ -141,18 +185,16 @@ function CommentsSheet({ productId, onClose }) {
               <div className="w-9 h-9 rounded-full bg-gray-600 flex items-center justify-center text-xs">
                 {c.user?.name?.charAt(0) || "U"}
               </div>
-
               <div>
                 <p className="text-sm font-medium">
                   {c.user?.name || "Anonymous"}
                 </p>
-                <p className="text-sm text-white/80 leading-snug">{c.review}</p>
+                <p className="text-sm text-white/80">{c.comment}</p>
               </div>
             </div>
           ))}
         </div>
 
-        {/* INPUT */}
         <div className="border-t border-white/10 px-4 py-3 flex gap-3">
           <input
             value={comment}
@@ -160,11 +202,7 @@ function CommentsSheet({ productId, onClose }) {
             placeholder="Add a comment..."
             className="flex-1 bg-[#2c2c2e] rounded-full px-4 py-2 text-sm text-white outline-none"
           />
-          <button
-            onClick={addComment}
-            disabled={posting}
-            className="text-sm opacity-80"
-          >
+          <button onClick={handleComment} disabled={posting} className="text-sm">
             {posting ? "..." : "Send"}
           </button>
         </div>
@@ -178,19 +216,21 @@ function CommentsSheet({ productId, onClose }) {
 /* ------------------------------------------------------------------ */
 
 function ReelItem({ item, loadProduct }) {
-  const [liked, setLiked] = useState(item.user_liked);
+  const [liked, setLiked] = useState(item.is_liked);
   const [likes, setLikes] = useState(item.likes_count || 0);
   const [expanded, setExpanded] = useState(false);
   const [showComments, setShowComments] = useState(false);
 
-   const handleLike = async () => {
-      try {
-        axios.defaults.withCredentials = true;
+
+  const handleLike = async () => {
+    try {
+      axios.defaults.withCredentials = true;
         const { data } = await axios.post(
           `${
             import.meta.env.VITE_BASE_URL
-          }/api/product/${item.id}/like`,
-          {},
+          }/api/product/${item.id}/engage`,
+          {type:"like",
+          },
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -201,42 +241,80 @@ function ReelItem({ item, loadProduct }) {
         console.log(data);
         if (data.success) {
           toast.success(data.message);
-          setLiked(data.liked)
-          setLikes(data.likes_count)
-          // item.likes_count=data.likes_count
-          // setSelectedProductDetails({
-          //   ...item,
-          //   user_liked: data.liked,
-          //   likes_count: data.likes_count,
-          // });
-        } else toast.error("Couldn't process request");
-      } catch (error) {
-        console.log(error);
-        toast.error("Some error occurred");
-      }
-    };
 
-  const toggleLike = () => {
-    setLiked((prev) => !prev);
-    setLikes((prev) => (liked ? prev - 1 : prev + 1));
+            setLiked(data.data.liked)
+            setLikes(data.data.likes_count)
+   
+            // else if(type=="comment") {
+            //   setComment("")
+            //   setCommentsList((prev) => [
+            //               {
+            //                 id: Date.now(),
+            //                 review: comment,
+                            
+            //                 user: { name: data?.data?.comment?.user?.name },
+            //                 created_at: new Date(),
+            //               },
+            //               ...prev,
+            //             ]);
+
+            // }
+        } else toast.error("Couldn't process request");
+    
+    } catch (error) {
+      console.log(error);
+      toast.error("Some error occurred");
+    }
   };
+
+  //  const handleLike = async () => {
+  //     try {
+  //       axios.defaults.withCredentials = true;
+  //       const { data } = await axios.post(
+  //         `${
+  //           import.meta.env.VITE_BASE_URL
+  //         }/api/product/${item.id}/like`,
+  //         {},
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //           },
+  //           withCredentials: true,
+  //         }
+  //       );
+  //       console.log(data);
+  //       if (data.success) {
+  //         toast.success(data.message);
+  //         setLiked(data.liked)
+  //         setLikes(data.likes_count)
+  //         // item.likes_count=data.likes_count
+  //         // setSelectedProductDetails({
+  //         //   ...item,
+  //         //   user_liked: data.liked,
+  //         //   likes_count: data.likes_count,
+  //         // });
+  //       } else toast.error("Couldn't process request");
+  //     } catch (error) {
+  //       console.log(error);
+  //       toast.error("Some error occurred");
+  //     }
+  //   };
+
+  // const toggleLike = () => {
+  //   setLiked((prev) => !prev);
+  //   setLikes((prev) => (liked ? prev - 1 : prev + 1));
+  // };
 
   const designerAvatar = item.user?.avatar || null;
   const designerCallname =
-    item.user?.callname || item.user?.username || "takshila";
+    item.user?.name || item.user?.username || "takshila";
 
   return (
-    <div className="h-screen snap-start relative flex flex-col">
-      {expanded && (
-        <div
-          className="fixed inset-0 bg-black/50 z-40"
-          onClick={() => setExpanded(false)}
-        />
-      )}
-
+    <div className="h-screen snap-start relative flex flex-col pt-24 mb-24">
       <div className="flex-1" />
 
-      <div className="flex flex-col items-center gap-4 px-4 relative z-30">
+      {/* IMAGE + HEADER */}
+      <div className="flex flex-col items-center gap-4 px-4">
         <div className="flex items-center gap-3 self-start">
           <div className="w-11 h-11 rounded-full border border-white overflow-hidden flex items-center justify-center bg-black">
             {designerAvatar ? (
@@ -250,7 +328,6 @@ function ReelItem({ item, loadProduct }) {
               </span>
             )}
           </div>
-
           <span className="text-sm">@{designerCallname}</span>
         </div>
 
@@ -262,57 +339,43 @@ function ReelItem({ item, loadProduct }) {
             className="w-full object-contain"
           />
         </div>
-      </div>
 
-      <HotMeter
-        average={item.average_rating || 50}
-        userRating={item.user_rating || null}
-        onRate={(rating) => console.log("User rated:", rating)}
-      />
+        {/* ACTION ROW — ALIGNED TO IMAGE WIDTH */}
+        <div className="w-full max-w-[360px] mx-auto px-1 mt-4">
+          <div className="flex items-center justify-between">
+            {/* LEFT — CUSTOMIZE */}
+            <button
+              onClick={() => loadProduct(item.id)}
+              className="
+        px-7 py-3
+        rounded-full
+        text-sm font-semibold
+        bg-white text-black
+        hover:bg-white/90
+        transition
+      "
+            >
+              Customize
+            </button>
 
-      <div className="flex-1" />
-
-      {/* ACTION ICONS */}
-      <div className="absolute right-5 bottom-10 flex flex-col items-center gap-6 z-30">
-        <button onClick={() => loadProduct(item.id)}>
-          <img src="/assets/edit.png" className="w-6 h-6" />
-        </button>
-
-          <button
-                      onClick={handleLike}
-                      className="
-
-                      rounded-full
-                      text-sm
-                      backdrop-blur
-                      shadow-lg
-                      transition
-                     
-                     
-                    "
-                    >
-                      {/* <img
-                      src="/assets/heart.svg"
-                      alt="Like"
-                      className={`w-4 h-4 text-red-700  transition ${
-                        selectedProductDetails.user_liked ? "scale-110 opacity-100" : "opacity-70"
-                      }`
-                    }
-                    /> */}
-                      <svg
+            {/* RIGHT — ICONS */}
+            <div className="flex items-center gap-5">
+              {/* LIKE */}
+              <button className="flex items-center gap-1">
+                <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="currentColor"
                         width="24"
                         height="24"
                         viewBox="0 0 24 24"
                         stroke="white"
-                        strokeWidth="2"
+                        strokeWidth="3"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         className={` lucide lucide-heart-icon lucide-heart transition ${
                           liked
                             ? " text-red-700 opacity-100"
-                            : "text-black opacity-70"
+                            : " text-transparent opacity-70"
                         }`}
                       >
                         <path
@@ -320,26 +383,42 @@ function ReelItem({ item, loadProduct }) {
                           fill="currentColor"
                         />{" "}
                       </svg>
+                <span className="text-xs">{likes}</span>
+              </button>
 
-                      <span>{likes}</span>
-                    </button>
+              {/* COMMENTS */}
+              <button
+                onClick={() => setShowComments(true)}
+                className="flex items-center gap-1"
+              >
+                <img src="/assets/comments.png" className="w-6 h-6" />
+                <span className="text-xs">{item.reviews_count || 0}</span>
+              </button>
 
-        {/* COMMENTS BUTTON */}
-        <button
-          onClick={() => setShowComments(true)}
-          className="flex flex-col items-center"
-        >
-          <img src="/assets/comments.png" className="w-6 h-6" />
-          <span className="text-xs mt-1">{item.reviews_count || 0}</span>
-        </button>
+              {/* SHARE */}
+              <button>
+                <img src="/assets/Share.svg" className="w-6 h-6" />
+              </button>
+            </div>
+          </div>
+        </div>
 
-        <button>
-          <img src="/assets/Share.svg" className="w-6 h-6" />
-        </button>
+        {/* HOT METER */}
+        <div className="w-full max-w-[360px] mt-4">
+          <HotMeter
+            average={item.average_rating || 50}
+            userRating={item.user_rating || null}
+            onRate={(rating) => console.log("User rated:", rating)}
+          />
+        </div>
       </div>
 
+      <div className="flex-1" />
+
+   
+
       {/* DESCRIPTION */}
-      <div className="relative z-30 px-6 pb-8">
+      <div className="px-6 pb-8">
         <h2 className="text-3xl font-light">{item.name}</h2>
         <p className="text-sm opacity-80 line-clamp-1">
           {item.description || "No description provided"}

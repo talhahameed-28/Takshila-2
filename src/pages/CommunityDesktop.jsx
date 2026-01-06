@@ -136,11 +136,11 @@ export default function CommunityDesktop({ handleOpenModal }) {
     loadProducts();
   }, [currentPage]);
 
-  const loadProduct = async (id) => {
+  const loadProduct = async (id,item) => {
     try {
       axios.defaults.withCredentials = true;
       const { data } = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/api/product/${id}`,
+        `${import.meta.env.VITE_BASE_URL}/api/product/${id}/engagements`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -148,9 +148,12 @@ export default function CommunityDesktop({ handleOpenModal }) {
         }
       );
       console.log(data);
-      setSelectedProductId(id);
-      setSelectedProductDetails(data.data.product);
-      setCommentsList(data.data.product.reviews);
+      if(data.success){
+        setSelectedProductId(id);
+        setSelectedProductDetails(item);
+        setCommentsList(data.data.comments.list);
+
+      }
     } catch (error) {
       toast.error("Couldn't fetch details");
       console.log(error);
@@ -280,36 +283,83 @@ export default function CommunityDesktop({ handleOpenModal }) {
 
   // SHARE URL
   const shareUrl = `${window.location.origin}/product/${selectedProductId}`;
-
-  const handleLike = async () => {
+  const handleEngagement = async (type) => {
     try {
       axios.defaults.withCredentials = true;
-      const { data } = await axios.post(
-        `${
-          import.meta.env.VITE_BASE_URL
-        }/api/product/${selectedProductId}/like`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        const { data } = await axios.post(
+          `${
+            import.meta.env.VITE_BASE_URL
+          }/api/product/${selectedProductId}/engage`,
+          {type,
+            ...(type=="comment"?{comment}:{})
           },
-          withCredentials: true,
-        }
-      );
-      console.log(data);
-      if (data.success) {
-        toast.success(data.message);
-        setSelectedProductDetails({
-          ...selectedProductDetails,
-          user_liked: data.liked,
-          likes_count: data.likes_count,
-        });
-      } else toast.error("Couldn't process request");
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            withCredentials: true,
+          }
+        );
+        console.log(data);
+        if (data.success) {
+          toast.success(data.message);
+          if(type=="like"){
+            setSelectedProductDetails({
+              ...selectedProductDetails,
+              is_liked: data.data.liked,
+              likes_count: data.data.likes_count,
+            });}
+            else if(type=="comment") {
+              setComment("")
+              setCommentsList((prev) => [
+                          {
+                            id: Date.now(),
+                            review: comment,
+                            
+                            user: { name: data?.data?.comment?.user?.name },
+                            created_at: new Date(),
+                          },
+                          ...prev,
+                        ]);
+
+            }
+        } else toast.error("Couldn't process request");
+    
     } catch (error) {
       console.log(error);
       toast.error("Some error occurred");
     }
   };
+
+  // const handleLike = async () => {
+  //   try {
+  //     axios.defaults.withCredentials = true;
+  //     const { data } = await axios.post(
+  //       `${
+  //         import.meta.env.VITE_BASE_URL
+  //       }/api/product/${selectedProductId}/like`,
+  //       {},
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //         },
+  //         withCredentials: true,
+  //       }
+  //     );
+  //     console.log(data);
+  //     if (data.success) {
+  //       toast.success(data.message);
+  //       setSelectedProductDetails({
+  //         ...selectedProductDetails,
+  //         user_liked: data.liked,
+  //         likes_count: data.likes_count,
+  //       });
+  //     } else toast.error("Couldn't process request");
+  //   } catch (error) {
+  //     console.log(error);
+  //     toast.error("Some error occurred");
+  //   }
+  // };
 
   const handleComment = async () => {
     try {
@@ -444,7 +494,7 @@ export default function CommunityDesktop({ handleOpenModal }) {
             return (
               <div
                 key={item.id}
-                onClick={() => loadProduct(item.id)}
+                onClick={() => loadProduct(item.id,item)}
                 className="cursor-pointer group rounded-3xl border border-[#ccc] bg-[#f7f6f5] hover:bg-white shadow-md hover:shadow-lg hover:scale-[1.02] transition-transform duration-300"
               >
                 <img
@@ -502,7 +552,7 @@ export default function CommunityDesktop({ handleOpenModal }) {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          loadProduct(item.id); // ← opens modal
+                          loadProduct(item.id,item); // ← opens modal
                         }}
                         className="px-5 py-2 bg-[#555555] hover:bg-[#000000] text-white text-sm rounded-full 
                  transition shadow-md hover:shadow-lg active:scale-95"
@@ -748,7 +798,7 @@ export default function CommunityDesktop({ handleOpenModal }) {
                   {/* LIKE BUTTON — BOTTOM RIGHT */}
                   {isLoggedIn && (
                     <button
-                      onClick={handleLike}
+                      onClick={()=>{handleEngagement("like")}}
                       className="
                       absolute bottom-4 right-4
                       flex items-center gap-2
@@ -782,7 +832,7 @@ export default function CommunityDesktop({ handleOpenModal }) {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         className={` lucide lucide-heart-icon lucide-heart transition ${
-                          selectedProductDetails.user_liked
+                          selectedProductDetails.is_liked
                             ? " text-red-700 opacity-100"
                             : "text-black opacity-70"
                         }`}
@@ -842,10 +892,10 @@ export default function CommunityDesktop({ handleOpenModal }) {
                         />
 
                         <button
-                          onClick={handleComment}
-                          disabled={!rating || !comment.trim()}
-                          className={`absolute bottom-2 left-1/2 -translate-x-1/2 px-6 py-1.5 rounded-full text-xs ${
-                            !rating || !comment.trim()
+                          onClick={()=>handleEngagement("comment")}
+                          disabled={!comment.trim()}
+                          className={`absolute cursor-pointer bottom-2 left-1/2 -translate-x-1/2 px-6 py-1.5 rounded-full text-xs ${
+                            !comment.trim()
                               ? "bg-gray-400 cursor-not-allowed"
                               : "bg-black hover:opacity-90"
                           }`}
@@ -931,7 +981,7 @@ export default function CommunityDesktop({ handleOpenModal }) {
                       </div>
 
                       <p className="text-sm text-gray-700 leading-relaxed">
-                        {c.review}
+                        {c.comment}
                       </p>
 
                       {c.created_at && (

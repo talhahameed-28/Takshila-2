@@ -73,7 +73,7 @@ export default function CommunityMobile({setJewelleryData,totalPages,setTotalPag
             key={item.id} item={item} loadProduct={loadProduct} />
             {idx==jewelleryData.length-1 && totalPages!=currentPage &&
             <div ref={loadMoreDesignRef} className="flex flex-col items-center justify-center py-10">
-              <div className="h-10 w-10 border-4 border-gray-300 border-t-gray-700 rounded-full animate-spin"></div>
+              <div className="h-10 w-10 -mt-24 border-4 border-gray-300 border-t-gray-700 rounded-full animate-spin"></div>
               <p className="mt-4 text-sm text-white text-center max-w-xs">
               Loading more designs...
             </p>
@@ -143,7 +143,7 @@ function CommentsSheet({productId, onClose }) {
         setComments((prev) => [
           {
             id: Date.now(),
-            review: comment,
+            comment: comment,
             user: { name: data?.data?.comment?.user?.name },
             created_at: new Date(),
           },
@@ -361,7 +361,7 @@ function ReelItem({ item, loadProduct }) {
             {/* RIGHT — ICONS */}
             <div className="flex items-center gap-5">
               {/* LIKE */}
-              <button className="flex items-center gap-1">
+              <button  onClick={handleLike} className="flex items-center gap-1">
                 <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="currentColor"

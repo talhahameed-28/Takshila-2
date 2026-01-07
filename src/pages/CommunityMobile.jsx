@@ -371,13 +371,15 @@ function ReelItem({ item, loadProduct }) {
             <button
               onClick={() => loadProduct(item.id)}
               className="
-        px-7 py-3
-        rounded-full
-        text-sm font-semibold
-        bg-white text-black
-        hover:bg-white/90
-        transition
-      "
+    px-7 py-3
+    rounded-full
+    text-sm font-semibold
+    text-white
+    bg-transparent
+    border border-white
+    hover:bg-white/10
+    transition
+  "
             >
               Customize
             </button>

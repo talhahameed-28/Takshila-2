@@ -310,17 +310,17 @@ export default function CommunityDesktop({ handleOpenModal }) {
               likes_count: data.data.likes_count,
             });}
             else if(type=="comment") {
-              setComment("")
               setCommentsList((prev) => [
-                          {
-                            id: Date.now(),
-                            review: comment,
-                            
-                            user: { name: data?.data?.comment?.user?.name },
-                            created_at: new Date(),
-                          },
-                          ...prev,
-                        ]);
+                {
+                  id: Date.now(),
+                  comment: comment,
+                  
+                  user: { name: data?.data?.comment?.user?.name },
+                  created_at: new Date(),
+                },
+                ...prev,
+              ]);
+              setComment("")
 
             }
         } else toast.error("Couldn't process request");

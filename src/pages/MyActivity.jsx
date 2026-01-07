@@ -153,7 +153,7 @@ export default function MyActivity() {
 
         setDesigns((prev) =>
           prev.map((p) =>
-            p.id === selectedProduct.id ? { ...p, name: editData.name } : p
+            p.id === selectedProduct.id ? { ...p, name: editData.name,description: editData.description } : p
           )
         );
       }

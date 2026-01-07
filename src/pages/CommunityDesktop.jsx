@@ -568,7 +568,7 @@ export default function CommunityDesktop({ handleOpenModal }) {
         </div>
       </main>
 
-      {/* MODAL */}
+      {/* MODAL  */}
       {selectedProductId && (
         <>
           <div className="fixed inset-0 flex items-end md:items-center justify-center z-[50] pt-[72px] md:pt-0">

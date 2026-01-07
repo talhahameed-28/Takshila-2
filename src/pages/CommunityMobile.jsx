@@ -235,6 +235,15 @@ function ReelItem({ item, loadProduct }) {
   const [likes, setLikes] = useState(item.likes_count || 0);
   const [expanded, setExpanded] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  const descRef = useRef(null);
+  const [showReadMore, setShowReadMore] = useState(false);
+   useEffect(() => {
+     if (descRef.current) {
+       const el = descRef.current;
+       setShowReadMore(el.scrollHeight > el.clientHeight);
+     }
+   }, [item.description]);
+
 
 
   const handleLike = async () => {
@@ -376,28 +385,28 @@ function ReelItem({ item, loadProduct }) {
             {/* RIGHT — ICONS */}
             <div className="flex items-center gap-5">
               {/* LIKE */}
-              <button  onClick={handleLike} className="flex items-center gap-1">
+              <button onClick={handleLike} className="flex items-center gap-1">
                 <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="currentColor"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        stroke="white"
-                        strokeWidth="3"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className={` lucide lucide-heart-icon lucide-heart transition ${
-                          liked
-                            ? " text-red-700 opacity-100"
-                            : " text-transparent opacity-70"
-                        }`}
-                      >
-                        <path
-                          d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"
-                          fill="currentColor"
-                        />{" "}
-                      </svg>
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  stroke="white"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className={` lucide lucide-heart-icon lucide-heart transition ${
+                    liked
+                      ? " text-red-700 opacity-100"
+                      : " text-transparent opacity-70"
+                  }`}
+                >
+                  <path
+                    d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"
+                    fill="currentColor"
+                  />{" "}
+                </svg>
                 <span className="text-xs">{likes}</span>
               </button>
 
@@ -430,22 +439,24 @@ function ReelItem({ item, loadProduct }) {
 
       <div className="flex-1" />
 
-   
-
       {/* DESCRIPTION */}
       <div className="px-6 pb-8">
         <h2 className="text-3xl font-light">{item.name}</h2>
-        <p className="text-sm opacity-80 line-clamp-1">
-          {item.description || "No description provided"}
-        </p>
-
         {item.description && (
-          <button
-            onClick={() => setExpanded(true)}
-            className="text-xs text-white/70 mt-1"
-          >
-            Read more
-          </button>
+          <>
+            <p ref={descRef} className="text-sm opacity-80 line-clamp-1">
+              {item.description}
+            </p>
+
+            {showReadMore && (
+              <button
+                onClick={() => setExpanded(true)}
+                className="text-xs text-white/70 mt-1"
+              >
+                Read more
+              </button>
+            )}
+          </>
         )}
       </div>
 

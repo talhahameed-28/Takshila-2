@@ -122,7 +122,7 @@ export default function CommunityProductModal({
           h-[92vh]
           lg:h-[85vh]
           lg:max-w-7xl
-          bg-[#E5E1DA]
+          bg-[#414141]
           rounded-t-3xl lg:rounded-3xl
           overflow-y-auto
           animate-slideUp

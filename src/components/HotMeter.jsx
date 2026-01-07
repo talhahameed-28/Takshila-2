@@ -48,7 +48,7 @@ export default function HotMeter({ average = 50, userRating = null, onRate }) {
   };
 
   return (
-    <div className="w-full px-2 mt-4">
+    <div className="w-full px-2">
       <div className="flex items-center gap-4">
         {/* SLIDER + FAKE THUMB WRAPPER */}
         <div className="relative flex-1">

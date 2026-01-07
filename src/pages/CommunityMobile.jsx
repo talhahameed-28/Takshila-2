@@ -82,10 +82,10 @@ export default function CommunityMobile({setJewelleryData,totalPages,setTotalPag
       >
       {jewelleryData.map((item,idx) =>{
           return(
-            <>
+            <div key={item.id}>
             <ReelItem  
             
-            key={item.id} item={item} loadProduct={loadProduct} />
+             item={item} loadProduct={loadProduct} />
             {idx==jewelleryData.length-1 && totalPages!=currentPage &&
             <div ref={loadMoreDesignRef} className="flex flex-col items-center justify-center py-10">
               <div className="h-10 w-10 -mt-24 border-4 border-gray-300 border-t-gray-700 rounded-full animate-spin"></div>
@@ -93,7 +93,7 @@ export default function CommunityMobile({setJewelleryData,totalPages,setTotalPag
                 Loading more designs...
                 </p>
             </div>}
-            </>
+            </div>
         
       )})}
       
@@ -334,7 +334,7 @@ function ReelItem({ item, loadProduct }) {
     item.user?.name || item.user?.username || "takshila";
 
   return (
-    <div className="h-screen snap-start relative flex flex-col pt-24 mb-24">
+    <div className="h-screen snap-start relative flex flex-col pt-21 mb-21">
       <div className="flex-1" />
 
       {/* IMAGE + HEADER */}
@@ -428,7 +428,7 @@ function ReelItem({ item, loadProduct }) {
         </div>
 
         {/* HOT METER */}
-        <div className="w-full max-w-[360px] mt-4">
+        <div className="w-full max-w-[360px] ">
           <HotMeter
             average={item.average_rating || 50}
             userRating={item.user_rating || null}

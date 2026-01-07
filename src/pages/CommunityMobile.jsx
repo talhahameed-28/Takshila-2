@@ -6,49 +6,64 @@ import toast from "react-hot-toast";
 export default function CommunityMobile({setJewelleryData,totalPages,setTotalPages, jewelleryData = [], loadProduct }) {
   const loadMoreDesignRef = useRef(null)
   const [currentPage, setCurrentPage] = useState(1)
-   useEffect(() => {
+   const loadingRef = useRef(false);
 
-    const loadMoreProducts=async()=>{
-      try {
-         const { data } = await axios.get(
-                  `${
-                    import.meta.env.VITE_BASE_URL
-                  }/api/product?per_page=9&page=${currentPage+1}`,
-                  {
-                    headers: {
-                      Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
-                  }
-                );
-                console.log(data);
-                if (data.success) {
-                  setCurrentPage(prev=>prev+1)
-                  setJewelleryData([...jewelleryData,...data.data.products]);
-                  setTotalPages(data.data.pagination.last_page)
-                } else toast.error("Couldn't fetch products");
-              } catch (error) {
-                console.log(error);
+      useEffect(() => {
+        if (!loadMoreDesignRef.current) return;
+
+        const loadMoreProducts = async () => {
+          if (loadingRef.current) return;
+          if (currentPage >= totalPages) return;
+
+          loadingRef.current = true;
+
+          try {
+            const nextPage = currentPage + 1;
+
+            const { data } = await axios.get(
+              `${import.meta.env.VITE_BASE_URL}/api/product?per_page=9&page=${nextPage}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
               }
-    }
-     
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if(entry.isIntersecting){
-          if(currentPage==totalPages) return;
-          loadMoreProducts()
+            );
+            console.log(data)
+            if (data.success) {
+              setCurrentPage(nextPage);
+              setJewelleryData(prev => [
+                ...prev,
+                ...data.data.products
+              ]);
+              setTotalPages(data.data.pagination.last_page);
+            } else {
+              toast.error("Couldn't fetch products");
+            }
+          } catch (error) {
+            console.log(error);
+          } finally {
+            loadingRef.current = false;
+          }
         };
-      }, 
-      {
-        root:null,
-        rootMargin:"1000px 0px",
-        threshold: 0, // 10% visible
-      }
-    );
 
-    if (loadMoreDesignRef.current) observer.observe(loadMoreDesignRef.current);
+        const observer = new IntersectionObserver(
+          ([entry]) => {
+            if (entry.isIntersecting) {
+              loadMoreProducts();
+            }
+          },
+          {
+            root: null,
+            rootMargin: "1000px 0px",
+            threshold: 0,
+          }
+        );
 
-    return () => observer.disconnect();
-  }, [jewelleryData]);
+        observer.observe(loadMoreDesignRef.current);
+
+        return () => observer.disconnect();
+      }, [currentPage, totalPages]);
+
 
 
   if (jewelleryData.length === 0) {
@@ -74,9 +89,9 @@ export default function CommunityMobile({setJewelleryData,totalPages,setTotalPag
             {idx==jewelleryData.length-1 && totalPages!=currentPage &&
             <div ref={loadMoreDesignRef} className="flex flex-col items-center justify-center py-10">
               <div className="h-10 w-10 -mt-24 border-4 border-gray-300 border-t-gray-700 rounded-full animate-spin"></div>
-              <p className="mt-4 text-sm text-white text-center max-w-xs">
-              Loading more designs...
-            </p>
+                <p className="mt-4 text-sm text-white text-center max-w-xs">
+                Loading more designs...
+                </p>
             </div>}
             </>
         

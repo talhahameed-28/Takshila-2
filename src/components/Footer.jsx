@@ -24,7 +24,7 @@ export default function Footer() {
   return (
     <>
       {/* ✅ Outer Background */}
-      <div className="bg-[#e5e2df] pb-6 flex justify-center px-6 transition-colors duration-500">
+      <div className="md:bg-[#e5e2df] pt-12 bg-black md:pt-0 pb-6 flex justify-center px-6 transition-colors duration-500">
         {/* 🌌 Dark Glass Footer */}
         <footer
           className="relative w-full max-w-[1400px] rounded-3xl 

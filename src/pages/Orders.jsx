@@ -101,6 +101,8 @@ export default function Orders() {
     
   }, [])
   
+  
+  
   return (
     <div className="w-full min-h-screen bg-[#e5e3df] text-black flex flex-col items-center pt-20 px-4">
       {/* --- Page Title --- */}
@@ -137,11 +139,11 @@ export default function Orders() {
 
       {/* ---------- My Orders Tab ---------- */}
      
-        <div className="w-full max-w-4xl space-y-6">
+       {tab ==="orders" && (<div className="w-full max-w-4xl space-y-6">
            
             {orders.map(order=>(
-              <>
-              <div  key={order.id} className="w-full cursor-pointer hover:scale-102 transition-all duration-200 hover:bg-[#7e7e7e] bg-[#d8d8d8] rounded-2xl p-5 flex items-center justify-between shadow-sm" onClick={() => toggle(order.id)}>
+              <div key={order.id}>
+              <div   className="w-full cursor-pointer hover:scale-102 transition-all duration-200 hover:bg-[#7e7e7e] bg-[#d8d8d8] rounded-2xl p-5 flex items-center justify-between shadow-sm" onClick={() => toggle(order.id)}>
               {/* Left Side */}
               <div className="flex items-start space-x-4">
                 <div className="w-16 h-16 bg-white rounded-xl">
@@ -262,7 +264,7 @@ export default function Orders() {
 
           </div>:<div></div>
                       }
-                      </>
+                      </div>
             )
            )}
 
@@ -270,7 +272,7 @@ export default function Orders() {
 
   
           
-        </div>
+        </div>)}
      
       {/* ---------- Delivered Tab ---------- */}
       {tab === "delivered" && (

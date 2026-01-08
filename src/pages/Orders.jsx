@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import CADModal from "../components/CADModal";
 
 export default function Orders() {
   const [tab, setTab] = useState("orders"); // "orders" or "delivered"
@@ -9,7 +10,7 @@ export default function Orders() {
   const [orders, setOrders] = useState([])
   const [selectedOrder, setSelectedOrder] = useState(null)
 
-  const [isCadModalOpen, setIsCadModalOpen] = useState(false)
+  const [modalStage, setModalStage] = useState("")
   // const toggle =async (id) => {
   //   try {
   //     if(id==selectedOrder?.order_id) {
@@ -166,7 +167,7 @@ export default function Orders() {
                                             </div>
                                          </td>
                                         <td> {selectedOrder.progress[1].is_completed && selectedOrder.progress[1].completed_at!=null ?`Completed on :  ${selectedOrder.progress[1]?. completed_at.split("T")[0]}`:"Pending..."} </td>
-                                        <td> {selectedOrder.progress[1].started_at!=null?<button className="underline decoration-1 hover:text-zinc-900" onClick={()=>setIsCadModalOpen(true)} command="show-modal" commandfor="cadmodal"> View CAD </button>:""} </td>
+                                        <td> {selectedOrder.progress[1].started_at!=null?<button className="underline decoration-1 hover:text-zinc-900" onClick={()=>setModalStage("cad")} command="show-modal" commandfor="cadmodal"> View CAD </button>:""} </td>
 
                                         <td> 
                                           {selectedOrder.progress[1].is_completed?<span className="fill-check"><svg xmlns="http://www.w3.org/2000/svg" height="21px" viewBox="0 -960 960 960" width="21px" fill="#fff"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg></span> 
@@ -324,11 +325,11 @@ export default function Orders() {
           <div tabIndex="0" className="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
             <el-dialog-panel className="relative transform overflow-hidden bg-[#716F6DE0] text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-2lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 border rounded-xl border-gray-300">
               <div className="px-6 pt-9 pb-6 sm:p-6 sm:pb-4">
-                           {isCadModalOpen && <CADModal id={selectedOrder?.id}/>}
+                           {modalStage=="cad" && <CADModal setModalStage={setModalStage} id={selectedOrder?.id}/>}
               </div>
 
               <div className="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                <button type="button" command="close" onClick={()=>setIsCadModalOpen(false)} commandfor="cadmodal" className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 sm:ml-3 sm:w-auto"> Close </button>
+                <button type="button" command="close" onClick={()=>setModalStage("")} commandfor="cadmodal" className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 sm:ml-3 sm:w-auto"> Close </button>
               </div>
             </el-dialog-panel>
           </div>
@@ -568,55 +569,4 @@ export default function Orders() {
   );
 }
 
-function CADModal({id}){
-  useEffect(() => {
-    const loadCADs=async()=>{
-      try {
-        axios.defaults.withCredentials=true
-         const {data} = await axios.get(
-        `${
-          import.meta.env.VITE_BASE_URL
-        }/api/order/${id}/stages/cad_approved`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      console.log(data)
-      } catch (error) {
-        console.log(error)
-        toast.error("Some error occurred")
-      }
-    }
-    
-    loadCADs()
-    
-  }, [])
-  
-  return (
-    <div className="col-md-12 details-generate text-start md:px-12 px-4 pt-5">
-                                <h2 className="text-center text-2xl font-bold uppercase text-white pb-5"> CAD Details </h2>
-                                
-                                <h6 className="mb-1 text-white text-start"> Review CAD submissions </h6>
-                                  
-                                   <div className="flex flex-row mt-8 w-full justify-center">
-                                    <div className="basis-1/2">
-                                       <p className="text-white pb-2"> Version: V2 </p>
-                                       <p className="text-white pb-2"> Submitted: 12/17/2025, 6:55:23 AM </p>
-                                        <p className="text-white"> Studio notes: submiting glb </p>
-                                    </div>
-                                    <div className="basis-1/2 text-end">
-                                        <h5 className="bg-red-500 px-3 rounded-xl py-2 inline-block text-white mb-3"> Revisions Requested 
-                                        </h5>
-                                        <p className="text-yellow-300"> Your feedback: reject 1 </p>
-                                    </div>
-                                </div>  
- 
-                                <div className="mt-6 text-center relative flex gap-4">
-                                      <img src="https://img.freepik.com/premium-photo/magic-ring_665280-62586.jpg" className="inline-block border border-gray-300 rounded-xl" width={240} />
-                                       <img src="https://img.freepik.com/premium-photo/magic-ring_665280-62586.jpg" className="inline-block border border-gray-300 rounded-xl" width={240} />
-                                </div>
-                            </div>
-  )
-}
+

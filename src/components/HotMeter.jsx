@@ -1,8 +1,8 @@
 import { useState, useRef } from "react";
 
-export default function HotMeter({ average = 50, userRating = null, onRate }) {
-  const [value, setValue] = useState(0);
-  const [locked, setLocked] = useState(!!userRating);
+export default function HotMeter({ isRated,average = 50, userRating = null, onRate }) {
+  const [value, setValue] = useState(userRating!=null?userRating*10:0);
+  const [locked, setLocked] = useState(!!isRated);
   const THUMB_SIZE = 32; // same as w-8 (32px)
 
   const isHot = value >= 76;

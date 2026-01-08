@@ -2,11 +2,13 @@ import { useState, useEffect, useRef } from "react";
 import HotMeter from "../components/HotMeter";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
 
-export default function CommunityMobile({setJewelleryData,totalPages,setTotalPages, jewelleryData = [], loadProduct }) {
+export default function CommunityMobile({setJewelleryData,totalPages,setTotalPages, jewelleryData = [], loadProduct ,handleOpenModal}) {
   const loadMoreDesignRef = useRef(null)
   const [currentPage, setCurrentPage] = useState(1)
    const loadingRef = useRef(false);
+   const {isLoggedIn}=useSelector(state=>state.user)
 
       useEffect(() => {
         if (!loadMoreDesignRef.current) return;
@@ -83,9 +85,7 @@ export default function CommunityMobile({setJewelleryData,totalPages,setTotalPag
       {jewelleryData.map((item,idx) =>{
           return(
             <div key={item.id}>
-            <ReelItem  
-            
-             item={item} loadProduct={loadProduct} />
+            <ReelItem handleOpenModal={handleOpenModal} isLoggedIn={isLoggedIn} item={item} loadProduct={loadProduct} />
             {idx==jewelleryData.length-1 && totalPages!=currentPage &&
             <div ref={loadMoreDesignRef} className="flex flex-col items-center justify-center py-10">
               <div className="h-10 w-10 -mt-24 border-4 border-gray-300 border-t-gray-700 rounded-full animate-spin"></div>
@@ -230,9 +230,12 @@ function CommentsSheet({productId, onClose }) {
 /* SINGLE REEL ITEM */
 /* ------------------------------------------------------------------ */
 
-function ReelItem({ item, loadProduct }) {
-  const [liked, setLiked] = useState(item.is_liked);
+function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal }) {
+  const [isLiked, setIsLiked] = useState(item.is_liked);
   const [likes, setLikes] = useState(item.likes_count || 0);
+  const [isRated, setIsRated] = useState(item.is_rated)
+  const [averageRating, setAverageRating] = useState(item.average_rating)
+  const [ratingsCount, setRatingsCount] = useState(item.ratings_count)
   const [expanded, setExpanded] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const descRef = useRef(null);
@@ -246,14 +249,15 @@ function ReelItem({ item, loadProduct }) {
 
 
 
-  const handleLike = async () => {
+  const handleEngage = async (type,rating=0) => {
     try {
       axios.defaults.withCredentials = true;
         const { data } = await axios.post(
           `${
             import.meta.env.VITE_BASE_URL
           }/api/product/${item.id}/engage`,
-          {type:"like",
+          {type,
+            ...(type=="rating"?{rating:rating/10}:{})
           },
           {
             headers: {
@@ -264,11 +268,17 @@ function ReelItem({ item, loadProduct }) {
         );
         console.log(data);
         if (data.success) {
+          
           toast.success(data.message);
-
-            setLiked(data.data.liked)
+           if(type=="like"){ 
+            setIsLiked(data.data.liked)
             setLikes(data.data.likes_count)
-   
+            }
+            else if(type=="rating"){
+              setIsRated(true)
+              setAverageRating(data.data.average_rating)
+              setRatingsCount(data.data.ratings_count)
+            }  
             // else if(type=="comment") {
             //   setComment("")
             //   setCommentsList((prev) => [
@@ -385,39 +395,40 @@ function ReelItem({ item, loadProduct }) {
             {/* RIGHT — ICONS */}
             <div className="flex items-center gap-5">
               {/* LIKE */}
-              <button onClick={handleLike} className="flex items-center gap-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  stroke="white"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className={` lucide lucide-heart-icon lucide-heart transition ${
-                    liked
-                      ? " text-red-700 opacity-100"
-                      : " text-transparent opacity-70"
-                  }`}
-                >
-                  <path
-                    d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"
+              {isLoggedIn &&( <>
+                <button onClick={()=>handleEngage("like")} className="flex items-center gap-1">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"
-                  />{" "}
-                </svg>
-                <span className="text-xs">{likes}</span>
-              </button>
-
-              {/* COMMENTS */}
-              <button
-                onClick={() => setShowComments(true)}
-                className="flex items-center gap-1"
-              >
-                <img src="/assets/comments.png" className="w-6 h-6" />
-                <span className="text-xs">{item.reviews_count || 0}</span>
-              </button>
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    stroke="white"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className={` lucide lucide-heart-icon lucide-heart transition ${
+                      isLiked
+                        ? " text-red-700 opacity-100"
+                        : " text-transparent opacity-70"
+                    }`}
+                  >
+                    <path
+                      d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"
+                      fill="currentColor"
+                    />{" "}
+                  </svg>
+                  <span className="text-xs">{likes}</span>
+                </button>
+                {/* COMMENTS */}
+                <button
+                  onClick={() => setShowComments(true)}
+                  className="flex items-center gap-1"
+                >
+                  <img src="/assets/comments.png" className="w-6 h-6" />
+                  <span className="text-xs">{item.comments_count || 0}</span>
+                </button>
+              </>)}
 
               {/* SHARE */}
               <button>
@@ -428,13 +439,14 @@ function ReelItem({ item, loadProduct }) {
         </div>
 
         {/* HOT METER */}
-        <div className="w-full max-w-[360px] ">
+       {isLoggedIn? <div className="w-full max-w-[360px] ">
           <HotMeter
-            average={item.average_rating || 50}
+          isRated={isRated}
+            average={item.average_rating || 0}
             userRating={item.user_rating || null}
-            onRate={(rating) => console.log("User rated:", rating)}
+            onRate={(rating)=>handleEngage("rating",rating)}
           />
-        </div>
+        </div>:<div className="w-full max-w-[360px] text-s mb-1"><span onClick={()=>handleOpenModal("login")} className="underline text-blue-400 hover:text-blue-500">Login</span> to engage with this product</div>}
       </div>
 
       <div className="flex-1" />

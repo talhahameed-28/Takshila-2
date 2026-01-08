@@ -395,7 +395,7 @@ function ReelItem({ item, loadProduct }) {
                   height="24"
                   viewBox="0 0 24 24"
                   stroke="white"
-                  strokeWidth="3"
+                  strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   className={` lucide lucide-heart-icon lucide-heart transition ${
@@ -423,7 +423,7 @@ function ReelItem({ item, loadProduct }) {
 
               {/* SHARE */}
               <button>
-                <img src="/assets/Share.svg" className="w-6 h-6" />
+                <img src="/assets/share.svg" className="w-6 h-6" />
               </button>
             </div>
           </div>

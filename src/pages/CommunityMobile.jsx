@@ -468,7 +468,7 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal }) {
 
               {/* SHARE */}
               <button>
-                <img src="/assets/share.svg" className="w-6 h-6" />
+                <img src="/assets/grp32.svg" className="w-6 h-6" />
               </button>
             </div>
           </div>

@@ -350,18 +350,52 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal }) {
       {/* IMAGE + HEADER */}
       <div className="flex flex-col items-center gap-4 px-4">
         <div className="flex items-center gap-3 self-start">
-          <div className="w-11 h-11 rounded-full border border-white overflow-hidden flex items-center justify-center bg-black">
+          <svg
+            width="44"
+            height="48"
+            viewBox="0 0 100 110"
+            className="shrink-0"
+          >
+            {/* HEXAGON STROKE */}
+            <polygon
+              points="50,5 95,30 95,80 50,105 5,80 5,30"
+              fill="black"
+              stroke="white"
+              strokeWidth="4"
+            />
+
+            {/* IMAGE MASK */}
+            <defs>
+              <clipPath id={`hexClip-${item.id}`}>
+                <polygon points="50,5 95,30 95,80 50,105 5,80 5,30" />
+              </clipPath>
+            </defs>
+
             {designerAvatar ? (
-              <img
-                src={designerAvatar}
-                className="w-full h-full object-cover"
+              <image
+                href={designerAvatar}
+                x="0"
+                y="0"
+                width="100"
+                height="110"
+                preserveAspectRatio="xMidYMid slice"
+                clipPath={`url(#hexClip-${item.id})`}
               />
             ) : (
-              <span className="text-sm uppercase">
+              <text
+                x="50%"
+                y="55%"
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fill="white"
+                fontSize="40"
+                fontWeight="600"
+              >
                 {designerCallname.charAt(0)}
-              </span>
+              </text>
             )}
-          </div>
+          </svg>
+
           <span className="text-sm">@{designerCallname}</span>
         </div>
 
@@ -381,13 +415,15 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal }) {
             <button
               onClick={() => loadProduct(item.id)}
               className="
-        px-7 py-3
-        rounded-full
-        text-sm font-semibold
-        bg-white text-black
-        hover:bg-white/90
-        transition
-      "
+    px-7 py-3
+    rounded-full
+    text-sm font-semibold
+    text-white
+    bg-transparent
+    border border-white
+    hover:bg-white/10
+    transition
+  "
             >
               Customize
             </button>
@@ -432,7 +468,7 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal }) {
 
               {/* SHARE */}
               <button>
-                <img src="/assets/Share.svg" className="w-6 h-6" />
+                <img src="/assets/share.svg" className="w-6 h-6" />
               </button>
             </div>
           </div>

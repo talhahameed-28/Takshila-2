@@ -2,26 +2,14 @@ import { useState, useRef } from "react";
 
 export default function HotMeter({ average = 50, userRating = null, onRate }) {
   const [value, setValue] = useState(0);
-  const [locked, setLocked] = useState(!!userRating);
   const THUMB_SIZE = 32; // same as w-8 (32px)
 
   const isHot = value >= 76;
-  const lastTapRef = useRef(0);
 
   const handleRelease = () => {
-    if (locked) return;
-    setLocked(true);
     onRate?.(value);
   };
 
-  // 🔓 Double tap / double click to unlock
-  const handleUnlockAttempt = () => {
-    const now = Date.now();
-    if (now - lastTapRef.current < 300) {
-      setLocked(false);
-    }
-    lastTapRef.current = now;
-  };
 
   const getLabel = (v) => {
     if (v <= 25) return "😬 Not great";
@@ -58,12 +46,9 @@ export default function HotMeter({ average = 50, userRating = null, onRate }) {
             min="0"
             max="100"
             value={value}
-            disabled={locked}
             onChange={(e) => setValue(Number(e.target.value))}
             onMouseUp={handleRelease}
             onTouchEnd={handleRelease}
-            onDoubleClick={handleUnlockAttempt}
-            onTouchStart={handleUnlockAttempt}
             className="w-full appearance-none h-1 rounded-full cursor-pointer"
             style={filledBackground}
           />
@@ -90,10 +75,8 @@ export default function HotMeter({ average = 50, userRating = null, onRate }) {
 
         {/* LABEL + AVERAGE */}
         <div className="flex items-center gap-2 min-w-[90px] justify-end">
-          <span className="text-sm text-white/80">{getLabel(value)}</span>
-          {locked && (
+          <span className="text-sm text-white/80">{getLabel(value)} </span>
             <span className="text-sm font-semibold">{Math.round(average)}</span>
-          )}
         </div>
       </div>
 

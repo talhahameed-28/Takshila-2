@@ -14,6 +14,7 @@ const CADModal=({setModalStage,id})=>{
   const [submissions, setSubmissions] = useState([])
   const [openFeedback, setOpenFeedback] = useState(false)
   const [allSubmissions, setallSubmissions] = useState({glb:[],stl:[],pdf:[]})
+  const [loading, setLoading] = useState(true)
     const feedbackRef = useRef(null)
     const handleApproval=async (decision)=>{
         try {
@@ -55,6 +56,7 @@ const CADModal=({setModalStage,id})=>{
   useEffect(() => {
     const loadCADs=async()=>{
       try {
+
         axios.defaults.withCredentials=true
          const {data} = await axios.get(
         `${
@@ -76,6 +78,8 @@ const CADModal=({setModalStage,id})=>{
       } catch (error) {
         console.log(error)
         toast.error("Some error occurred")
+      }finally{
+        setLoading(false)
       }
     }
     
@@ -101,12 +105,25 @@ const CADModal=({setModalStage,id})=>{
   
   
   return (
-    <div className="col-md-12 details-generate text-start md:px-12 px-4 pt-5">
+    <>
+            <div aria-labelledby="dialog-title" className="fixed inset-0 size-auto max-h-none max-w-4xl overflow-y-auto bg-transparent backdrop:bg-transparent mx-auto">
+
+    <el-dialog-backdrop className="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+
+          <div tabIndex="0" className="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
+            <el-dialog-panel className="relative transform overflow-hidden bg-[#716F6DE0] text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-2lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 border rounded-xl border-gray-300">
+              <div className="px-6 pt-9 pb-6 sm:p-6 sm:pb-4">
+    {loading?<div className="flex flex-col items-center justify-center py-10">
+            <div className="h-10 w-10 border-4 border-gray-300 border-t-gray-700 rounded-full animate-spin"></div>
+
+            <p className="mt-4 text-sm text-black text-center max-w-xs">
+              Loading submissions
+            </p>
+          </div>:<div className="col-md-12 details-generate text-start md:px-12 px-4 pt-5">
                                 
       <h2 className="text-center text-2xl font-bold uppercase text-white pb-5"> CAD Details </h2>
                                 
       <h6 className="mb-1 text-white text-start"> Review CAD submissions </h6>
-                                
        <>
                <button
           onClick={prevSlide}
@@ -118,7 +135,7 @@ const CADModal=({setModalStage,id})=>{
         <button
           onClick={nextSlide}
           className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/60 text-white px-3 py-2 rounded-full hover:bg-black transition"
-        >
+          >
           ▶
         </button>
     
@@ -135,10 +152,10 @@ const CADModal=({setModalStage,id})=>{
               <p className="text-white pb-2"> Studio notes: {submissions[currentIndex]?.notes || "No studio notes"} </p>
               <p className="text-white">Files:{" "}
                     {submissions[currentIndex]?.files
-                      .filter(file => file.extension === "pdf")
+                      .filter(file =>["pdf","zip"].includes(file.extension))
                       .map((file, idx, arr) => (
                         <span key={idx}>
-                          <a className="underline" target="_blank" href={file.url}>{file.name}</a>
+                          <a download={file.extension=="zip"?file.name:undefined} className="underline" target="_blank" href={file.url}>{file.name}</a>
                           {idx < arr.length - 1 && ", "}
                         </span>
                       ))}
@@ -147,7 +164,7 @@ const CADModal=({setModalStage,id})=>{
                     {submissions[currentIndex]?.files
                       .filter(file => file.extension === "stl")
                       .map((file, idx, arr) => (
-                        <div className="mt-10 border-black border-t-3 w-full h-[50vh]">
+                        <div key={idx} className="mt-10 border-black border-t-3 w-full h-[50vh]">
                             <p className="text-white">{file.name}</p>
                             <Canvas  onCreated={({ gl }) => {
                                 gl.setClearColor("#ffffff");
@@ -273,7 +290,16 @@ const CADModal=({setModalStage,id})=>{
                 </button>
                 </div>
        </>                           
+  </div>}
   </div>
+
+              <div className="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                <button type="button" command="close" onClick={()=>setModalStage("")} commandfor="cadmodal" className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 sm:ml-3 sm:w-auto"> Close </button>
+              </div>
+            </el-dialog-panel>
+          </div>
+          </div>
+                </>
   )
 }
 function GLBModel({ path }) {

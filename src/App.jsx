@@ -24,6 +24,7 @@ import DesignStudio from "./pages/DesignStudio";
 
 // ⬇️ Video Loader Component
 import VideoLoader from "./components/VideoLoader";
+import { HelmetProvider } from "react-helmet-async";
 
 
 export default function App() {

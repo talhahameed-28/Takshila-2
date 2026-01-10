@@ -5,6 +5,8 @@ import App from "./App";
 import "./index.css";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
+import {HelmetProvider} from "react-helmet-async";
+
 // import { WishlistProvider } from "./context/WishlistContext";
 import { Toaster } from "react-hot-toast";
 
@@ -17,11 +19,14 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       reverseOrder={false}
     />
     <Provider store={store}>
-      <BrowserRouter>
-        {/* <WishlistProvider> */}
-          <App />
-        {/* </WishlistProvider> */}
-      </BrowserRouter>
+      <HelmetProvider>
+
+        <BrowserRouter>
+          {/* <WishlistProvider> */}
+            <App />
+          {/* </WishlistProvider> */}
+        </BrowserRouter>
+      </HelmetProvider>
     </Provider>
       
   </React.StrictMode>

@@ -109,9 +109,17 @@ const CommunityProduct = ({handleOpenModal}) => {
                     },
                 }
             );
-            console.log(data);
+             const { data:engagements } = await axios.get(
+                    `${import.meta.env.VITE_BASE_URL}/api/product/${productId}/engagements`,
+                    {
+                      headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                      },
+                    }
+                  );
+            console.log(engagements);
             setSelectedProductDetails(data.data.product);
-            setCommentsList(data.data.product.reviews)
+            setCommentsList(engagements.data.comments.list)
             } catch (error) {
             toast.error("Couldn't fetch details");
             console.log(error);
@@ -142,7 +150,7 @@ const CommunityProduct = ({handleOpenModal}) => {
               };
         
         
-            if( Object.keys(customData).length === 0) return;
+            if( Object.keys(customData)?.length === 0) return;
               // debounce
               const timer = setTimeout(() => {
                 getBreakdown();
@@ -202,7 +210,7 @@ const CommunityProduct = ({handleOpenModal}) => {
                     id: Date.now(),
                     review: comment,
                     rating,
-                    user: { name: data?.data?.review?.user?.name },
+                    user: { name: data?.data?.comment?.user?.name },
                     created_at: new Date(),
                   },
                   ...prev,
@@ -249,7 +257,6 @@ const CommunityProduct = ({handleOpenModal}) => {
                   }
                 }
 
-   console.log(productId)
   return (
      <>
           <div className="inset-0 flex items-end md:items-center justify-center z-[50] pt-[72px] md:pt-0">
@@ -662,7 +669,7 @@ const CommunityProduct = ({handleOpenModal}) => {
                       </div>
 
                       <p className="text-sm text-gray-700 leading-relaxed">
-                        {c.review}
+                        {c.comment}
                       </p>
 
                       {c.created_at && (

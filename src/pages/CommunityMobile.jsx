@@ -508,7 +508,7 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal }) {
           <div className="w-full max-w-[360px] ">
             <HotMeter
               isRated={isRated}
-              average={item.average_rating || 0}
+              average={averageRating || 0}
               userRating={item.user_rating || null}
               onRate={(rating) => handleEngage("rating", rating)}
             />

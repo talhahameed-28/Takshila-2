@@ -78,11 +78,11 @@ export default function CommunityMobile({setJewelleryData,totalPages,setTotalPag
 
   return (
     <>
-    <div
-      className="bg-black h-screen overflow-y-scroll snap-y snap-mandatory text-white"
-      style={{ WebkitOverflowScrolling: "touch" }}
+      <div
+        className="bg-black h-screen overflow-y-scroll snap-y snap-mandatory text-white"
+        style={{ WebkitOverflowScrolling: "touch" }}
       >
-      {jewelleryData.map((item,idx) =>{
+        {/*{jewelleryData.map((item,idx) =>{
           return(
             <div key={item.id}>
             <ReelItem handleOpenModal={handleOpenModal} isLoggedIn={isLoggedIn} item={item} loadProduct={loadProduct} />
@@ -95,11 +95,37 @@ export default function CommunityMobile({setJewelleryData,totalPages,setTotalPag
             </div>}
             </div>
         
-      )})}
-      
-    </div>
-    
-      </>
+      )})}*/}
+
+        {jewelleryData.map((item) => (
+          <ReelItem
+            key={item.id}
+            handleOpenModal={handleOpenModal}
+            isLoggedIn={isLoggedIn}
+            item={item}
+            loadProduct={loadProduct}
+          />
+        ))}
+
+        {/* Loader — OUTSIDE snap items 
+        {totalPages !== currentPage && (
+          <div
+            ref={loadMoreDesignRef}
+            className="flex flex-col items-center justify-center py-10 snap-none"
+          >
+            <div className="h-10 w-10 border-4 border-gray-300 border-t-gray-700 rounded-full animate-spin" />
+            <p className="mt-4 text-sm text-white text-center max-w-xs">
+              Loading more designs...
+            </p>
+          </div>
+        )}*/}
+
+        {/* Infinite scroll sentinel (invisible) */}
+        {totalPages !== currentPage && (
+          <div ref={loadMoreDesignRef} className="h-px w-full snap-none" />
+        )}
+      </div>
+    </>
   );
 }
 
@@ -344,11 +370,9 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal }) {
     item.user?.name || item.user?.username || "takshila";
 
   return (
-    <div className="h-screen snap-start relative flex flex-col pt-21 mb-21">
-      <div className="flex-1" />
-
+    <div className="h-screen snap-start snap-stop-always relative flex flex-col pt-21 mb-21">
       {/* IMAGE + HEADER */}
-      <div className="flex flex-col items-center gap-4 px-4">
+      <div className="flex flex-col items-center gap-4 pt-5 px-4">
         <div className="flex items-center gap-3 self-start">
           <svg
             width="44"
@@ -431,40 +455,45 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal }) {
             {/* RIGHT — ICONS */}
             <div className="flex items-center gap-5">
               {/* LIKE */}
-              {isLoggedIn &&( <>
-                <button onClick={()=>handleEngage("like")} className="flex items-center gap-1">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="currentColor"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    stroke="white"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className={` lucide lucide-heart-icon lucide-heart transition ${
-                      isLiked
-                        ? " text-red-700 opacity-100"
-                        : " text-transparent opacity-70"
-                    }`}
+              {isLoggedIn && (
+                <>
+                  <button
+                    onClick={() => handleEngage("like")}
+                    className="flex items-center gap-1"
                   >
-                    <path
-                      d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
                       fill="currentColor"
-                    />{" "}
-                  </svg>
-                  <span className="text-xs">{likes}</span>
-                </button>
-                {/* COMMENTS */}
-                <button
-                  onClick={() => setShowComments(true)}
-                  className="flex items-center gap-1"
-                >
-                  <img src="/assets/comments.png" className="w-6 h-6" />
-                  <span className="text-xs">{item.comments_count || 0}</span>
-                </button>
-              </>)}
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      stroke="white"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className={` lucide lucide-heart-icon lucide-heart transition ${
+                        isLiked
+                          ? " text-red-700 opacity-100"
+                          : " text-transparent opacity-70"
+                      }`}
+                    >
+                      <path
+                        d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"
+                        fill="currentColor"
+                      />{" "}
+                    </svg>
+                    <span className="text-xs">{likes}</span>
+                  </button>
+                  {/* COMMENTS */}
+                  <button
+                    onClick={() => setShowComments(true)}
+                    className="flex items-center gap-1"
+                  >
+                    <img src="/assets/comments.png" className="w-6 h-6" />
+                    <span className="text-xs">{item.comments_count || 0}</span>
+                  </button>
+                </>
+              )}
 
               {/* SHARE */}
               <button>
@@ -475,20 +504,30 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal }) {
         </div>
 
         {/* HOT METER */}
-       {isLoggedIn? <div className="w-full max-w-[360px] ">
-          <HotMeter
-          isRated={isRated}
-            average={item.average_rating || 0}
-            userRating={item.user_rating || null}
-            onRate={(rating)=>handleEngage("rating",rating)}
-          />
-        </div>:<div className="w-full max-w-[360px] text-s mb-1"><span onClick={()=>handleOpenModal("login")} className="underline text-blue-400 hover:text-blue-500">Login</span> to engage with this product</div>}
+        {isLoggedIn ? (
+          <div className="w-full max-w-[360px] ">
+            <HotMeter
+              isRated={isRated}
+              average={item.average_rating || 0}
+              userRating={item.user_rating || null}
+              onRate={(rating) => handleEngage("rating", rating)}
+            />
+          </div>
+        ) : (
+          <div className="w-full max-w-[360px] text-s mb-1">
+            <span
+              onClick={() => handleOpenModal("login")}
+              className="underline text-blue-400 hover:text-blue-500"
+            >
+              Login
+            </span>{" "}
+            to engage with this product
+          </div>
+        )}
       </div>
 
-      <div className="flex-1" />
-
       {/* DESCRIPTION */}
-      <div className="px-6 pb-8">
+      <div className="px-6 pb-2 py-10">
         <h2 className="text-3xl font-light">{item.name}</h2>
         {item.description && (
           <>

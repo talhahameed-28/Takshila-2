@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import Home from "../pages/Home";
 import { ROUTES } from "./routes";
 import Community from "../pages/Community";
@@ -35,7 +35,7 @@ const MainRoutes = ({setIsMobileMenuOpen,setModalOpen,setModalType,setShowProfil
         <ScrollToTop/>
 
             <Routes>
-                <Route path={ROUTES.HOME} element={<Home />} />
+                <Route path={ROUTES.HOME} element={<Navigate to={ROUTES.COMMUNITY} replace />} />
                 <Route path={ROUTES.COMMUNITY} element={<Community handleOpenModal={handleOpenModal} />} />
                 <Route path={ROUTES.COMMUNITYPRODUCT} element={<CommunityProduct handleOpenModal={handleOpenModal} />} />
                 <Route path={ROUTES.CATALOGUE} element={<Catalogue />} />

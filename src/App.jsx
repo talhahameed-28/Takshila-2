@@ -25,7 +25,7 @@ import DesignStudio from "./pages/DesignStudio";
 
 
 // ⬇️ Video Loader Component
-import VideoLoader from "./components/VideoLoader";
+//import VideoLoader from "./components/VideoLoader";
 import { HelmetProvider } from "react-helmet-async";
 
 
@@ -43,8 +43,8 @@ export default function App() {
  
   return (
     <>
-      {/* Loader — shows first, hides automatically */}
-      {loading && <VideoLoader onFinish={() => setLoading(false)} />}
+      {/* Loader — shows first, hides automatically 
+      {loading && <VideoLoader onFinish={() => setLoading(false)} />}*/}
 
       {/* Main Website (hidden until loader ends) */}
       {!loading && (

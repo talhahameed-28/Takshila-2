@@ -57,36 +57,48 @@ export default function MobileNavbar() {
           >
             Orders
           </Link>
+
+          <Link
+            to="/blogs"
+            onClick={() => setMenuOpen(false)}
+            className="px-6 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white"
+          >
+            Blogs
+          </Link>
         </div>
       )}
 
       {/* NAVBAR */}
       <div
-        className="relative flex items-center gap-6 px-6 py-0
-                   rounded-full bg-[#202020]/80 backdrop-blur-xl
-                   border border-white/10 shadow-lg"
+        className="relative flex items-center justify-between
+             px-10 py-2
+             w-[360px]
+             rounded-full bg-[#202020]/80 backdrop-blur-xl
+             border border-white/10 shadow-lg"
       >
         <Link
           to="/community"
-          className={`p-3 rounded-full ${isActive("/community")}`}
+          className={`p-3 rounded-full -ml-5 ${isActive("/community")}`}
         >
-          👥
+          <img src="/assets/community.png" className="w-6 h-6 object-contain" />
         </Link>
 
         <Link
-          to="/catalogue"
-          className={`p-3 rounded-full ${isActive("/catalogue")}`}
+          to="/my-activity"
+          className={`p-3 rounded-full ${isActive("/my-activity")}`}
         >
-          📦
+          <img src="/assets/activity.png" className="w-6 h-6 object-contain" />
         </Link>
 
         {/* CENTER BUTTON */}
         <Link
           to="/design-studio"
-          className="relative -top-7 flex items-center justify-center
-                     w-16 h-16 rounded-full
-                     bg-[#2a2a2a] border border-white/20
-                     shadow-[0_0_25px_rgba(255,255,255,0.25)]"
+          className="absolute left-1/2 -translate-x-1/2 -top-6
+             flex items-center justify-center
+             w-16 h-16 rounded-full
+             bg-[#2a2a2a]
+             border border-white/20
+             shadow-[0_0_30px_rgba(255,255,255,0.35)]"
         >
           <img
             src="/assets/logoo.svg"
@@ -97,23 +109,23 @@ export default function MobileNavbar() {
 
         <Link
           to="/our-story"
-          className={`p-3 rounded-full ${isActive("/our-story")}`}
+          className={`p-3 rounded-full ml-20 ${isActive("/our-story")}`}
         >
-          👤
+          <img src="/assets/story.png" className="w-6 h-6 object-contain" />
         </Link>
 
         {/* ☰ MENU BUTTON */}
         <button
           ref={menuButtonRef}
           onClick={() => setMenuOpen((prev) => !prev)}
-          className={`p-3 rounded-full transition
+          className={`p-3 rounded-full transition -mr-5
             ${
               menuOpen
                 ? "bg-white/20 text-white"
                 : "text-gray-400 hover:bg-white/10"
             }`}
         >
-          ☰
+          <img src="/assets/menu.png" className="w-6 h-6 object-contain" />
         </button>
       </div>
     </div>

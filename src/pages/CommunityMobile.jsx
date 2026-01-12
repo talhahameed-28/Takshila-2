@@ -345,10 +345,9 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal }) {
 
   return (
     <div className="h-screen snap-start relative flex flex-col pt-21 mb-21">
-      <div className="flex-1" />
 
       {/* IMAGE + HEADER */}
-      <div className="flex flex-col items-center gap-4 px-4">
+      <div className="flex flex-col items-center gap-4 pt-5 px-4">
         <div className="flex items-center gap-3 self-start">
           <svg
             width="44"
@@ -485,10 +484,10 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal }) {
         </div>:<div className="w-full max-w-[360px] text-s mb-1"><span onClick={()=>handleOpenModal("login")} className="underline text-blue-400 hover:text-blue-500">Login</span> to engage with this product</div>}
       </div>
 
-      <div className="flex-1" />
+      
 
       {/* DESCRIPTION */}
-      <div className="px-6 pb-8">
+      <div className="px-6 pb-2 py-10">
         <h2 className="text-3xl font-light">{item.name}</h2>
         {item.description && (
           <>

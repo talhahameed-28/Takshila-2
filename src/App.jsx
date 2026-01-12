@@ -2,8 +2,10 @@ import React, { useState,useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "./store/slices/userSlice";
+import MobileTopBar from "./components/MobileTopBar";
+import ResponsiveNavbar from "./components/ResponsiveNavbar";
 
-import Navbar from "./components/Navbar";
+
 import Footer from "./components/Footer";
 
 import Home from "./pages/Home";
@@ -44,11 +46,12 @@ export default function App() {
       {/* Loader — shows first, hides automatically */}
       {loading && <VideoLoader onFinish={() => setLoading(false)} />}
 
-
       {/* Main Website (hidden until loader ends) */}
       {!loading && (
         <div className="bg-[#111] text-white min-h-screen">
-          <Navbar
+          <MobileTopBar />
+
+          <ResponsiveNavbar
             showAboutMenu={showAboutMenu}
             setShowAboutMenu={setShowAboutMenu}
             isMobileMenuOpen={isMobileMenuOpen}
@@ -56,23 +59,29 @@ export default function App() {
             modalOpen={modalOpen}
             setModalOpen={setModalOpen}
             modalType={modalType}
-            setModalType={setModalType} 
+            setModalType={setModalType}
             showProfileMenu={showProfileMenu}
-            setShowProfileMenu={setShowProfileMenu}/>
-            
+            setShowProfileMenu={setShowProfileMenu}
+          />
+
           <Routes>
             {/* MainRoutes for Auth related routes */}
-            <Route path="/*" element={<MainRoutes  
-            setIsMobileMenuOpen={setIsMobileMenuOpen}    
-            setModalOpen={setModalOpen}
-            setModalType={setModalType}     
-            setShowProfileMenu={setShowProfileMenu}/>} />
+            <Route
+              path="/*"
+              element={
+                <MainRoutes
+                  setIsMobileMenuOpen={setIsMobileMenuOpen}
+                  setModalOpen={setModalOpen}
+                  setModalType={setModalType}
+                  setShowProfileMenu={setShowProfileMenu}
+                />
+              }
+            />
           </Routes>
 
           <Footer />
         </div>
       )}
     </>
-
   );
 }

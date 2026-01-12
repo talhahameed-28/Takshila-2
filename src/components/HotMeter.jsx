@@ -1,17 +1,50 @@
-import { useState, useRef } from "react";
+import { useState, useEffect } from "react";
 
-export default function HotMeter({ isRated,average = 50, userRating = null, onRate }) {
-  const [value, setValue] = useState(userRating!=null?userRating*10:0);
-  const [locked, setLocked] = useState(!!isRated);
+export default function HotMeter({
+  isRated, // kept for API compatibility (not used anymore)
+  average = 50,
+  userRating = null,
+  onRate,
+}) {
+  const [value, setValue] = useState(userRating != null ? userRating * 10 : 0);
+  const [isInteracting, setIsInteracting] = useState(false);
+
   const THUMB_SIZE = 32; // same as w-8 (32px)
-
   const isHot = value >= 76;
 
+  /* --------------------------------------------------
+     🔒 Disable page scroll ONLY while interacting
+  -------------------------------------------------- */
+  useEffect(() => {
+    if (isInteracting) {
+      document.body.style.overflow = "hidden";
+      document.body.style.touchAction = "none";
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+    };
+  }, [isInteracting]);
+
+  /* --------------------------------------------------
+     🎯 Interaction handlers
+  -------------------------------------------------- */
+  const handleStart = () => {
+    setIsInteracting(true);
+  };
+
   const handleRelease = () => {
+    setIsInteracting(false);
     onRate?.(value);
   };
 
-
+  /* --------------------------------------------------
+     🏷 Label helper
+  -------------------------------------------------- */
   const getLabel = (v) => {
     if (v <= 25) return "😬 Not great";
     if (v <= 50) return "😐 Meh";
@@ -19,6 +52,9 @@ export default function HotMeter({ isRated,average = 50, userRating = null, onRa
     return "🔥 Hot";
   };
 
+  /* --------------------------------------------------
+     🎨 Filled gradient background
+  -------------------------------------------------- */
   const filledBackground = {
     background: `
       linear-gradient(
@@ -41,17 +77,23 @@ export default function HotMeter({ isRated,average = 50, userRating = null, onRa
       <div className="flex items-center gap-4">
         {/* SLIDER + FAKE THUMB WRAPPER */}
         <div className="relative flex-1">
-          {/* RANGE INPUT (thumb hidden) */}
+          {/* RANGE INPUT (native thumb hidden) */}
           <input
             type="range"
             min="0"
             max="100"
             value={value}
             onChange={(e) => setValue(Number(e.target.value))}
+            onMouseDown={handleStart}
+            onTouchStart={handleStart}
             onMouseUp={handleRelease}
             onTouchEnd={handleRelease}
-            className="w-full appearance-none h-1 rounded-full cursor-pointer"
-            style={filledBackground}
+            onMouseLeave={isInteracting ? handleRelease : undefined}
+            className="w-full appearance-none h-1 rounded-full cursor-pointer touch-none"
+            style={{
+              ...filledBackground,
+              touchAction: "none",
+            }}
           />
 
           {/* 🔥 CUSTOM FLAME THUMB */}
@@ -59,8 +101,7 @@ export default function HotMeter({ isRated,average = 50, userRating = null, onRa
             className="absolute top-1/2 pointer-events-none"
             style={{
               left: `calc(${value}% - ${THUMB_SIZE / 2}px)`,
-              maxLeft: `calc(100% - ${THUMB_SIZE}px)`,
-              right: `calc(${100 - value}% - ${THUMB_SIZE}px)`,
+              right: `calc(${100 - value}% - ${THUMB_SIZE / 2}px)`,
               transform: "translateY(-50%)",
             }}
           >
@@ -76,18 +117,10 @@ export default function HotMeter({ isRated,average = 50, userRating = null, onRa
 
         {/* LABEL + AVERAGE */}
         <div className="flex items-center gap-2 min-w-[90px] justify-end">
-          <span className="text-sm text-white/80">{getLabel(value)} </span>
-            <span className="text-sm font-semibold">{Math.round(average)}</span>
+          <span className="text-sm text-white/80">{getLabel(value)}</span>
+          <span className="text-sm font-semibold">{Math.round(average)}</span>
         </div>
       </div>
-
-      {/* Hint 
-      {locked && (
-        <p className="text-xs text-white/50 mt-1 text-right">
-          Double tap to change rating
-        </p>
-      )}
-        */}
 
       {/* HIDE NATIVE THUMB */}
       <style>{`
@@ -103,26 +136,27 @@ export default function HotMeter({ isRated,average = 50, userRating = null, onRa
         }
       `}</style>
 
+      {/* 🔥 Flame glow animation */}
       <style>{`
-  @keyframes pulseGlow {
-    0% {
-      filter:
-        drop-shadow(0 0 10px rgba(255, 0, 0, 0.8))
-        drop-shadow(0 0 20px rgba(255, 30, 30, 0.9));
-    }
-    50% {
-      filter:
-        drop-shadow(0 0 22px rgba(255, 0, 0, 1))
-        drop-shadow(0 0 36px rgba(255, 0, 0, 0.9))
-        drop-shadow(0 0 48px rgba(255, 60, 60, 0.8));
-    }
-    100% {
-      filter:
-        drop-shadow(0 0 10px rgba(255, 0, 0, 0.8))
-        drop-shadow(0 0 20px rgba(255, 30, 30, 0.9));
-    }
-  }
-`}</style>
+        @keyframes pulseGlow {
+          0% {
+            filter:
+              drop-shadow(0 0 10px rgba(255, 0, 0, 0.8))
+              drop-shadow(0 0 20px rgba(255, 30, 30, 0.9));
+          }
+          50% {
+            filter:
+              drop-shadow(0 0 22px rgba(255, 0, 0, 1))
+              drop-shadow(0 0 36px rgba(255, 0, 0, 0.9))
+              drop-shadow(0 0 48px rgba(255, 60, 60, 0.8));
+          }
+          100% {
+            filter:
+              drop-shadow(0 0 10px rgba(255, 0, 0, 0.8))
+              drop-shadow(0 0 20px rgba(255, 30, 30, 0.9));
+          }
+        }
+      `}</style>
     </div>
   );
 }

@@ -1,9 +1,50 @@
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../store/slices/userSlice";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import AuthModals from "./AuthModals";
+
+
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 
 export default function MobileNavbar() {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalType, setModalType] = useState("login");
+
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { isLoggedIn } = useSelector((state) => state.user);
+  const handleLogout = async () => {
+    try {
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/v1/logout`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          withCredentials: true,
+        }
+      );
+
+      if (data.success) {
+        localStorage.removeItem("token");
+        dispatch(logout());
+        setMenuOpen(false);
+        navigate("/");
+        toast.success("Logged out successfully");
+      } else {
+        toast.error("Couldn't process your request");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Some error occurred");
+    }
+  };
 
   const menuRef = useRef(null);
   const menuButtonRef = useRef(null);
@@ -24,9 +65,18 @@ export default function MobileNavbar() {
       }
     };
 
+    
+
+
     document.addEventListener("mousedown", handleOutsideClick);
     return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, [menuOpen]);
+
+  const handleOpenModal = (type) => {
+    setModalType(type);
+    setModalOpen(true);
+    setMenuOpen(false);
+  };
 
   return (
     <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[9999] md:hidden">
@@ -35,13 +85,14 @@ export default function MobileNavbar() {
         <div
           ref={menuRef}
           className="absolute bottom-20 right-2
-                     flex flex-col gap-3
-                     px-4 py-4 rounded-3xl
-                     bg-[#202020]/90 backdrop-blur-2xl
-                     border border-white/10
-                     shadow-[0_0_30px_rgba(255,255,255,0.15)]
-                     animate-fadeIn"
+               flex flex-col gap-3
+               px-4 py-4 rounded-3xl
+               bg-[#202020]/90 backdrop-blur-2xl
+               border border-white/10
+               shadow-[0_0_30px_rgba(255,255,255,0.15)]
+               animate-fadeIn"
         >
+          {/* Common links */}
           <Link
             to="/profile"
             onClick={() => setMenuOpen(false)}
@@ -65,6 +116,32 @@ export default function MobileNavbar() {
           >
             Blogs
           </Link>
+
+          {/* AUTH SECTION */}
+          {!isLoggedIn ? (
+            <>
+              <button
+                onClick={() => handleOpenModal("login")}
+                className="px-6 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white"
+              >
+                Login
+              </button>
+
+              <button
+                onClick={() => handleOpenModal("signup")}
+                className="px-6 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white"
+              >
+                Sign Up
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={handleLogout}
+              className="px-6 py-2 rounded-full bg-red-500/20 hover:bg-red-500/30 text-white"
+            >
+              Logout
+            </button>
+          )}
         </div>
       )}
 
@@ -128,6 +205,12 @@ export default function MobileNavbar() {
           <img src="/assets/menu.png" className="w-6 h-6 object-contain" />
         </button>
       </div>
+      <AuthModals
+        isOpen={modalOpen}
+        type={modalType}
+        onClose={() => setModalOpen(false)}
+        switchType={setModalType}
+      />
     </div>
   );
 }

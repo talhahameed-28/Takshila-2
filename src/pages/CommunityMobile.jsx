@@ -79,7 +79,7 @@ export default function CommunityMobile({setJewelleryData,totalPages,setTotalPag
   return (
     <>
       <div
-        className="bg-black h-screen overflow-y-scroll snap-y snap-mandatory text-white"
+        className="bg-black h-screen overflow-y-scroll text-white"
         style={{ WebkitOverflowScrolling: "touch" }}
       >
         {/*{jewelleryData.map((item,idx) =>{
@@ -122,7 +122,7 @@ export default function CommunityMobile({setJewelleryData,totalPages,setTotalPag
 
         {/* Infinite scroll sentinel (invisible) */}
         {totalPages !== currentPage && (
-          <div ref={loadMoreDesignRef} className="h-px w-full snap-none" />
+          <div ref={loadMoreDesignRef} className="h-px w-full" />
         )}
       </div>
     </>
@@ -370,13 +370,13 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal }) {
     item.user?.name || item.user?.username || "takshila";
 
   return (
-    <div className="h-screen snap-start snap-stop-always relative flex flex-col pt-21 mb-21">
+    <div className=" relative flex flex-col pt-16 -mb-20">
       {/* IMAGE + HEADER */}
       <div className="flex flex-col items-center gap-4 pt-5 px-4">
         <div className="flex items-center gap-3 self-start">
           <svg
-            width="44"
-            height="48"
+            width="38"
+            height="42"
             viewBox="0 0 100 110"
             className="shrink-0"
           >
@@ -420,7 +420,7 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal }) {
             )}
           </svg>
 
-          <span className="text-sm">@{designerCallname}</span>
+          <span className="text-xs">@{designerCallname}</span>
         </div>
 
         <div className="bg-[#f3ece4] rounded-2xl overflow-hidden w-full max-w-[360px]">
@@ -433,13 +433,13 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal }) {
         </div>
 
         {/* ACTION ROW — ALIGNED TO IMAGE WIDTH */}
-        <div className="w-full max-w-[360px] mx-auto px-1 mt-4">
+        <div className="w-full max-w-[360px] mx-auto px-1 mt-1">
           <div className="flex items-center justify-between">
             {/* LEFT — CUSTOMIZE */}
             <button
               onClick={() => loadProduct(item.id)}
               className="
-    px-7 py-3
+    px-6 py-2
     rounded-full
     text-sm font-semibold
     text-white
@@ -527,11 +527,11 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal }) {
       </div>
 
       {/* DESCRIPTION */}
-      <div className="px-6 pb-2 py-10">
-        <h2 className="text-3xl font-light">{item.name}</h2>
+      <div className="px-6 pt-2 pb-4">
+        <h2 className="text-2xl font-light">{item.name}</h2>
         {item.description && (
           <>
-            <p ref={descRef} className="text-sm opacity-80 line-clamp-1">
+            <p ref={descRef} className="text-xs opacity-80 line-clamp-1">
               {item.description}
             </p>
 

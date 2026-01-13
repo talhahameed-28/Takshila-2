@@ -16,7 +16,7 @@ export default function ResponsiveNavbar(props) {
 
   // ✅ MOBILE → ONLY MobileNavbar
   if (isMobile) {
-    return <MobileNavbar />;
+    return <MobileNavbar {...props}/>;
   }
 
   // ✅ DESKTOP → ONLY Navbar (unchanged)

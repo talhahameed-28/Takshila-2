@@ -179,7 +179,7 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
     <>
       {/* Overlay */}
       <div
-        className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-1000 flex items-center justify-center transition-opacity duration-300 ${
+        className={`fixed inset-0 bg-black/60 backdrop-blur-md z-[1000] flex items-center justify-center transition-opacity duration-300 ${
           isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={onClose}
@@ -187,20 +187,22 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
 
       {/* Centered Modal */}
       <div
-        className={`fixed inset-0 z-1000 flex items-center justify-center transition-all duration-300 ${
+        className={`fixed inset-0 z-[1000] flex items-end md:items-center justify-center transition-all duration-300 ${
           isOpen
             ? "opacity-100 scale-100 translate-y-0"
             : "opacity-0 scale-95 translate-y-5 pointer-events-none"
         }`}
       >
         <div
-          className={`relative bg-white/15 backdrop-blur-2xl border border-white/30 shadow-2xl rounded-3xl w-[90%] max-w-4xl text-white p-10 ${
-            type === "login" ? "flex flex-col md:flex-row" : "flex flex-col"
-          }`}
+          className={`relative bg-white/15 backdrop-blur-2xl border border-white/30 shadow-2xl rounded-3xl w-[90%] max-w-4xl text-white
+  pt-16 px-5 pb-6
+  max-h-[85vh] overflow-visible${
+    type === "login" ? "flex flex-col md:flex-row" : "flex flex-col"
+  }`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Logo Circle */}
-          <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-black backdrop-blur-md rounded-full w-20 h-20 shadow-xl flex items-center justify-center border border-white/30">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black backdrop-blur-md rounded-full w-20 h-20 shadow-xl flex items-center justify-center border border-white/30">
             <img
               src="assets/logoo.svg"
               alt="Logo"
@@ -315,7 +317,7 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
                 </FacebookLogin>
               </div>
             </>
-          ) : type ==="signup" ? (
+          ) : type === "signup" ? (
             /* SIGNUP MODAL */
             <div className="w-full flex flex-col justify-center items-center px-0 md:px-16">
               <h2 className="text-3xl font-semibold text-center mb-2">
@@ -366,7 +368,7 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
                   placeholder="Password"
                   className="input-style"
                 />
-                  <input
+                <input
                   name="password_confirmation"
                   required
                   type="password"
@@ -440,15 +442,21 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
                 </button>
               </p>
             </div>
-          ):(<div className="flex flex-col gap-8">
-            <div className="flex flex-col items-center">
-                 <p className="text-3xl font-semibold p-2">Forgot Password ?</p>
-                <p className="text-sm p-1">No worries! We'll send you reset instructions.</p>
+          ) : (
+            <div className="flex flex-col gap-8">
+              <div className="flex flex-col items-center">
+                <p className="text-3xl font-semibold p-2">Forgot Password ?</p>
+                <p className="text-sm p-1">
+                  No worries! We'll send you reset instructions.
+                </p>
               </div>
 
-            <div className="flex flex-col items-center" >
-              <form className="w-full flex items-center flex-col gap-3" onSubmit={handleReset}>
-                    <input
+              <div className="flex flex-col items-center">
+                <form
+                  className="w-full flex items-center flex-col gap-3"
+                  onSubmit={handleReset}
+                >
+                  <input
                     required
                     name="email"
                     type="email"
@@ -456,19 +464,19 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
                     className="w-1/2 bg-white/30 text-white px-4 py-2 rounded-full placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/40"
                   />
                   <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className={`w-1/2 py-3 rounded-full text-white font-medium transition ${
-                    isSubmitting
-                      ? "bg-gray-600 cursor-not-allowed"
-                      : "bg-black/80 hover:bg-black"
-                  }`}
-                >
-                  {isSubmitting ? "Please wait..." : "Send reset link"}
-                </button>
-              </form>
-              
-              <p className="text-center text-sm text-gray-300">
+                    type="submit"
+                    disabled={isSubmitting}
+                    className={`w-1/2 py-3 rounded-full text-white font-medium transition ${
+                      isSubmitting
+                        ? "bg-gray-600 cursor-not-allowed"
+                        : "bg-black/80 hover:bg-black"
+                    }`}
+                  >
+                    {isSubmitting ? "Please wait..." : "Send reset link"}
+                  </button>
+                </form>
+
+                <p className="text-center text-sm text-gray-300">
                   Remember your password?{" "}
                   <button
                     onClick={() => switchType("login")}
@@ -477,10 +485,9 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
                     Back to login
                   </button>
                 </p>
+              </div>
             </div>
-           
-             
-          </div>)}
+          )}
         </div>
       </div>
     </>

@@ -423,7 +423,7 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal }) {
           <span className="text-xs">@{designerCallname}</span>
         </div>
 
-        <div className="bg-[#f3ece4] rounded-2xl overflow-hidden w-full max-w-[360px]">
+        <div className="bg-[#f3ece4] rounded-2xl overflow-hidden w-full max-w-90">
           <img
             src={item.image}
             alt={item.name}
@@ -433,7 +433,7 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal }) {
         </div>
 
         {/* ACTION ROW — ALIGNED TO IMAGE WIDTH */}
-        <div className="w-full max-w-[360px] mx-auto px-1 mt-1">
+        <div className="w-full max-w-90 mx-auto px-1 mt-1">
           <div className="flex items-center justify-between">
             {/* LEFT — CUSTOMIZE */}
             <button
@@ -505,7 +505,7 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal }) {
 
         {/* HOT METER */}
         {isLoggedIn ? (
-          <div className="w-full max-w-[360px] ">
+          <div className="w-full max-w-90 ">
             <HotMeter
               isRated={isRated}
               average={averageRating || 0}
@@ -514,7 +514,7 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal }) {
             />
           </div>
         ) : (
-          <div className="w-full max-w-[360px] text-s mb-1">
+          <div className="w-full max-w-90 text-s mb-1">
             <span
               onClick={() => handleOpenModal("login")}
               className="underline text-blue-400 hover:text-blue-500"

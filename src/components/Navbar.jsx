@@ -145,13 +145,13 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
       <header
         className={`fixed top-0 left-0 w-full flex justify-center 
               px-4 sm:px-6 md:px-8 py-4 
-              z-[1000] transition-all duration-500 ${
+              z-1000 transition-all duration-500 ${
                 isScrolled ? "bg-transparent" : "bg-transparent"
               }`}
       >
         <div
           className="flex items-center justify-between w-full 
-               max-w-[95%] sm:max-w-[600px] md:max-w-[900px] lg:max-w-6xl 
+               max-w-[95%] sm:max-w-150 md:max-w-225 lg:max-w-6xl 
                space-x-3 sm:space-x-4 md:space-x-6 
                px-3 sm:px-4 py-2 rounded-full 
                bg-[#202020]/70 backdrop-blur-md border border-white/10 
@@ -163,19 +163,19 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
 
           <div
             className="absolute inset-0 pointer-events-none rounded-full 
-                          bg-gradient-to-tr from-white/15 via-transparent to-transparent 
+                          bg-linear-to-tr from-white/15 via-transparent to-transparent 
                           opacity-25 blur-sm"
           ></div>
           <div
-            className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-transparent 
+            className="absolute inset-0 bg-linear-to-b from-white/10 via-transparent to-transparent 
                           pointer-events-none mix-blend-overlay"
           ></div>
           <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-full">
             <div
               className="absolute top-0 left-[-120%] w-[120%] h-full 
-                            bg-gradient-to-r from-transparent via-white/25 to-transparent 
+                            bg-linear-to-r from-transparent via-white/25 to-transparent 
                             transform rotate-12 animate-shine-full 
-                            [mask-image:radial-gradient(circle_at_center,white_80%,transparent_100%)]
+                            mask-[radial-gradient(circle_at_center,white_80%,transparent_100%)]
                             group-hover:via-white/40 transition-all duration-500"
             ></div>
           </div>
@@ -210,7 +210,7 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
             ))}
 
             {/* About Dropdown */}
-            <div ref={aboutRef} className="relative z-[9999]">
+            <div ref={aboutRef} className="relative z-9999">
               <button
                 onClick={() => setShowAboutMenu(!showAboutMenu)}
                 className={`flex items-center transition ${
@@ -226,7 +226,7 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
               {showAboutMenu && (
                 <div
                   className="absolute top-full left-1/2 -translate-x-1/2 mt-6
-        flex flex-col items-center space-y-4 z-[99999] animate-fadeIn
+        flex flex-col items-center space-y-4 z-99999 animate-fadeIn
         px-3 py-3 rounded-3xl border border-white/10
         shadow-[0_0_25px_rgba(255,255,255,0.15)]
         bg-[#202020]/70 overflow-hidden backdrop-blur-3xl"
@@ -238,7 +238,7 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
                   <Link
                     to="/our-story"
                     onClick={() => setShowAboutMenu(false)}
-                    className="relative w-[130px] text-center text-white font-medium py-2 rounded-full
+                    className="relative w-32.5 text-center text-white font-medium py-2 rounded-full
           bg-white/10 hover:bg-white/20 backdrop-blur-sm ring-1 ring-white/12
           border border-white/6 transition-all shadow-[0_4px_12px_rgba(0,0,0,0.4)]"
                   >
@@ -248,7 +248,7 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
                   <Link
                     to="/blogs"
                     onClick={() => setShowAboutMenu(false)}
-                    className="relative w-[130px] text-center text-white font-medium py-2 rounded-full
+                    className="relative w-32.5 text-center text-white font-medium py-2 rounded-full
           bg-white/10 hover:bg-white/20 backdrop-blur-sm ring-1 ring-white/12
           border border-white/6 transition-all shadow-[0_4px_12px_rgba(0,0,0,0.4)]"
                   >
@@ -269,7 +269,7 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
             </Link>
 
             {/* Search */}
-            <div ref={searchRef} className="relative z-[9999]">
+            <div ref={searchRef} className="relative z-9999">
               <button
                 onClick={() => setShowSearch(!showSearch)}
                 className="p-2 rounded-full hover:bg-white/10 transition"
@@ -286,7 +286,7 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
                   className="absolute right-0 mt-3 flex items-center gap-2 p-2 
                              backdrop-blur-3xl bg-black/70 border border-white/10
                              rounded-full shadow-[0_4px_20px_rgba(255,255,255,0.1)]
-                             animate-fadeIn z-[9999]"
+                             animate-fadeIn z-9999"
                 >
                   <input
                     type="text"
@@ -316,7 +316,7 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
             </Link> */}
 
             {/* Profile Dropdown */}
-            <div ref={profileRef} className="relative z-[9999]">
+            <div ref={profileRef} className="relative z-9999">
               <button
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
                 className="p-2 rounded-full hover:bg-white/10 transition"
@@ -330,7 +330,7 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
 
               {showProfileMenu && (
                 <div
-                  className="absolute right-0 mt-4 flex flex-col items-center space-y-4 z-[99999] animate-fadeIn
+                  className="absolute right-0 mt-4 flex flex-col items-center space-y-4 z-99999 animate-fadeIn
                px-3 py-3 rounded-3xl border border-white/10 
                shadow-[0_0_25px_rgba(255,255,255,0.15)]
                bg-[#202020]/70 overflow-hidden backdrop-blur-3xl"
@@ -342,7 +342,7 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
                   {isLoggedIn ? (
                     <button
                       onClick={handleLogout}
-                      className="relative w-[130px] text-white font-medium py-2 rounded-full
+                      className="relative w-32.5 text-white font-medium py-2 rounded-full
                        bg-white/10 hover:bg-white/20 backdrop-blur-sm ring-1 ring-white/12
                        border border-white/6 transition-all shadow-[0_4px_12px_rgba(0,0,0,0.4)]"
                     >
@@ -352,7 +352,7 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
                     <>
                       <button
                         onClick={() => handleOpenModal("login")}
-                        className="relative w-[130px] text-white font-medium py-2 rounded-full
+                        className="relative w-32.5 text-white font-medium py-2 rounded-full
                        bg-white/10 hover:bg-white/20 backdrop-blur-sm ring-1 ring-white/12
                        border border-white/6 transition-all shadow-[0_4px_12px_rgrgba(0,0,0,0.4)]"
                       >
@@ -361,7 +361,7 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
 
                       <button
                         onClick={() => handleOpenModal("signup")}
-                        className="relative w-[130px] text-white font-medium py-2 rounded-full
+                        className="relative w-32.5 text-white font-medium py-2 rounded-full
                        bg-white/10 hover:bg-white/20 backdrop-blur-sm ring-1 ring-white/12
                        border border-white/6 transition-all shadow-[0_4px_12px_rgxba(0,0,0,0.4)]"
                       >
@@ -372,7 +372,7 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
 
                   <Link
                     to="/orders"
-                    className="relative w-[130px] text-center text-white font-medium py-2 rounded-full
+                    className="relative w-32.5 text-center text-white font-medium py-2 rounded-full
                      bg-white/10 hover:bg-white/20 backdrop-blur-sm ring-1 ring-white/12
                      border border-white/6 transition-all shadow-[0_4px_12px_rgba(0,0,0,0.4)]"
                   >
@@ -416,7 +416,7 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
 
       {/* ================= MOBILE MENU ================= */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-[9990] md:hidden">
+        <div className="fixed inset-0 z-9990 md:hidden">
           {/* Backdrop */}
           <div
             onClick={() => setIsMobileMenuOpen(false)}

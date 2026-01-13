@@ -32,7 +32,7 @@ export default function Wishlist() {
           MY WISHLIST
         </h1>
 
-        <div className="w-full h-[1px] bg-[#1a1a1a]/40 mt-6 mb-12"></div>
+        <div className="w-full h-px bg-[#1a1a1a]/40 mt-6 mb-12"></div>
       </section>
 
       {/* Share Wishlist */}
@@ -132,7 +132,7 @@ export default function Wishlist() {
       {/* Share Modal */}
       {showShareModal && (
         <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[100]"
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-100"
           onClick={() => setShowShareModal(false)}
         >
           <div
@@ -209,7 +209,7 @@ export default function Wishlist() {
                 href={`https://www.instagram.com/?url=${shareUrl}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-12 h-12 rounded-full bg-gradient-to-br from-[#feda75] via-[#d62976] to-[#4f5bd5] flex items-center justify-center hover:opacity-90 transition"
+                className="w-12 h-12 rounded-full bg-linear-to-br from-[#feda75] via-[#d62976] to-[#4f5bd5] flex items-center justify-center hover:opacity-90 transition"
               >
                 <img
                   src="assets/instagram.svg"

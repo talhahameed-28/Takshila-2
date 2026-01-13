@@ -79,7 +79,7 @@ export default function MobileNavbar() {
   };
 
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[9999] md:hidden">
+    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-9999 md:hidden">
       {/* MENU */}
       {menuOpen && (
         <div
@@ -149,7 +149,7 @@ export default function MobileNavbar() {
       <div
         className="relative flex items-center justify-between
              px-10 py-2
-             w-[360px]
+             w-90
              rounded-full bg-[#202020]/80 backdrop-blur-xl
              border border-white/10 shadow-lg"
       >

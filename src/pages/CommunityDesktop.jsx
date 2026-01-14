@@ -71,6 +71,7 @@ export default function CommunityDesktop({ handleOpenModal }) {
   const { isLoggedIn } = useSelector((state) => state.user);
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [currentIndex, setCurrentIndex] = useState(0)
   const cardsPerPage = 9;
   const [jewelleryData, setJewelleryData] = useState([]);
   const [totalProducts, setTotalProducts] = useState();
@@ -195,6 +196,18 @@ export default function CommunityDesktop({ handleOpenModal }) {
 
   const goToPage = (p) => {
     if (p >= 1 && p <= totalPages) setCurrentPage(p);
+  };
+
+   const prevSlide = () => {
+    if(selectedProductDetails) setCurrentIndex((prev) =>
+      prev === 0 ? selectedProductDetails?.images?.length - 1 : prev - 1
+    );
+  };
+
+  const nextSlide = () => {
+    if(selectedProductDetails) setCurrentIndex((prev) =>
+      prev === selectedProductDetails?.images?.length - 1 ? 0 : prev + 1
+    );
   };
 
   /* Pricing logic (unchanged) */
@@ -575,7 +588,7 @@ export default function CommunityDesktop({ handleOpenModal }) {
             {/* BACKDROP */}
             <div
               className="absolute inset-0 bg-black/40 backdrop-blur-md animate-blurFade z-[40]"
-              onClick={() => setSelectedProductId(null)}
+              onClick={() =>{ setSelectedProductId(null);setCurrentIndex(0)}}
             />
 
             {/* MODAL PANEL */}
@@ -592,7 +605,7 @@ export default function CommunityDesktop({ handleOpenModal }) {
             >
               {/* CLOSE */}
               <button
-                onClick={() => setSelectedProductId(null)}
+                onClick={() => { setSelectedProductId(null);setCurrentIndex(0)}}
                 className="absolute top-4 right-4 md:top-6 md:right-6 z-50 text-black/50 hover:text-black text-2xl"
               >
                 ✕
@@ -783,8 +796,27 @@ export default function CommunityDesktop({ handleOpenModal }) {
                 {/* ================= TOP RIGHT ================= */}
                 <div className="relative bg-white rounded-3xl shadow-md overflow-hidden group">
                   {/* IMAGE */}
+                    {selectedProductDetails?.images?.length>1 && (<>
+                        <button
+                        type="button"
+                          onClick={prevSlide}
+                          className="absolute z-10 left-3 top-1/2 -translate-y-1/2 bg-black/60 text-white px-3 py-2 rounded-full hover:bg-black transition"
+                        >
+                          ◀
+                        </button>
+
+                        <button
+                        type="button"
+                          onClick={nextSlide}
+                          className="absolute z-10 right-3 top-1/2 -translate-y-1/2 bg-black/60 text-white px-3 py-2 rounded-full hover:bg-black transition"
+                          >
+                          ▶
+                        </button>
+                      </>
+                        )
+                      }
                   <img
-                    src={selectedProductDetails.image}
+                    src={selectedProductDetails.images[currentIndex]}
                     className={`
                         w-full h-full object-cover
                         ${

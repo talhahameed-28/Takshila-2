@@ -123,8 +123,8 @@ export default function DesignStudio() {
   const [upTotalCarat, setUpTotalCarat] = useState(1.0);
   const [upPrice, setUpPrice] = useState(2186.33);
   const [upCommission, setUpCommission] = useState(76.52);
-  const [upPreviewImage,setUpPreviewImage]= useState(null)
-  const [upPreviewImageFile,setUpPreviewImageFile] =useState(null)
+  const [upPreviewImages,setUpPreviewImages]= useState([])
+  const [upPreviewImageFiles,setUpPreviewImageFiles] =useState([])
   const [royalty, setRoyalty] = useState(0)
   
   const uploadRef = useRef()
@@ -138,12 +138,16 @@ export default function DesignStudio() {
   const handleClick = () => uploadRef.current.click();
 
   const handleChange=(e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    setUpPreviewImageFile(file)
+    const files = e.target.files;
+    if (!files) return;
+    setUpPreviewImageFiles(files)
     // Create a local preview URL
-    const imageUrl = URL.createObjectURL(file);
-    setUpPreviewImage(imageUrl);
+    let imageUrls=[]
+    for (const url of files) {
+      imageUrls.push(URL.createObjectURL(url));
+    }
+    
+    setUpPreviewImages(imageUrls);
   };
 
   const handleMyDesignUpload = async (e) => {
@@ -152,12 +156,12 @@ export default function DesignStudio() {
     e.preventDefault();
 
     const formData = new FormData(e.target);
-
+    console.log(Object.fromEntries(formData.entries()))
     // Extract all normal text fields EXCEPT files
     const values = Object.fromEntries(
       [...formData.entries()].filter(([key, value]) => !(value instanceof File))
     );
-
+    console.log(values)
     axios.defaults.withCredentials = true;
 
     const calculatedPrice =
@@ -209,7 +213,7 @@ export default function DesignStudio() {
     sendData.append("meta_data[diamondShape]", diamondShape);
     sendData.append("meta_data[goldKarat]", goldKarat);
     sendData.append("meta_data[goldType]", goldType);
-    sendData.append("meta_data[quality]", quality);
+    sendData.append("meta_data[quality]", quality == 0? "good": quality == 1? "premium": "excellent");
     sendData.append("meta_data[ringSize]", ringSize);
     if(activeTab!=="ai") sendData.append("meta_data[royalties]", royalties);
     sendData.append("meta_data[totalCaratWeight]", totalCaratWeight);
@@ -373,7 +377,7 @@ export default function DesignStudio() {
             name:designName.trim(),
             description:designDescription.trim(),
             price:upPriceBreakdown.totalPriceWithRoyalties,
-            "images[]":[upPreviewImageFile],
+            "images[]":upPreviewImageFiles,
             // is_community_uploaded:false,
             meta_data:{
               centerStoneCarat:upCenterCarat,
@@ -458,7 +462,7 @@ export default function DesignStudio() {
                   name:designName.trim(),
                   description:designDescription.trim(),
                   price:upPriceBreakdown.totalPriceWithRoyalties,
-                  "images[]":[upPreviewImageFile],
+                  "images[]":[upPreviewImageFiles],
                   meta_data:{
                     centerStoneCarat:upCenterCarat,
                     description:designDescription.trim(),
@@ -689,7 +693,7 @@ export default function DesignStudio() {
           <RightPanel
             loadingDesign={loadingDesign}
             activeTab={activeTab}
-            upPreviewImage={upPreviewImage}
+            upPreviewImages={upPreviewImages}
             aiPreviewimage={aiPreviewimage}
             handleUpdateDetails={handleUpdateDetails}
             uploading={uploading}
@@ -739,6 +743,7 @@ export default function DesignStudio() {
                 onChange={handleChange}
                 type="file"
                 ref={uploadRef}
+                accept=".png, .jpg, .jpeg, .gif"
                 className="hidden"
               />
               <div className="w-12 h-12 bg-[#D9D9D9] rounded-full flex items-center justify-center text-black text-3xl mb-4">
@@ -756,7 +761,7 @@ export default function DesignStudio() {
           <RightPanel
             loadingDesign={loadingDesign}
             activeTab={activeTab}
-            upPreviewImage={upPreviewImage}
+            upPreviewImages={upPreviewImages}
             aiPreviewimage={aiPreviewimage}
             handleUpdateDetails={handleUpdateDetails}
             uploading={uploading}
@@ -847,15 +852,28 @@ export default function DesignStudio() {
   );
 }
 
-const RightPanel = ({loadingDesign,activeTab,upPreviewImage,aiPreviewimage,handleUpdateDetails,uploading,handleBuy}) => {
+const RightPanel = ({loadingDesign,activeTab,upPreviewImages,aiPreviewimage,handleUpdateDetails,uploading,handleBuy}) => {
     const [designName, setDesignName] = useState("")
     const [designDescription, setDesignDescription] = useState("")
     const [updating, setUpdating] = useState(false) 
     const [checkingOut, setCheckingOut] = useState(false)
+    const [currentIndex, setCurrentIndex] = useState(0)
+    const prevSlide = () => {
+    setCurrentIndex((prev) =>
+      prev === 0 ? upPreviewImages.length - 1 : prev - 1
+    );
+  };
+
+  const nextSlide = () => {
+    setCurrentIndex((prev) =>
+      prev === upPreviewImages.length - 1 ? 0 : prev + 1
+    );
+  };
     return(
     
     <div className="flex flex-col">
-      <div className="w-full h-[520px] bg-white rounded-3xl shadow-md">
+      <div className="w-full h-[520px] bg-white rounded-3xl shadow-md relative">
+         
         {loadingDesign ? (
           <div className="flex flex-col items-center justify-center py-10">
             <div className="h-10 w-10 border-4 border-gray-300 border-t-gray-700 rounded-full animate-spin"></div>
@@ -865,12 +883,30 @@ const RightPanel = ({loadingDesign,activeTab,upPreviewImage,aiPreviewimage,handl
               here
             </p>
           </div>
-        ) : (
+        ) : (<>
+       {upPreviewImages.length>1 && (<>
+        <button
+        type="button"
+          onClick={prevSlide}
+          className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/60 text-white px-3 py-2 rounded-full hover:bg-black transition"
+        >
+          ◀
+        </button>
+
+        <button
+        type="button"
+          onClick={nextSlide}
+          className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/60 text-white px-3 py-2 rounded-full hover:bg-black transition"
+          >
+          ▶
+        </button>
+        </>)}
           <img
             className="w-full rounded-3xl h-full"
-            src={activeTab == "upload" ? upPreviewImage : aiPreviewimage}
+            src={activeTab == "upload" && upPreviewImages? upPreviewImages[currentIndex] : aiPreviewimage}
             alt="imagePreview"
-          />
+            />
+        </>
         )}
       </div>
 
@@ -1031,7 +1067,7 @@ const RightPanel = ({loadingDesign,activeTab,upPreviewImage,aiPreviewimage,handl
               value={shape}
               onChange={(val) => setShapeValue(val)}
             />
-            <input type="hidden" value={shape} />
+            <input name="diamondShape" type="hidden" value={shape} />
           </div>
 
           <div>
@@ -1043,6 +1079,7 @@ const RightPanel = ({loadingDesign,activeTab,upPreviewImage,aiPreviewimage,handl
                 {/* white inner line */}
 
                 <input
+                name="quality"
                   type="range"
                   min="0"
                   max="2"

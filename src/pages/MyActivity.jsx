@@ -91,6 +91,7 @@ export default function MyActivity() {
     description: "",
   });
   const [saving, setSaving] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0)
   const nameRef = React.useRef(null);
   const descRef = React.useRef(null);
 
@@ -317,6 +318,19 @@ export default function MyActivity() {
     if (p >= 1 && p <= totalPages) setCurrentPage(p);
   };
 
+
+   const prevSlide = () => {
+    if (selectedProduct) setCurrentIndex((prev) =>
+      prev === 0 ? selectedProduct?.images.length - 1 : prev - 1
+    );
+  };
+
+  const nextSlide = () => {
+    if (selectedProduct) setCurrentIndex((prev) =>
+      prev === selectedProduct?.images.length - 1 ? 0 : prev + 1
+    );
+  };
+
   return (
     <div className="bg-[#e5e2df] min-h-screen flex flex-col text-[#1a1a1a]">
       <main className="flex-grow pt-40 px-6 md:px-12 lg:px-20 pb-24 transition-all duration-500">
@@ -427,7 +441,7 @@ export default function MyActivity() {
         <div className="fixed inset-0 flex items-end md:items-center justify-center z-[50] pt-[72px] md:pt-0">
           <div
             className="absolute inset-0 bg-black/40 backdrop-blur-md animate-blurFade z-[40]"
-            onClick={() => setSelectedProduct(null)}
+            onClick={() => { setSelectedProduct(null);setCurrentIndex(0)}}
           />
 
           <div
@@ -442,7 +456,7 @@ export default function MyActivity() {
             "
           >
             <button
-              onClick={() => setSelectedProduct(null)}
+              onClick={() => { setSelectedProduct(null);setCurrentIndex(0)}}
               className="absolute top-4 right-4 md:top-6 md:right-6 z-50 text-black/50 hover:text-black text-2xl"
             >
               ✕
@@ -628,8 +642,27 @@ export default function MyActivity() {
 
               {/* ========== IMAGE PANEL ========== */}
               <div className="relative bg-white rounded-3xl shadow-md overflow-hidden group">
+                
+                {selectedProduct.images.length>1 && (<>
+                <button
+                type="button"
+                  onClick={prevSlide}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/60 text-white px-3 py-2 rounded-full hover:bg-black transition"
+                >
+                  ◀
+                  </button>
+
+                  <button
+                  type="button"
+                    onClick={nextSlide}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/60 text-white px-3 py-2 rounded-full hover:bg-black transition"
+                    >
+                    ▶
+                  </button>
+                </>)
+                }
                 <img
-                  src={selectedProduct.image}
+                  src={selectedProduct.images[currentIndex]}
                   className="w-full h-full object-cover transition duration-300"
                 />
               </div>

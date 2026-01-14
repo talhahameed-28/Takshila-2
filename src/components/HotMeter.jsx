@@ -116,7 +116,7 @@ export default function HotMeter({
         </div>
 
         {/* LABEL + AVERAGE */}
-        <div className="flex items-center gap-2 min-w-[90px] justify-end">
+        <div className="flex items-center gap-2 min-w-22.5 justify-end">
           <span className="text-sm text-white/80">{getLabel(value)}</span>
           <span className="text-sm font-semibold">{Number((average*10)).toFixed(1)}</span>
         </div>

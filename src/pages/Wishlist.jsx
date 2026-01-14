@@ -2,6 +2,13 @@ import React, { useState } from "react";
 // import { useWishlist } from "../context/WishlistContext";
 
 export default function Wishlist() {
+  const [wishlistItems, setWishlistItems] = useState([]); // ✅ ADD THIS
+
+  const removeFromWishlist = (id) => {
+    setWishlistItems((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const shareUrl = `${window.location.origin}/wishlist`; // ✅ ADD THIS
   // const { wishlistItems, removeFromWishlist } = useWishlist();
 
   const [showShareModal, setShowShareModal] = useState(false);
@@ -42,7 +49,7 @@ export default function Wishlist() {
           className="w-11 h-11 flex items-center justify-center rounded-full bg-[#868686] shadow-md hover:shadow-lg transition"
         >
           <img
-            src="assets/Share.svg"
+            src="assets/grp32.svg"
             alt="share"
             className="w-5 h-5 opacity-80"
           />

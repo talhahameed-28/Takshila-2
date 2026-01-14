@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 // import { useWishlist } from "../context/WishlistContext";
 
 export default function Wishlist() {
@@ -31,6 +33,34 @@ export default function Wishlist() {
     // In future → redirect to checkout page
   };
 
+  useEffect(() => {
+    const loadWishlist=async()=>{
+      try {
+        axios.defaults.withCredentials=true
+         const {data}=await  axios.get(`${import.meta.env.VITE_BASE_URL}/api/wishlist`,        
+                {
+                    headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    "Content-Type":'application/json'
+                    },
+                    withCredentials: true,
+                }
+            );
+            console.log(data)
+            if(data.success){
+              toast.success("Wishlist loaded")
+              setWishlistItems(data.data.wishlist_items)
+            }else{
+              toast.error("Couldn't fetch wishlist")
+            }
+      } catch (error) {
+          toast.error("Some error occurred")
+          console.log(error)
+      }
+    }
+   loadWishlist()
+  }, [])
+  
   return (
     <div className="bg-[#e5e2df] min-h-screen text-[#1a1a1a] pt-40 px-6 md:px-12 lg:px-20 pb-40 font-serif relative">
       {/* Page Header */}
@@ -91,7 +121,7 @@ export default function Wishlist() {
                 {/* Card */}
                 <div className="w-full bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 p-4">
                   <img
-                    src={item.image}
+                    src={item.product.image}
                     alt={item.name}
                     className="w-full h-56 object-cover rounded-xl"
                   />
@@ -103,7 +133,7 @@ export default function Wishlist() {
                 </h2>
 
                 {/* Price */}
-                <p className="text-gray-600 text-sm mt-1">{item.price}</p>
+                <p className="text-gray-600 text-sm mt-1">{item.amount}</p>
 
                 {/* Remove Button */}
                 <button

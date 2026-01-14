@@ -138,7 +138,7 @@ export default function ExperienceSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-gradient-to-b to-black from-neutral-700  pt-44 pb-32 flex justify-center overflow-hidden"
+      className="relative bg-linear-to-b to-black from-neutral-700  pt-44 pb-32 flex justify-center overflow-hidden"
     >
       {/* ================= SWITCH ================= */}
       <div className="absolute top-10 left-1/2 -translate-x-1/2 z-20">
@@ -197,7 +197,7 @@ export default function ExperienceSection() {
       >
         {/* MAIN LINE */}
         <div
-          className="absolute left-1/2 -translate-x-1/2 w-[2px] bg-white/30"
+          className="absolute left-1/2 -translate-x-1/2 w-0.5 bg-white/30"
           style={{
             top: firstTop + CIRCLE_SIZE / 2,
             height: ((lastTop - firstTop) * lineProgress) / 100,
@@ -230,7 +230,7 @@ export default function ExperienceSection() {
                 </div>
 
                 <div
-                  className={`absolute top-1/2 -translate-y-1/2 h-[2px] bg-white/30
+                  className={`absolute top-1/2 -translate-y-1/2 h-0.5 bg-white/30
                   ${step.side === "left" ? "right-full" : "left-full"}
                   ${visible ? "w-28 opacity-100" : "w-0 opacity-0"}`}
                 />
@@ -239,7 +239,7 @@ export default function ExperienceSection() {
               {/* CARD */}
               <div
                 className={`absolute top-1/2 -translate-y-1/2
-                w-[420px] rounded-xl p-6 bg-white/5 border border-white/10 backdrop-blur-xl
+                w-105 rounded-xl p-6 bg-white/5 border border-white/10 backdrop-blur-xl
                 transition-all duration-500
                 ${
                   step.side === "left"

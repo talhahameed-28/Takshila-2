@@ -271,7 +271,7 @@ const CADModal=({setModalStage,id})=>{
                                          overflow-hidden
                                         transition-all duration-700 ease-in-out
                                         ${openFeedback
-                                        ? "max-h-[1000px] opacity-100 pt-4 mt-4"
+                                        ? "max-h-250 opacity-100 pt-4 mt-4"
                                         : "max-h-0 opacity-0 pt-0 mt-0"}
                                     `}>
                                 <button
@@ -283,7 +283,7 @@ const CADModal=({setModalStage,id})=>{
                                     </button>
                         <div className="col-span-full border-t pt-4 border-gray-900/10">
                         <h2 className="text-3xl md:text-2xl font-bold mb-2"> Please submit your feedback </h2>
-                            <div><textarea maxLength="1000" ref={feedbackRef} placeholder="Feedback..." className="w-full h-[90px] rounded-xl p-3 pb-8 bg-black/10 text-white text-sm resize-none outline-none"></textarea></div>
+                            <div><textarea maxLength="1000" ref={feedbackRef} placeholder="Feedback..." className="w-full h-22.5 rounded-xl p-3 pb-8 bg-black/10 text-white text-sm resize-none outline-none"></textarea></div>
                         </div>
                          <button
                 onClick={()=>handleApproval("reject")}

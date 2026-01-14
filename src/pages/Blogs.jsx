@@ -17,7 +17,7 @@ export default function Blogs() {
 
 
     <section className="pt-20 pb-20 bg-[#e5e2df]">
-        <div className="container max-w-[1380px] w-full mx-auto">
+        <div className="container max-w-345 w-full mx-auto">
             <div className="flex flex-wrap w-full md:px-2">
                  
 
@@ -25,7 +25,7 @@ export default function Blogs() {
                       <div className="grid grid-cols-2 gap-6">
                         {items.map((item) => (
                             <div key={item.id}>
-                                  <img src={item.img} className="mb-3 w-full h-[330px] object-cover" />
+                                  <img src={item.img} className="mb-3 w-full h-82.5 object-cover" />
                                   <h3 className="text-black text-2xl font-bold leading-[1.2] mb-2"> {item.name} </h3>
                                   <p className="text-stone-500 text-[16px]"> {item.desc} </p>
                                   <a href="#" className="mt-3 px-5 py-3 font-semibold text-sm rounded-full transition-all bg-[#2E4B45] hover:bg-[#1f332e] text-white inline-block "> Read More</a>

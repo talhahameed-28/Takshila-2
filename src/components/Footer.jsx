@@ -27,21 +27,21 @@ export default function Footer() {
       <div className="md:bg-[#e5e2df] pt-12 bg-black md:pt-0 pb-6 flex justify-center px-6 transition-colors duration-500">
         {/* 🌌 Dark Glass Footer */}
         <footer
-          className="relative w-full max-w-[1400px] rounded-3xl 
+          className="relative w-full max-w-350 rounded-3xl 
           bg-[#202020]/70 backdrop-blur-3xl border border-white/10 text-gray-200 
           shadow-2xl py-14 px-8 md:px-20 overflow-hidden transition-all duration-500"
         >
           {/* ✨ Glass Shine Layers */}
           <div
             className="absolute inset-0 pointer-events-none rounded-3xl 
-                          bg-gradient-to-tr from-white/15 via-transparent to-transparent 
+                          bg-linear-to-tr from-white/15 via-transparent to-transparent 
                           opacity-30 blur-md"
           ></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-transparent pointer-events-none mix-blend-overlay"></div>
-          <div className="absolute top-0 left-0 right-0 h-[2px] bg-white/10 blur-sm opacity-50"></div>
+          <div className="absolute inset-0 bg-linear-to-b from-white/10 via-transparent to-transparent pointer-events-none mix-blend-overlay"></div>
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-white/10 blur-sm opacity-50"></div>
 
           {/* Content Grid */}
-          <div className="relative z-10 max-w-[1300px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-20">
+          <div className="relative z-10 max-w-325 mx-auto grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-20">
             {/* Logo + Info */}
             <div className="space-y-6">
               <img
@@ -145,7 +145,7 @@ export default function Footer() {
           </div>
 
           {/* Bottom Gloss Line */}
-          <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/10 to-transparent"></div>
 
           {/* Copyright */}
           <div className="relative mt-12 text-center text-xs border-t pt-6 border-white/10 text-gray-500">

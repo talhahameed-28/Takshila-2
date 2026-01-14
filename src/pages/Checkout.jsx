@@ -141,7 +141,7 @@ function Checkout(){
 
 
         <section className="pt-10 pb-17">
-        <div className="container max-w-[1000px] mx-auto">
+        <div className="container max-w-250 mx-auto">
                 <div className="flex md:flex-row flex-col md:px-0 px-5">
                     
         {/* left side */}
@@ -284,7 +284,7 @@ function Checkout(){
                                         col-span-full overflow-hidden
                                         transition-all duration-700 ease-in-out  grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6
                                         ${!sameBillingAddress
-                                        ? "max-h-[1000px] opacity-100 pt-4 mt-4"
+                                        ? "max-h-250 opacity-100 pt-4 mt-4"
                                         : "max-h-0 opacity-0 pt-0 mt-0"}
                                     `}>
                                            <div className="col-span-full border-t pt-4 border-gray-900/10">

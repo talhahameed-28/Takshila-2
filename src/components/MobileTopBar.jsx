@@ -20,7 +20,7 @@ export default function MobileTopBar() {
     location.pathname.replace("/", "").replace("-", " ");
 
   return (
-    <div className="fixed top-0 left-0 w-full z-[9998] md:hidden">
+    <div className="fixed top-0 left-0 w-full z-9998 md:hidden">
       <div
         className="relative flex items-center justify-between
                    px-5 py-4

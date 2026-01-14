@@ -38,7 +38,7 @@ export default function StoriesSection() {
     >
       <div
         className="
-          max-w-[1500px] 
+          max-w-375 
           w-full 
           grid 
           grid-cols-1 
@@ -63,7 +63,7 @@ export default function StoriesSection() {
             "
           >
             {/* Image Section */}
-            <div className="relative flex-grow">
+            <div className="relative grow">
               <img
                 src={story.img}
                 alt={story.headline}

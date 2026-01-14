@@ -79,7 +79,7 @@ export default function MobileNavbar() {
   };
 
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-9999 md:hidden">
+    <div className="fixed bottom-1 left-1/2 -translate-x-1/2 z-9999 md:hidden">
       {/* MENU */}
       {menuOpen && (
         <div
@@ -163,24 +163,24 @@ export default function MobileNavbar() {
       >
         <Link
           to="/community"
-          className={`p-3 rounded-full -ml-5 ${isActive("/community")}`}
+          className={`p-2 rounded-full -ml-5 ${isActive("/community")}`}
         >
-          <img src="/assets/community.png" className="w-6 h-6 object-contain" />
+          <img src="/assets/community.png" className="w-5 h-5 object-contain" />
         </Link>
 
         <Link
           to="/my-activity"
-          className={`p-3 rounded-full ${isActive("/my-activity")}`}
+          className={`p-2 rounded-full ${isActive("/my-activity")}`}
         >
-          <img src="/assets/activity.png" className="w-6 h-6 object-contain" />
+          <img src="/assets/activity.png" className="w-5 h-5 object-contain" />
         </Link>
 
         {/* CENTER BUTTON */}
         <Link
           to="/design-studio"
-          className="absolute left-1/2 -translate-x-1/2 -top-6
+          className="absolute left-1/2 -translate-x-1/2 
              flex items-center justify-center
-             w-16 h-16 rounded-full
+             w-12 h-12 rounded-full
              bg-[#2a2a2a]
              border border-white/20
              shadow-[0_0_30px_rgba(255,255,255,0.35)]"
@@ -188,29 +188,29 @@ export default function MobileNavbar() {
           <img
             src="/assets/logoo.svg"
             alt="Design Studio"
-            className="w-12 h-12 object-contain"
+            className="w-10 h-10 object-contain"
           />
         </Link>
 
         <Link
           to="/our-story"
-          className={`p-3 rounded-full ml-20 ${isActive("/our-story")}`}
+          className={`p-2 rounded-full ml-20 ${isActive("/our-story")}`}
         >
-          <img src="/assets/story.png" className="w-6 h-6 object-contain" />
+          <img src="/assets/story.png" className="w-5 h-5 object-contain" />
         </Link>
 
         {/* ☰ MENU BUTTON */}
         <button
           ref={menuButtonRef}
           onClick={() => setMenuOpen((prev) => !prev)}
-          className={`p-3 rounded-full transition -mr-5
+          className={`p-2 rounded-full transition -mr-5
             ${
               menuOpen
                 ? "bg-white/20 text-white"
                 : "text-gray-400 hover:bg-white/10"
             }`}
         >
-          <img src="/assets/menu.png" className="w-6 h-6 object-contain" />
+          <img src="/assets/menu.png" className="w-5 h-5 object-contain" />
         </button>
       </div>
       <AuthModals

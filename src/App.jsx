@@ -1,10 +1,9 @@
-import React, { useState,useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { fetchUser } from "./store/slices/userSlice";
 import MobileTopBar from "./components/MobileTopBar";
 import ResponsiveNavbar from "./components/ResponsiveNavbar";
-
 
 import Footer from "./components/Footer";
 
@@ -14,33 +13,39 @@ import Catalogue from "./pages/Catalogue";
 import MyActivity from "./pages/MyActivity";
 import OurStory from "./pages/OurStory";
 import Blogs from "./pages/Blogs";
-import ResetPassword from "./pages/ResetPassword"; 
+import ResetPassword from "./pages/ResetPassword";
 import Orders from "./pages/Orders";
 
 import EmailVerify from "./pages/EmailVerify";
-import Wishlist from "./pages/Wishlist"
+import Wishlist from "./pages/Wishlist";
 import MainRoutes from "./router";
 
 import DesignStudio from "./pages/DesignStudio";
 
-
 // ⬇️ Video Loader Component
-//import VideoLoader from "./components/VideoLoader";
+// import VideoLoader from "./components/VideoLoader";
 import { HelmetProvider } from "react-helmet-async";
-
 
 export default function App() {
   const [loading, setLoading] = useState(false); // loader state
   const dispatch = useDispatch();
+
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-    const [showAboutMenu, setShowAboutMenu] = useState(false);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [modalOpen, setModalOpen] = useState(false);
-    const [modalType, setModalType] = useState("login");
+  const [showAboutMenu, setShowAboutMenu] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalType, setModalType] = useState("login");
+
+  const location = useLocation(); // ✅ ADDED
+
   useEffect(() => {
     dispatch(fetchUser());
   }, [dispatch]);
- 
+
+  // ✅ ADDED: routes where footer should be hidden
+  const hideFooterRoutes = ["/community"];
+  const shouldHideFooter = hideFooterRoutes.includes(location.pathname);
+
   return (
     <>
       {/* Loader — shows first, hides automatically 
@@ -79,7 +84,8 @@ export default function App() {
             />
           </Routes>
 
-          <Footer />
+          {/* ✅ Footer hidden on Community */}
+          {!shouldHideFooter && <Footer />}
         </div>
       )}
     </>

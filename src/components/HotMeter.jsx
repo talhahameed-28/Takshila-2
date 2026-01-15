@@ -14,7 +14,7 @@ export default function HotMeter({
 
   /* --------------------------------------------------
      🔒 Disable page scroll ONLY while interacting
-  -------------------------------------------------- 
+  -------------------------------------------------- */
   useEffect(() => {
     if (isInteracting) {
       document.body.style.overflow = "hidden";
@@ -28,11 +28,11 @@ export default function HotMeter({
       document.body.style.overflow = "";
       document.body.style.touchAction = "";
     };
-  }, [isInteracting]);*/
+  }, [isInteracting]);
 
   /* --------------------------------------------------
      🎯 Interaction handlers
-  -------------------------------------------------- 
+  -------------------------------------------------- */
   const handleStart = () => {
     setIsInteracting(true);
   };
@@ -40,7 +40,7 @@ export default function HotMeter({
   const handleRelease = () => {
     setIsInteracting(false);
     onRate?.(value);
-  };*/
+  };
 
   /* --------------------------------------------------
      🏷 Label helper
@@ -77,37 +77,25 @@ export default function HotMeter({
       <div className="flex items-center gap-4">
         {/* SLIDER + FAKE THUMB WRAPPER */}
         <div className="relative flex-1">
-          {/* RANGE INPUT (native thumb hidden) 
+          {/* RANGE INPUT (native thumb hidden) */}
           <input
             type="range"
             min="0"
             max="100"
             value={value}
+            onInput={(e) => setValue(Number(e.target.value))}
             onChange={(e) => setValue(Number(e.target.value))}
             onMouseDown={handleStart}
             onTouchStart={handleStart}
             onMouseUp={handleRelease}
             onTouchEnd={handleRelease}
             onMouseLeave={isInteracting ? handleRelease : undefined}
-            className="w-full appearance-none h-1 rounded-full cursor-pointer touch-none"
+            className="w-full appearance-none rounded-full cursor-pointer slider-input"
             style={{
               ...filledBackground,
-              touchAction: "none",
+              WebkitAppearance: "none",
+              height: '4px',
             }}
-          />*/}
-
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={value}
-            onChange={(e) => setValue(Number(e.target.value))}
-            /* Commit rating when user releases */
-            onMouseUp={() => onRate?.(value)}
-            onPointerUp={() => onRate?.(value)}
-            onTouchEnd={() => onRate?.(value)} // iOS fallback
-            className="w-full appearance-none h-1 rounded-full cursor-pointer"
-            style={filledBackground}
           />
 
           {/* 🔥 CUSTOM FLAME THUMB */}
@@ -130,32 +118,49 @@ export default function HotMeter({
         </div>
 
         {/* LABEL + AVERAGE */}
-        <div className="flex items-center gap-2 min-w-22.5 justify-end">
+        <div className="flex items-center gap-2 min-w-[90px] justify-end">
           <span className="text-sm text-white/80">{getLabel(value)}</span>
-          <span className="text-sm font-semibold">
-            {Number(average * 10).toFixed(1)}
-          </span>
+          <span className="text-sm font-semibold">{Number((average*10)).toFixed(1)}</span>
         </div>
       </div>
 
       {/* HIDE NATIVE THUMB */}
       <style>{`
+        .slider-input {
+          display: block;
+          height: 32px;
+        }
+        
+        input[type=range] {
+          -webkit-tap-highlight-color: transparent;
+        }
+        
         input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 32px;
-  height: 32px;
-  background: transparent;
-}
-
-input[type=range]::-moz-range-thumb {
-  width: 32px;
-  height: 32px;
-  background: transparent;
-}
+          -webkit-appearance: none;
+          appearance: none;
+          width: 44px;
+          height: 44px;
+          background: transparent;
+          cursor: pointer;
+          border: none;
+        }
+        
         input[type=range]::-moz-range-thumb {
           appearance: none;
-          width: 0;
-          height: 0;
+          width: 44px;
+          height: 44px;
+          background: transparent;
+          border: none;
+          cursor: pointer;
+        }
+        
+        input[type=range]::-webkit-slider-runnable-track {
+          -webkit-appearance: none;
+          height: 32px;
+        }
+        
+        input[type=range]::-moz-range-track {
+          height: 32px;
         }
       `}</style>
 

@@ -14,7 +14,7 @@ export default function HotMeter({
 
   /* --------------------------------------------------
      🔒 Disable page scroll ONLY while interacting
-  -------------------------------------------------- */
+  -------------------------------------------------- 
   useEffect(() => {
     if (isInteracting) {
       document.body.style.overflow = "hidden";
@@ -28,11 +28,11 @@ export default function HotMeter({
       document.body.style.overflow = "";
       document.body.style.touchAction = "";
     };
-  }, [isInteracting]);
+  }, [isInteracting]);*/
 
   /* --------------------------------------------------
      🎯 Interaction handlers
-  -------------------------------------------------- */
+  -------------------------------------------------- 
   const handleStart = () => {
     setIsInteracting(true);
   };
@@ -40,7 +40,7 @@ export default function HotMeter({
   const handleRelease = () => {
     setIsInteracting(false);
     onRate?.(value);
-  };
+  };*/
 
   /* --------------------------------------------------
      🏷 Label helper
@@ -77,7 +77,7 @@ export default function HotMeter({
       <div className="flex items-center gap-4">
         {/* SLIDER + FAKE THUMB WRAPPER */}
         <div className="relative flex-1">
-          {/* RANGE INPUT (native thumb hidden) */}
+          {/* RANGE INPUT (native thumb hidden) 
           <input
             type="range"
             min="0"
@@ -94,6 +94,20 @@ export default function HotMeter({
               ...filledBackground,
               touchAction: "none",
             }}
+          />*/}
+
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={value}
+            onChange={(e) => setValue(Number(e.target.value))}
+            /* Commit rating when user releases */
+            onMouseUp={() => onRate?.(value)}
+            onPointerUp={() => onRate?.(value)}
+            onTouchEnd={() => onRate?.(value)} // iOS fallback
+            className="w-full appearance-none h-1 rounded-full cursor-pointer"
+            style={filledBackground}
           />
 
           {/* 🔥 CUSTOM FLAME THUMB */}
@@ -118,17 +132,26 @@ export default function HotMeter({
         {/* LABEL + AVERAGE */}
         <div className="flex items-center gap-2 min-w-22.5 justify-end">
           <span className="text-sm text-white/80">{getLabel(value)}</span>
-          <span className="text-sm font-semibold">{Number((average*10)).toFixed(1)}</span>
+          <span className="text-sm font-semibold">
+            {Number(average * 10).toFixed(1)}
+          </span>
         </div>
       </div>
 
       {/* HIDE NATIVE THUMB */}
       <style>{`
         input[type=range]::-webkit-slider-thumb {
-          appearance: none;
-          width: 0;
-          height: 0;
-        }
+  -webkit-appearance: none;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+}
+
+input[type=range]::-moz-range-thumb {
+  width: 32px;
+  height: 32px;
+  background: transparent;
+}
         input[type=range]::-moz-range-thumb {
           appearance: none;
           width: 0;

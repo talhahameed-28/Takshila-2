@@ -33,14 +33,8 @@ export default function HotMeter({
   /* --------------------------------------------------
      🎯 Interaction handlers
   -------------------------------------------------- */
-  const handleStart = (e) => {
+  const handleStart = () => {
     setIsInteracting(true);
-  };
-
-  const handleMove = (e) => {
-    if (isInteracting) {
-      setValue(Number(e.target.value));
-    }
   };
 
   const handleRelease = () => {
@@ -93,15 +87,14 @@ export default function HotMeter({
             onChange={(e) => setValue(Number(e.target.value))}
             onMouseDown={handleStart}
             onTouchStart={handleStart}
-            onMouseMove={handleMove}
-            onTouchMove={handleMove}
             onMouseUp={handleRelease}
             onTouchEnd={handleRelease}
             onMouseLeave={isInteracting ? handleRelease : undefined}
-            className="w-full appearance-none h-1 rounded-full cursor-pointer"
+            className="w-full appearance-none rounded-full cursor-pointer slider-input"
             style={{
               ...filledBackground,
               WebkitAppearance: "none",
+              height: '4px',
             }}
           />
 
@@ -112,7 +105,8 @@ export default function HotMeter({
               left: `calc(${value}% - ${THUMB_SIZE / 2}px)`,
               right: `calc(${100 - value}% - ${THUMB_SIZE / 2}px)`,
               transform: "translateY(-50%)",
-            }}>
+            }}
+          >
             <img
               src="/assets/flame.png"
               alt="flame"
@@ -124,7 +118,7 @@ export default function HotMeter({
         </div>
 
         {/* LABEL + AVERAGE */}
-        <div className="flex items-center gap-2 min-w-22.5 justify-end">
+        <div className="flex items-center gap-2 min-w-[90px] justify-end">
           <span className="text-sm text-white/80">{getLabel(value)}</span>
           <span className="text-sm font-semibold">{Number((average*10)).toFixed(1)}</span>
         </div>
@@ -132,15 +126,41 @@ export default function HotMeter({
 
       {/* HIDE NATIVE THUMB */}
       <style>{`
-        input[type=range]::-webkit-slider-thumb {
-          appearance: none;
-          width: 0;
-          height: 0;
+        .slider-input {
+          display: block;
+          height: 32px;
         }
+        
+        input[type=range] {
+          -webkit-tap-highlight-color: transparent;
+        }
+        
+        input[type=range]::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 44px;
+          height: 44px;
+          background: transparent;
+          cursor: pointer;
+          border: none;
+        }
+        
         input[type=range]::-moz-range-thumb {
           appearance: none;
-          width: 0;
-          height: 0;
+          width: 44px;
+          height: 44px;
+          background: transparent;
+          border: none;
+          cursor: pointer;
+        }
+        
+        input[type=range]::-webkit-slider-runnable-track {
+          -webkit-appearance: none;
+          height: 32px;
+        }
+        
+        input[type=range]::-moz-range-track {
+          height: 32px;
         }
       `}</style>
 

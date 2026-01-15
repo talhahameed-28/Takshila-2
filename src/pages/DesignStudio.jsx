@@ -601,12 +601,12 @@ export default function DesignStudio() {
   // PAGE RETURN
   // -----------------------------------
   return (<>
-  <Helmet>
+  {/* <Helmet>
     <title> AI Designer | Custom Diamond & Gold Jewelry | Takshila </title>
           <meta name="description" content="Takshila’s AI Designer turns your ideas into custom jewelry designs – enter a text or image prompt and watch your dream piece (whether a ring, pendant, earring, or any other jewelry) come to life with AI. Enjoy transparent price breakdowns and even witness the crafting process as your design becomes reality." />
           <meta name="keywords" content="AI jewelry designer, AI jewelry generator, text-to-jewelry design, Custom ring Design AI, Custom Pendant design AI, AI jewelry design tool, Generative AI jewelry" />
           <link rel="canonical" href="https://takshila.cloud/design-studio" />
-  </Helmet>
+  </Helmet> */}
     <div className="w-full min-h-screen bg-[#E5E1DA] pt-24 pb-20 flex flex-col items-center">
       {/* TITLE */}
       <section className="text-center mt-20 mb-2 ">

@@ -19,14 +19,14 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       reverseOrder={false}
     />
     <Provider store={store}>
-      <HelmetProvider>
+      {/* <HelmetProvider> */}
 
         <BrowserRouter>
           {/* <WishlistProvider> */}
             <App />
           {/* </WishlistProvider> */}
         </BrowserRouter>
-      </HelmetProvider>
+      {/* </HelmetProvider> */}
     </Provider>
       
   </React.StrictMode>

@@ -9,15 +9,21 @@ import AuthModals from "./AuthModals";
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 
-export default function MobileNavbar() {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalType, setModalType] = useState("login");
+export default function MobileNavbar({modalOpen,setModalOpen,modalType,setModalType}) {
+  // const [modalOpen, setModalOpen] = useState(false);
+  // const [modalType, setModalType] = useState("login");
 
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { isLoggedIn } = useSelector((state) => state.user);
+
+  const handleOpenModal = (type) => {
+    setModalType(type);
+    setModalOpen(true);
+    setMenuOpen(false);
+  };
   const handleLogout = async () => {
     try {
       const { data } = await axios.post(
@@ -72,13 +78,14 @@ export default function MobileNavbar() {
     return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, [menuOpen]);
 
-  const handleOpenModal = (type) => {
-    setModalType(type);
-    setModalOpen(true);
-    setMenuOpen(false);
-  };
+  // const handleOpenModal = (type) => {
+  //   setModalType(type);
+  //   setModalOpen(true);
+  //   setMenuOpen(false);
+  // };
 
   return (
+    <>
     <div className="fixed bottom-1 left-1/2 -translate-x-1/2 z-9999 md:hidden">
       {/* MENU */}
       {menuOpen && (
@@ -213,12 +220,13 @@ export default function MobileNavbar() {
           <img src="/assets/menu.png" className="w-5 h-5 object-contain" />
         </button>
       </div>
+    </div>
       <AuthModals
         isOpen={modalOpen}
         type={modalType}
         onClose={() => setModalOpen(false)}
         switchType={setModalType}
       />
-    </div>
+    </>
   );
 }

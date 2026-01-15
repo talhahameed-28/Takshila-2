@@ -234,12 +234,14 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
                   </p>
 
                   <input
+                  required
                     name="email"
                     type="email"
                     placeholder="Email"
                     className="w-full bg-white/30 text-white px-4 py-3 rounded-full placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/40"
                   />
                   <input
+                  required
                     name="password"
                     type="password"
                     placeholder="Password"

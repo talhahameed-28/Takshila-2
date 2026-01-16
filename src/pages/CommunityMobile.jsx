@@ -169,6 +169,7 @@ function CommentsSheet({productId, onClose, isLoggedIn, handleOpenModal }) {
   const handleComment = async () => {
     if (!comment.trim() || posting) return;
     if (!isLoggedIn) {
+      onClose()
       handleOpenModal("login");
       return;
     }

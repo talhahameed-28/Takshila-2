@@ -135,7 +135,7 @@ export default function CommunityMobile({setJewelleryData,totalPages,setTotalPag
 /* COMMENTS BOTTOM SHEET */
 /* ------------------------------------------------------------------ */
 
-function CommentsSheet({productId, onClose }) {
+function CommentsSheet({productId, onClose, isLoggedIn, handleOpenModal }) {
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(true);
@@ -168,6 +168,10 @@ function CommentsSheet({productId, onClose }) {
 
   const handleComment = async () => {
     if (!comment.trim() || posting) return;
+    if (!isLoggedIn) {
+      handleOpenModal("login");
+      return;
+    }
 
     try {
       setPosting(true);
@@ -245,7 +249,13 @@ function CommentsSheet({productId, onClose }) {
             placeholder="Add a comment..."
             className="flex-1 bg-[#2c2c2e] rounded-full px-4 py-2 text-sm text-white outline-none"
           />
-          <button onClick={handleComment} disabled={posting} className="text-sm">
+          <button
+            onClick={() => {
+              handleComment();
+            }}
+            disabled={posting}
+            className="text-sm"
+          >
             {posting ? "..." : "Send"}
           </button>
         </div>
@@ -282,6 +292,10 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal,setHideMobileNa
 
   const handleEngage = async (type,rating=0) => {
     try {
+      if (!isLoggedIn) {
+        handleOpenModal("login");
+        return;
+      }
       axios.defaults.withCredentials = true;
         const { data } = await axios.post(
           `${
@@ -328,7 +342,7 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal,setHideMobileNa
     
     } catch (error) {
       console.log(error);
-      toast.error("Some error occurred");
+      //toast.error("Some error occurred");
     }
   };
 
@@ -460,45 +474,46 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal,setHideMobileNa
             {/* RIGHT — ICONS */}
             <div className="flex items-center gap-5">
               {/* LIKE */}
-              {isLoggedIn && (
-                <>
-                  <button
-                    onClick={() => handleEngage("like")}
-                    className="flex items-center gap-1"
+
+              <>
+                <button
+                  onClick={() => {
+                    handleEngage("like");
+                  }}
+                  className="flex items-center gap-1"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="currentColor"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    stroke="white"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className={` lucide lucide-heart-icon lucide-heart transition ${
+                      isLiked
+                        ? " text-red-700 opacity-100"
+                        : " text-transparent opacity-70"
+                    }`}
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
+                    <path
+                      d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"
                       fill="currentColor"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      stroke="white"
-                      strokeWidth="3"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className={` lucide lucide-heart-icon lucide-heart transition ${
-                        isLiked
-                          ? " text-red-700 opacity-100"
-                          : " text-transparent opacity-70"
-                      }`}
-                    >
-                      <path
-                        d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"
-                        fill="currentColor"
-                      />{" "}
-                    </svg>
-                    <span className="text-xs">{likes}</span>
-                  </button>
-                  {/* COMMENTS */}
-                  <button
-                    onClick={() => setShowComments(true)}
-                    className="flex items-center gap-1"
-                  >
-                    <img src="/assets/comments.png" className="w-6 h-6" />
-                    <span className="text-xs">{item.comments_count || 0}</span>
-                  </button>
-                </>
-              )}
+                    />{" "}
+                  </svg>
+                  <span className="text-xs">{likes}</span>
+                </button>
+                {/* COMMENTS */}
+                <button
+                  onClick={() => setShowComments(true)}
+                  className="flex items-center gap-1"
+                >
+                  <img src="/assets/comments.png" className="w-6 h-6" />
+                  <span className="text-xs">{item.comments_count || 0}</span>
+                </button>
+              </>
 
               {/* SHARE */}
               <button>
@@ -509,28 +524,19 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal,setHideMobileNa
         </div>
 
         {/* HOT METER */}
-        {isLoggedIn ? (
-          <div className="w-full max-w-90 ">
-            <HotMeter
-              isRated={isRated}
-              average={averageRating || 0}
-              userRating={item.user_rating || null}
-              onRate={(rating) => handleEngage("rating", rating)}
-              isLoggedIn={isLoggedIn}
-              handleOpenModal={handleOpenModal}
-            />
-          </div>
-        ) : (
-          <div className="w-full max-w-90 text-s mb-1">
-            <span
-              onClick={() => handleOpenModal("login")}
-              className="underline text-blue-400 hover:text-blue-500"
-            >
-              Login
-            </span>{" "}
-            to engage with this product
-          </div>
-        )}
+
+        <div className="w-full max-w-90 ">
+          <HotMeter
+            isRated={isRated}
+            average={averageRating || 0}
+            userRating={item.user_rating || null}
+            onRate={(rating) => {
+              handleEngage("rating", rating);
+            }}
+            isLoggedIn={isLoggedIn}
+            handleOpenModal={handleOpenModal}
+          />
+        </div>
       </div>
 
       {/* DESCRIPTION */}
@@ -556,6 +562,8 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal,setHideMobileNa
 
       {showComments && (
         <CommentsSheet
+          handleOpenModal={handleOpenModal}
+          isLoggedIn={isLoggedIn}
           productId={item.id}
           onClose={() => {
             setShowComments(false);

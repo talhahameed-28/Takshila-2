@@ -5,6 +5,8 @@ export default function HotMeter({
   average = 50,
   userRating = null,
   onRate,
+  isLoggedIn,
+  handleOpenModal
 }) {
   const [value, setValue] = useState(userRating != null ? userRating * 10 : 0);
   const [isInteracting, setIsInteracting] = useState(false);
@@ -38,6 +40,10 @@ export default function HotMeter({
   };
 
   const handleRelease = () => {
+    if(!isLoggedIn){
+      setValue(0)
+      handleOpenModal("login")
+    }
     setIsInteracting(false);
     onRate?.(value);
   };

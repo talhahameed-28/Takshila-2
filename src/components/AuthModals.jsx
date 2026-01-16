@@ -187,16 +187,19 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
 
       {/* Centered Modal */}
       <div
-        className={`fixed inset-0 z-1000 flex items-end md:items-center justify-center transition-all duration-300 ${
+        className={`fixed inset-0 z-1000 flex items-end md:items-center pb-20 justify-center transition-all duration-300 ${
           isOpen
             ? "opacity-100 scale-100 translate-y-0"
             : "opacity-0 scale-95 translate-y-5 pointer-events-none"
         }`}
       >
         <div
-          className={`relative bg-white/15 backdrop-blur-2xl border border-white/30 shadow-2xl rounded-3xl w-[90%] max-w-4xl text-white
-  pt-16 px-5 pb-6
-  max-h-[85vh] overflow-visible${
+          className={`relative bg-white/15 backdrop-blur-2xl border border-white/30 shadow-2xl rounded-2xl
+  w-[92%] md:w-[90%] max-w-4xl
+  text-sm md:text-base text-white
+  pt-12 md:pt-16 px-4 md:px-5 pb-4 md:pb-6
+  max-h-[80vh] md:max-h-[85vh]
+  overflow-visible${
     type === "login" ? "flex flex-col md:flex-row" : "flex flex-col"
   }`}
           onClick={(e) => e.stopPropagation()}
@@ -226,27 +229,36 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
                 <h2 className="text-2xl font-semibold text-center md:text-left mb-2">
                   Login to Takshila
                 </h2>
-                <hr className="border-white/30 mb-6" />
+                <hr className="border-white/30 mb-3" />
 
-                <form className="space-y-4" onSubmit={handleLogin}>
+                <form className="space-y-2" onSubmit={handleLogin}>
                   <p className="text-xs text-gray-200 text-center md:text-left">
                     Please enter your login information
                   </p>
 
                   <input
-                  required
+                    required
                     name="email"
                     type="email"
                     placeholder="Email"
                     className="w-full bg-white/30 text-white px-4 py-3 rounded-full placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/40"
                   />
                   <input
-                  required
+                    required
                     name="password"
                     type="password"
                     placeholder="Password"
                     className="w-full bg-white/30 text-white px-4 py-3 rounded-full placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/40"
                   />
+                  <p className="text-center text-xs text-gray-300">
+                    Forgot Password?{" "}
+                    <button
+                      onClick={() => switchType("forgotPassword")}
+                      className="text-blue-400 hover:underline"
+                    >
+                      Reset
+                    </button>
+                  </p>
 
                   <p className="text-xs text-gray-300 text-center md:text-left">
                     By continuing, I agree to the{" "}
@@ -267,8 +279,8 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
                   </button>
                 </form>
 
-                <hr className="border-white/30 my-6" />
-                <p className="text-center text-sm text-gray-300">
+                <hr className="border-white/30 my-2" />
+                <p className="text-center text-xs text-gray-300">
                   Don’t have an account?{" "}
                   <button
                     onClick={() => switchType("signup")}
@@ -277,22 +289,13 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
                     Sign Up
                   </button>
                 </p>
-                <p className="text-center text-sm text-gray-300">
-                  Forgot Password?{" "}
-                  <button
-                    onClick={() => switchType("forgotPassword")}
-                    className="text-blue-400 hover:underline"
-                  >
-                    Reset
-                  </button>
-                </p>
               </div>
 
               {/* Divider */}
               <div className="hidden md:block w-px bg-white/30 mx-10"></div>
 
               {/* Right Section (Social Login) */}
-              <div className="flex-1 flex flex-col justify-center items-center space-y-6">
+              <div className="flex-1 flex flex-col justify-center items-center pt-2 space-y-2">
                 <GoogleOAuthProvider
                   clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
                 >
@@ -306,7 +309,7 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
                   style={{
                     backgroundColor: "#4267b2",
                     color: "#fff",
-                    fontSize: "16px",
+                    fontSize: "14px",
                     padding: "10px 12px",
                     border: "none",
                     borderRadius: "4px",

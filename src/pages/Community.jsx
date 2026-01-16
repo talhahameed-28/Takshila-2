@@ -5,11 +5,12 @@ import CommunityDesktop from "./CommunityDesktop";
 import CommunityMobile from "./CommunityMobile";
 import CommunityProductModal from "./CommunityProductModal";
 
-export default function Community(props) {
+export default function Community({ setHideMobileNavbar, ...props }) {
   const [jewelleryData, setJewelleryData] = useState([]);
-  const [totalPages, setTotalPages] = useState(1)
+  const [totalPages, setTotalPages] = useState(1);
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [selectedProductDetails, setSelectedProductDetails] = useState(null);
+  const [showMobileNavbar, setShowMobileNavbar] = useState(true);
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -25,7 +26,7 @@ export default function Community(props) {
 
         if (data.success) {
           setJewelleryData(data.data.products);
-          setTotalPages(data.data.pagination.last_page)
+          setTotalPages(data.data.pagination.last_page);
         }
       } catch (err) {
         console.log(err);
@@ -36,6 +37,7 @@ export default function Community(props) {
   }, []);
 
   const loadProduct = async (id) => {
+    setShowMobileNavbar(false);
     try {
       const { data } = await axios.get(
         `${import.meta.env.VITE_BASE_URL}/api/product/${id}`,
@@ -58,6 +60,7 @@ export default function Community(props) {
   const closeModal = () => {
     setSelectedProductId(null);
     setSelectedProductDetails(null);
+    setShowMobileNavbar(true);
   };
 
   return (
@@ -71,6 +74,7 @@ export default function Community(props) {
           loadProduct={loadProduct}
           totalPages={totalPages}
           setTotalPages={setTotalPages}
+          setHideMobileNavbar={setHideMobileNavbar}
         />
       </div>
 

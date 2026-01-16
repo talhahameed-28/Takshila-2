@@ -172,14 +172,14 @@ export default function MobileNavbar({modalOpen,setModalOpen,modalType,setModalT
           to="/community"
           className={`p-2 rounded-full -ml-5 ${isActive("/community")}`}
         >
-          <img src="/assets/community.png" className="w-5 h-5 object-contain" />
+          <img src="/assets/Grp34.svg" className="w-5 h-5 object-contain" />
         </Link>
 
         <Link
           to="/my-activity"
           className={`p-2 rounded-full ${isActive("/my-activity")}`}
         >
-          <img src="/assets/activity.png" className="w-5 h-5 object-contain" />
+          <img src="/assets/Grp33.svg" className="w-5 h-5 object-contain" />
         </Link>
 
         {/* CENTER BUTTON */}
@@ -203,7 +203,7 @@ export default function MobileNavbar({modalOpen,setModalOpen,modalType,setModalT
           to="/our-story"
           className={`p-2 rounded-full ml-20 ${isActive("/our-story")}`}
         >
-          <img src="/assets/story.png" className="w-5 h-5 object-contain" />
+          <img src="/assets/Grp22.svg" className="w-5 h-5 object-contain" />
         </Link>
 
         {/* ☰ MENU BUTTON */}

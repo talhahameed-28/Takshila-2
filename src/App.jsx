@@ -35,7 +35,7 @@ export default function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState("login");
-
+  const [hideMobileNavbar, setHideMobileNavbar] = useState(false);
   const location = useLocation(); // ✅ ADDED
 
   useEffect(() => {
@@ -57,6 +57,7 @@ export default function App() {
           <MobileTopBar />
 
           <ResponsiveNavbar
+            hideMobileNavbar={hideMobileNavbar}
             showAboutMenu={showAboutMenu}
             setShowAboutMenu={setShowAboutMenu}
             isMobileMenuOpen={isMobileMenuOpen}
@@ -79,6 +80,7 @@ export default function App() {
                   setModalOpen={setModalOpen}
                   setModalType={setModalType}
                   setShowProfileMenu={setShowProfileMenu}
+                  setHideMobileNavbar={setHideMobileNavbar}
                 />
               }
             />

@@ -118,32 +118,34 @@ export default function CommunityProductModal({
       <div
         className="
           relative
-          w-full
-          h-[92vh]
+          w-90
+          h-[80vh]
           lg:h-[85vh]
           lg:max-w-7xl
           bg-[#414141]
           rounded-t-3xl lg:rounded-3xl
+          rounded-b-2xl
           overflow-y-auto
           animate-slideUp
+          mb-16
         "
       >
         {/* CLOSE */}
         <button
           onClick={closeModal}
-          className="absolute top-4 right-4 text-xl opacity-60 hover:opacity-100"
+          className="absolute top-6 right-8 text-xl opacity-60 hover:opacity-100"
         >
           ✕
         </button>
 
         {/* CONTENT */}
-        <div className="p-6 lg:p-10">
+        <div className="p-4 lg:p-10">
           <div className="bg-[#6C6C6C] rounded-3xl p-8 text-white">
-            <h2 className="text-center text-xl tracking-[0.2em] font-semibold mb-6">
+            <h2 className="text-center text-lg tracking-[0.2em] font-semibold mb-3">
               Customizing Tools
             </h2>
 
-            <h3 className="font-semibold tracking-wide mb-3">Gold Options</h3>
+            <h3 className="font-medium tracking-wide mb-1">Gold Options</h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* GOLD TYPE */}
@@ -207,7 +209,7 @@ export default function CommunityProductModal({
                   ringSize: e.target.value,
                 }))
               }
-              className="bg-[#D9D9D9] text-black w-52 h-11 px-4 rounded-full"
+              className="bg-[#D9D9D9] text-black w-52 h-10 px-4 rounded-full"
             >
               {Array.from({ length: 21 }, (_, i) => 3 + i * 0.5).map((size) => (
                 <option key={size} value={size.toFixed(1)}>
@@ -216,7 +218,7 @@ export default function CommunityProductModal({
               ))}
             </select>
 
-            <h3 className="font-semibold tracking-wide mt-6 mb-3">
+            <h3 className="font-medium tracking-wide mt-6 mb-1">
               Diamond Options
             </h3>
 

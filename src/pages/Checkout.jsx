@@ -319,7 +319,7 @@ function Checkout(){
                                 <div className="sm:col-span-2">
                                 <label htmlFor="billing[state]" className="block text-sm/7 font-medium text-gray-900">State / Province</label>
                                 <div className="mt-1">
-                                    <select required={!sameBillingAddress} key={`${"billing["+previousInfo?.billing?.state+"]"}` || "empty"} defaultValue={previousInfo?.billing?.state} name="billing[state]" className="block w-full rounded-full bg-white/40 font-montserrat px-3 py-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-zinc-400 sm:text-sm/6" id="shipping_state_dropdown">
+                                    <select required={!sameBillingAddress} key={`${"billing["+previousInfo?.billing?.state+"]"}` || "empty"} defaultValue={previousInfo?.billing?.state} name="billing[state]" className="block w-full rounded-full bg-white/40 font-montserrat px-3 py-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-zinc-400 sm:text-sm/6" id="billing[shipping_state_dropdown]">
                                         <option value="">Select a State
                                         </option>
                                         <option value="AL">Alabama</option>
@@ -413,7 +413,7 @@ function Checkout(){
                                     </div>
                                     <div className="text-sm/6">
                                         <label htmlFor="comments" className="font-medium text-gray-900"> </label>
-                                        <p id="comments-description" className="text-gray-500"> Shipping address is same as my billing address </p>
+                                        <p  className="text-gray-500"> Shipping address is same as my billing address </p>
                                     </div>
                                     </div>
                                         
@@ -433,7 +433,7 @@ function Checkout(){
                                     </div>
                                     <div className="text-sm/6">
                                         <label htmlFor="comments" className="font-medium text-gray-900"> </label>
-                                        <p id="comments-description" className="text-gray-500"> Save this information for future checkouts </p>
+                                        <p  className="text-gray-500"> Save this information for future checkouts </p>
                                     </div>
                                     </div>
                                         
@@ -456,7 +456,7 @@ function Checkout(){
                                     
                                     <div className="text-sm/6">
                                         <label htmlFor="comments" className="font-medium text-gray-900"> </label>
-                                        <p id="comments-description" className="text-gray-500">  I agree to the <Link className="underline hover:text-blue-500" to="/terms-&-conditions"> Terms and Conditions </Link> and <Link className="underline hover:text-blue-500"  to="/privacy-policy"> Privacy Policy </Link> </p>
+                                        <p  className="text-gray-500">  I agree to the <Link className="underline hover:text-blue-500" to="/terms-&-conditions"> Terms and Conditions </Link> and <Link className="underline hover:text-blue-500"  to="/privacy-policy"> Privacy Policy </Link> </p>
                                     </div>
                                     </div>
                                     
@@ -506,14 +506,21 @@ function Checkout(){
                                     
                                 <tbody>
                                     <tr>
+                                    <td> Metal Type </td>
+                                    <td className="capitalize"> {productInfo?.product_options?.metalType} </td>
+                                    </tr>
+                                   {productInfo?.product_options?.metalType=="gold" && <>
+                                   <tr>
                                     <td> Gold Type </td>
-                                    <td> {productInfo?.product_options?.goldType} </td>
+                                    <td className="capitalize"> {productInfo?.product_options?.goldType} </td>
                                     </tr>
 
                                     <tr>
                                     <td> Gold Karat </td>
                                     <td> {productInfo?.product_options?.goldKarat} </td>
                                     </tr>
+                                   </>
+                                    }
 
                                     <tr>
                                     <td> Ring Size </td>
@@ -521,14 +528,19 @@ function Checkout(){
                                     </tr>
 
                                     <tr>
-                                    <td> Diamond Shape </td>
-                                    <td> {productInfo?.product_options?.diamondShape} </td>
+                                    <td> Stone Type </td>
+                                    <td className="capitalize"> {productInfo?.product_options?.stoneType} </td>
                                     </tr>
 
                                     <tr>
-                                    <td> Quality </td>
-                                    <td> {productInfo?.product_options?.quality} </td>
+                                    <td> Stone Shape </td>
+                                    <td className="capitalize"> {productInfo?.product_options?.diamondShape} </td>
                                     </tr>
+
+                                   { productInfo?.product_options?.stoneType=="diamond" && <tr>
+                                    <td> Quality </td>
+                                    <td className="capitalize"> {productInfo?.product_options?.quality} </td>
+                                    </tr>}
 
                                     <tr>
                                     <td> Center Stone Carat </td>
@@ -541,8 +553,7 @@ function Checkout(){
                                     </tr>
 
                                         <tr>
-                                    <td> Ring Details </td>
-                                    <td>  Gold Type: {productInfo?.product_options?.goldType} <br/> Gold Karat: {productInfo?.product_options?.goldKarat} <br/> Ring Size: {productInfo?.product_options?.ringSize}(US) <br/> Quality: {productInfo?.product_options?.quality}  </td>
+                                  
                                     </tr>
                                     
 

@@ -419,6 +419,8 @@ export default function DesignStudio() {
           if(!savedInfo.success) {toast.error("Couldn't process your request");return;}
         const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/wishlist/add`,
             {product_id:receivedAiImageId,
+              "metalType":aiMetalType,
+    "stoneType":  aiStoneType,
                "goldType": aiGoldType,
                 "goldKarat": aiKarat,
                 "ringSize": aiRingSize,
@@ -447,6 +449,8 @@ export default function DesignStudio() {
                   price:upPriceBreakdown.totalPriceWithRoyalties,
                   "images[]":[upPreviewImageFiles],
                   meta_data:{
+                    metalType:upMetalType,
+                    stoneType:  upStoneType,
                     centerStoneCarat:upCenterCarat,
                     description:designDescription.trim(),
                     diamondShape:upShape,
@@ -472,6 +476,8 @@ export default function DesignStudio() {
           if(!data.success) {toast.error("Couldn't process your request");return;}
           const {data:orderProcess}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/wishlist/add`,
             {product_id:data.data.product.id,
+              "metalType":upMetalType,
+              "stoneType":  upStoneType,
                "goldType": upGoldType,
                 "goldKarat": upKarat,
                 "ringSize": upRingSize,

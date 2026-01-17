@@ -106,6 +106,8 @@ export default function CommunityDesktop({ handleOpenModal }) {
         quality: selectedProductDetails.meta_data.quality,
         centerStoneCarat: selectedProductDetails.meta_data.centerStoneCarat,
         totalCaratWeight: selectedProductDetails.meta_data.totalCaratWeight,
+        metalType:selectedProductDetails.meta_data.metalType,
+        stoneType:selectedProductDetails.meta_data.stoneType,
         price: selectedProductDetails.price,
         commission: selectedProductDetails.meta_data.commission,
       });
@@ -618,12 +620,41 @@ export default function CommunityDesktop({ handleOpenModal }) {
                   <h2 className="text-center text-xl tracking-[0.2em] font-semibold mb-6">
                     Customizing Tools
                   </h2>
+                  <h3 className="font-semibold tracking-wide mb-3">Metal type</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
+                    <div>
+                      <p className="text-sm mb-2">Type</p>
 
+                      <div className="flex items-center gap-10">
+                        {["gold", "silver"].map((t) => (
+                          <label
+                            key={t}
+                            className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"
+                          >
+                            <input
+                              type="radio"
+                              value={t}
+                              name="metalType"
+                              checked={(t=="silver" && customData?.metalType == "silver") || ((t=="gold" && (customData?.metalType == undefined || customData?.metalType == "gold")))}
+                              onChange={() => setCustomData((prev)=>({...prev,metalType:t}))}
+                              className="w-5 h-5 accent-black"
+                            />
+                            <span className="mt-1 capitalize">{t}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                    
+                    </div>
+                  </div>
+                  {customData.metalType!="silver" &&<>
                   <h3 className="font-semibold tracking-wide mb-3">
                     Gold Options
                   </h3>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* GOLD TYPE */}
                     <div>
                       <p className="text-sm mb-2">Type</p>
@@ -674,9 +705,12 @@ export default function CommunityDesktop({ handleOpenModal }) {
                       </div>
                     </div>
                   </div>
+                  </>}
 
                   {/* RING SIZE */}
-                  <p className="text-sm mt-4 mb-2">Ring Size</p>
+                  <h3 className="font-semibold tracking-wide mt-4 mb-3">
+                    Ring Size
+                  </h3>
                   <select
                     value={customData?.ringSize}
                     onChange={(e) =>
@@ -697,9 +731,36 @@ export default function CommunityDesktop({ handleOpenModal }) {
                   </select>
 
                   <h3 className="font-semibold tracking-wide mt-6 mb-3">
-                    Diamond Options
+                    Stone Options
                   </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
+                    <div>
+                      <p className="text-sm mb-2">Type</p>
 
+                      <div className="flex items-center gap-10">
+                        {["diamond", "monsinite"].map((t) => (
+                          <label
+                            key={t}
+                            className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"
+                          >
+                            <input
+                              type="radio"
+                              value={t}
+                              name="stoneType"
+                              checked={(t=="monsinite" && customData?.stoneType == "monsinite") || ((t=="diamond" && (customData?.stoneType == undefined || customData?.stoneType == "diamond")))}
+                              onChange={() => setCustomData((prev)=>({...prev,stoneType:t}))}
+                              className="w-5 h-5 accent-black"
+                            />
+                            <span className="mt-1 capitalize">{t}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                    
+                    </div>
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* SHAPE */}
                     <div>
@@ -716,7 +777,7 @@ export default function CommunityDesktop({ handleOpenModal }) {
                     </div>
 
                     {/* QUALITY */}
-                    <div>
+                    {customData?.stoneType!="monsinite" && <div>
                       <p className="text-sm mb-1">Quality</p>
                       <input
                         type="range"
@@ -748,7 +809,7 @@ export default function CommunityDesktop({ handleOpenModal }) {
                         <span>Premium</span>
                         <span>Excellent</span>
                       </div>
-                    </div>
+                    </div>}
                   </div>
 
                   {/* CARAT OPTIONS */}

@@ -69,31 +69,6 @@ export default function DesignStudio() {
   // ACTIVE TAB
   const [activeTab, setActiveTab] = useState("ai"); // "ai" | "upload"
   const [uploading, setUploading] = useState(false)
-  
-
-//--------USED FOR PRODUCT DETAILS UPDATION-------------//
-
-  const nameRef = useRef(null)
-  const descriptionRef = useRef(null)
-//-----------------------------------------------------//
-
-//   const handleScroll=()=>{
-//     const y = window.scrollY;
-//     scrollRef.current = y;}
-
-// const scrollRef = useRef(0); 
-// useLayoutEffect(() => { 
-//   // store current scroll before render paints 
-//   window.addEventListener("scroll",handleScroll)
-
-//   return ()=>{window.removeEventListener("scroll",handleScroll)}
-    
-// });
-  
-// useLayoutEffect(() => { // restore after DOM updates
-
-//  window.scrollTo(0, scrollRef.current); 
-// });
 
   // -----------------------------------
   // AI DESIGNER STATES
@@ -105,6 +80,8 @@ export default function DesignStudio() {
   const [aiQuality, setAiQuality] = useState("good");
   const [aiCenterCarat, setAiCenterCarat] = useState(1.0);
   const [aiTotalCarat, setAiTotalCarat] = useState(1.0);
+  const [aiMetalType, setAiMetalType] = useState("gold")
+  const [aiStoneType, setAiStoneType] = useState("diamond")
   const [aiPrice, setAiPrice] = useState(2186.33);
   const [aiCommission, setAiCommission] = useState(76.52);
   const [aiPreviewimage, setAiPreviewimage] = useState(null)
@@ -121,6 +98,8 @@ export default function DesignStudio() {
   const [upQuality, setUpQuality] = useState("good");
   const [upCenterCarat, setUpCenterCarat] = useState(1.0);
   const [upTotalCarat, setUpTotalCarat] = useState(1.0);
+  const [upMetalType, setUpMetalType] = useState("gold")
+  const [upStoneType, setUpStoneType] = useState("diamond")
   const [upPrice, setUpPrice] = useState(2186.33);
   const [upCommission, setUpCommission] = useState(76.52);
   const [upPreviewImages,setUpPreviewImages]= useState([])
@@ -190,6 +169,8 @@ export default function DesignStudio() {
       ringSize,
       royalties,
       totalCaratWeight,
+      stoneType,
+      metalType
     } = values;
 
     console.log(values);
@@ -215,6 +196,8 @@ export default function DesignStudio() {
     sendData.append("meta_data[goldType]", goldType);
     sendData.append("meta_data[quality]", quality == 0? "good": quality == 1? "premium": "excellent");
     sendData.append("meta_data[ringSize]", ringSize);
+    sendData.append("meta_data[metalType]", metalType);
+    sendData.append("meta_data[stoneType]", stoneType);
     if(activeTab!=="ai") sendData.append("meta_data[royalties]", royalties);
     sendData.append("meta_data[totalCaratWeight]", totalCaratWeight);
 
@@ -527,33 +510,42 @@ export default function DesignStudio() {
  
   useEffect(() => {
   const getActiveValues = () => {
+    let activeValues={};
     if (activeTab === "ai") {
-      return {
-        ringSize: aiRingSize,
-        goldType: aiGoldType,
-        goldKarat: aiKarat,
-        quality: aiQuality,
-        totalCaratWeight: aiTotalCarat,
-      };
+      activeValues["ringSize"]=aiRingSize
+      activeValues["totalCaratWeight"]=aiTotalCarat
+      activeValues["metalType"]=aiMetalType
+      activeValues["stoneType"]=aiStoneType
+      if(aiMetalType=="gold"){
+        activeValues["goldType"]=aiGoldType
+        activeValues["goldKarat"]=aiKarat
+      }
+      if(aiStoneType=="diamond") activeValues["quality"]=aiQuality
+      
+    }else{
+      activeValues["royalties"]=royalty
+      activeValues["ringSize"]=upRingSize
+      activeValues["totalCaratWeight"]=upTotalCarat
+      activeValues["metalType"]=upMetalType
+      activeValues["stoneType"]=upStoneType
+      if(upMetalType=="gold"){
+        activeValues["goldType"]=upGoldType
+        activeValues["goldKarat"]=upKarat
+      }
+      if(upStoneType=="diamond") activeValues["quality"]=upQuality
     }
-    return {
-      ringSize: upRingSize,
-      goldType: upGoldType,
-      goldKarat: upKarat,
-      quality: upQuality,
-      totalCaratWeight: upTotalCarat,
-      royalties: royalty,
-    };
+    return activeValues;
   };
 
   const getBreakdown = async (active) => {
     try {
+      console.log(active)
       axios.defaults.withCredentials = true;
       const { data } = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/api/calculate/price`,
         { ...active }
       );
-
+      console.log(data)
       if (data.success) {
         if (activeTab === "ai") setAiPriceBreakdown(data.data);
         else setUpPriceBreakdown(data.data);
@@ -578,11 +570,15 @@ export default function DesignStudio() {
   aiRingSize,
   aiQuality,
   aiTotalCarat,
+  aiStoneType,
+  aiMetalType,
   upGoldType,
   upKarat,
   upRingSize,
   upTotalCarat,
   upQuality,
+  upStoneType,
+  upMetalType,
   royalty,
   activeTab,
 ]);
@@ -681,6 +677,10 @@ export default function DesignStudio() {
                 setCenterCaratValue={setAiCenterCarat}
                 totalCarat={aiTotalCarat}
                 setTotalCaratValue={setAiTotalCarat}
+                metalType={aiMetalType}
+                setMetalType={setAiMetalType}
+                stoneType={aiStoneType}
+                setStoneType={setAiStoneType}
                 price={aiPriceBreakdown.totalPriceWithRoyalties}
                 commission={aiPriceBreakdown.commission}
                 handleGenerateAiImage={handleGenerateAiImage}
@@ -725,6 +725,10 @@ export default function DesignStudio() {
                 setCenterCaratValue={setUpCenterCarat}
                 totalCarat={upTotalCarat}
                 setTotalCaratValue={setUpTotalCarat}
+                metalType={upMetalType}
+                setMetalType={setUpMetalType}
+                stoneType={upStoneType}
+                setStoneType={setUpStoneType}
                 price={upPriceBreakdown.totalPriceWithRoyalties}
                 commission={upPriceBreakdown.commission}
                 royalty={royalty}
@@ -978,7 +982,7 @@ const RightPanel = ({loadingDesign,activeTab,upPreviewImages,aiPreviewimage,hand
 
 
 
-  const LeftPanelTop =forwardRef (({ goldType,setGold,karat,setKaratValue,ringSize,setRing,shape,setShapeValue,quality,setQualityValue,centerCarat,setCenterCaratValue,totalCarat,setTotalCaratValue,royalty,setRoyalty,price,commission,mode,setShowBreakdown,handleGenerateAiImage,loadingDesign },promptRef) => {
+  const LeftPanelTop =forwardRef (({ goldType,setGold,karat,setKaratValue,ringSize,setRing,shape,setShapeValue,quality,setQualityValue,centerCarat,setCenterCaratValue,totalCarat,setTotalCaratValue,metalType,setMetalType,stoneType,setStoneType,royalty,setRoyalty,price,commission,mode,setShowBreakdown,handleGenerateAiImage,loadingDesign },promptRef) => {
 
 
     return (
@@ -986,9 +990,37 @@ const RightPanel = ({loadingDesign,activeTab,upPreviewImages,aiPreviewimage,hand
         <h2 className="text-center text-xl tracking-[0.2em] font-semibold mb-6">
           Customizing Tools
         </h2>
+        <h3 className="font-semibold tracking-wide mb-3">Metal type</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
+          <div>
+            <p className="text-sm mb-2">Type</p>
 
+            <div className="flex items-center gap-10">
+              {["gold", "silver"].map((t) => (
+                <label
+                  key={t}
+                  className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    value={t}
+                    name="metalType"
+                    checked={metalType === t}
+                    onChange={() => setMetalType(t)}
+                    className="w-5 h-5 accent-black"
+                  />
+                  <span className="mt-1 capitalize">{t}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div>
+          
+          </div>
+        </div>
         {/* GOLD OPTIONS */}
-        <h3 className="font-semibold tracking-wide mb-3">Gold Options</h3>
+        {metalType=="gold" && <><h3 className="font-semibold tracking-wide mb-3">Gold Options</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
@@ -1037,10 +1069,10 @@ const RightPanel = ({loadingDesign,activeTab,upPreviewImages,aiPreviewimage,hand
               ))}
             </div>
           </div>
-        </div>
+        </div></>}
 
         {/* RING SIZE */}
-        <p className="text-sm mt-4 mb-2">Ring Size</p>
+        <h3 className="font-semibold tracking-wide mt-4 mb-3">Ring Size</h3>
 
         <select
           name="ringSize"
@@ -1057,10 +1089,37 @@ const RightPanel = ({loadingDesign,activeTab,upPreviewImages,aiPreviewimage,hand
 
         {/* DIAMOND OPTIONS */}
         <h3 className="font-semibold tracking-wide mt-6 mb-3">
-          Diamond Options
+          Stone Options
         </h3>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 mb-4 gap-6">
+          <div>
+            <p className="text-sm mb-2">Type</p>
+
+            <div className="flex items-center gap-10">
+              {["diamond", "monsinite"].map((t) => (
+                <label
+                  key={t}
+                  className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    value={t}
+                    name="stoneType"
+                    checked={stoneType === t}
+                    onChange={() => setStoneType(t)}
+                    className="w-5 h-5 accent-black"
+                  />
+                  <span className="mt-1 capitalize">{t}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div>
+          </div>
+        </div>
+        <div className="grid mb-8 grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <p className="text-sm mb-2">Shape</p>
             <ShapeDropdown
@@ -1070,7 +1129,7 @@ const RightPanel = ({loadingDesign,activeTab,upPreviewImages,aiPreviewimage,hand
             <input name="diamondShape" type="hidden" value={shape} />
           </div>
 
-          <div>
+         {stoneType=="diamond" && <div>
             <p className="text-sm mb-1">Quality</p>
 
             <div className="w-full max-w-lg">
@@ -1141,7 +1200,7 @@ const RightPanel = ({loadingDesign,activeTab,upPreviewImages,aiPreviewimage,hand
                 </div>
               </div>
             </div>
-          </div>
+          </div>}
         </div>
 
         {/* CARATS */}

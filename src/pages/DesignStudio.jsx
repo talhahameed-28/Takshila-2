@@ -1217,8 +1217,7 @@ const RightPanel = ({loadingDesign,activeTab,upPreviewImages,aiPreviewimage,hand
             <input
               name="centerStoneCarat"
               type="number"
-              min="1"
-              max="5"
+              min="0.01"
               step="0.1"
               value={centerCarat}
               onChange={(e) => setCenterCaratValue(e.target.value)}
@@ -1232,8 +1231,7 @@ const RightPanel = ({loadingDesign,activeTab,upPreviewImages,aiPreviewimage,hand
             <input
               name="totalCaratWeight"
               type="number"
-              min="1"
-              max="6"
+              min="0.01"             
               step="0.1"
               value={totalCarat}
               onChange={(e) => setTotalCaratValue(e.target.value)}

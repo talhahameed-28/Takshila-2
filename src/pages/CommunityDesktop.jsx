@@ -99,7 +99,6 @@ export default function CommunityDesktop({ handleOpenModal }) {
   // ⭐ INITIALIZE CUSTOMDATA FROM PRODUCT
   useEffect(() => {
     if (selectedProductDetails?.meta_data) {
-      console.log(selectedProductDetails.meta_data.goldType || "rose")
       setCustomData({
         goldType: selectedProductDetails.meta_data.goldType!="undefined"?selectedProductDetails.meta_data.goldType:"rose",
         goldKarat:  selectedProductDetails.meta_data.goldKarat!="undefined"?selectedProductDetails.meta_data.goldKarat:"10K",

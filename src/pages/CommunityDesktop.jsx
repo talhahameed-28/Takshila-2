@@ -81,6 +81,7 @@ export default function CommunityDesktop({ handleOpenModal }) {
   const [selectedProductDetails, setSelectedProductDetails] = useState({});
   // Customization states
   const [customData, setCustomData] = useState({});
+  const [priceData, setPriceData] = useState({})
 
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(0);
@@ -98,19 +99,21 @@ export default function CommunityDesktop({ handleOpenModal }) {
   // ⭐ INITIALIZE CUSTOMDATA FROM PRODUCT
   useEffect(() => {
     if (selectedProductDetails?.meta_data) {
+      console.log(selectedProductDetails.meta_data.goldType || "rose")
       setCustomData({
-        goldType: selectedProductDetails.meta_data.goldType,
-        goldKarat: selectedProductDetails.meta_data.goldKarat,
+        goldType: selectedProductDetails.meta_data.goldType!="undefined"?selectedProductDetails.meta_data.goldType:"rose",
+        goldKarat:  selectedProductDetails.meta_data.goldKarat!="undefined"?selectedProductDetails.meta_data.goldKarat:"10K",
         ringSize: selectedProductDetails.meta_data.ringSize,
         diamondShape: selectedProductDetails.meta_data.diamondShape,
         quality: selectedProductDetails.meta_data.quality,
         centerStoneCarat: selectedProductDetails.meta_data.centerStoneCarat,
         totalCaratWeight: selectedProductDetails.meta_data.totalCaratWeight,
-        metalType:selectedProductDetails.meta_data.metalType,
-        stoneType:selectedProductDetails.meta_data.stoneType,
-        price: selectedProductDetails.price,
-        commission: selectedProductDetails.meta_data.commission,
+        metalType:selectedProductDetails.meta_data.metalType || "gold",
+        stoneType:selectedProductDetails.meta_data.stoneType || "diamond",
+        
       });
+      setPriceData({price: selectedProductDetails.price,
+        commission: selectedProductDetails.meta_data.commission})
     }
   }, [selectedProductDetails]);
 
@@ -259,7 +262,7 @@ export default function CommunityDesktop({ handleOpenModal }) {
 
   useEffect(() => {
     const getBreakdown = async () => {
-      try {
+      try {    
         axios.defaults.withCredentials = true;
         const { data } = await axios.post(
           `${import.meta.env.VITE_BASE_URL}/api/calculate/price`,
@@ -267,11 +270,11 @@ export default function CommunityDesktop({ handleOpenModal }) {
         );
 
         if (data.success) {
-          setCustomData((prev) => ({
-            ...prev,
+          setPriceData({
+            
             commission: data.data.commission,
             price: data.data.totalPriceWithRoyalties,
-          }));
+          });
         } else {
           toast.error("Couldn't process your request");
         }
@@ -285,7 +288,7 @@ export default function CommunityDesktop({ handleOpenModal }) {
     const timer = setTimeout(() => {
       getBreakdown();
     }, 1000);
-
+console.log(customData)
     return () => clearTimeout(timer);
   }, [customData]);
 
@@ -694,7 +697,7 @@ export default function CommunityDesktop({ handleOpenModal }) {
                               }))
                             }
                             className={`px-3 py-1 rounded-full ${
-                              customData?.goldKarat === k
+                              (customData?.goldKarat == k)
                                 ? "bg-white text-black"
                                 : "bg-white/20"
                             }`}
@@ -849,8 +852,8 @@ export default function CommunityDesktop({ handleOpenModal }) {
 
                   {/* PRICE / COMMISSION */}
                   <div className="flex justify-between bg-[#D9D9D9] text-black p-4 rounded-lg text-xs mt-6">
-                    <p>Price: ${customData?.price}</p>
-                    <p>Commission: ${customData?.commission}</p>
+                    <p>Price: ${priceData?.price}</p>
+                    <p>Commission: ${priceData?.commission}</p>
                   </div>
                 </div>
 

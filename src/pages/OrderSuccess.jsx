@@ -142,27 +142,39 @@ function OrderSuccess(){
                                             <table className="w-full table order-info border border-zinc-300 font-montserrat text-[15px]">
                                                         <tbody>
                                                             <tr>
+                                                                <td> Metal Type </td>
+                                                                    <td className="text-end capitalize"> {order?.order_info?.metalType} </td>
+                                                                </tr>
+                                                           
+                                                            {order?.order_info?.metalType=="gold" && <>
+                                                            <tr>
                                                                 <td> Gold Type </td>
                                                                     <td className="text-end"> {order?.order_info?.goldType} </td>
-                                                                </tr>
+                                                            </tr>
                                                             <tr>
                                                                 <td> Gold Karat </td>
                                                                     <td className="text-end"> {order?.order_info?.goldKarat} </td>
-                                                                </tr>
+                                                            </tr>
+                                                            </>
+                                                                }
                                                                 <tr>
                                                                 <td> Ring Size</td>
                                                                     <td className="text-end"> {order?.order_info?.ringSize} (US) </td>
                                                                 </tr>
                                                                 <tr>
-                                                                <td> Quality</td>
-                                                                    <td className="text-end"> {order?.order_info?.quality} </td>
+                                                                <td> Stone Type </td>
+                                                                    <td className="text-end capitalize"> {order?.order_info?.stoneType} </td>
                                                                 </tr>
+                                                               {order?.order_info?.stoneType=="diamond" && <tr>
+                                                                <td> Quality</td>
+                                                                    <td className="text-end capitalize"> {order?.order_info?.quality} </td>
+                                                                </tr>}
                                                                 <tr>
                                                                 <td> Total Carat Weight </td>
                                                                     <td className="text-end"> {order?.order_info?.totalCaratWeight} carat </td>
                                                                 </tr>
                                                                 <tr>
-                                                                <td> Diamond Shape </td>
+                                                                <td> Stone Shape </td>
                                                                     <td className="text-end"> {order?.order_info?.diamondShape} </td>
                                                                 </tr>
                                                         </tbody>

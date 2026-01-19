@@ -214,9 +214,7 @@ export default function DesignStudio() {
         sendData.append("images[]", file);
       });
     }
- 
-    // ---------------------------
-    console.log(sendData)
+   // ---------------------------
     const { data } = await axios.post(
       `${import.meta.env.VITE_BASE_URL}/api/product/post-design`,
       sendData,
@@ -251,7 +249,7 @@ export default function DesignStudio() {
 };
 
 
-  const handleGenerateAiImage=async(goldType,karat,ringSize,shape,quality,centerCarat,totalCarat,price,commission)=>{
+  const handleGenerateAiImage=async(goldType,karat,ringSize,shape,quality,centerCarat,totalCarat,price,commission,metalType,stoneType)=>{
     console.log(goldType,karat,ringSize,shape,quality,centerCarat,totalCarat,price,commission)
     try {
       if(totalCarat<centerCarat) {
@@ -260,9 +258,9 @@ export default function DesignStudio() {
         return
       }
       setLoadingDesign(true)
-      console.log(typeof(promptRef.current.value))
+      console.log(typeof(metalType))
       axios.defaults.withCredentials=true
-      console.log(promptRef.current.value)
+      // console.log(price,commission,metalType,stoneType)
       const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/generate/image`,
         {goldType,
           goldKarat:karat,
@@ -274,6 +272,8 @@ export default function DesignStudio() {
           ringSize:Number(ringSize),
           price:Number(price),
           commission:Number(commission),
+          stoneType,
+          metalType,
           royalties:0
         },
       {headers: {
@@ -1148,7 +1148,7 @@ const RightPanel = ({loadingDesign,activeTab,upPreviewImages,aiPreviewimage,hand
               name="centerStoneCarat"
               type="number"
               min="0.01"
-              step="0.1"
+              step="0.01"
               value={centerCarat}
               onChange={(e) => setCenterCaratValue(e.target.value)}
               className="bg-[#D9D9D9] text-black w-42 h-11 px-4 rounded-full"
@@ -1162,7 +1162,7 @@ const RightPanel = ({loadingDesign,activeTab,upPreviewImages,aiPreviewimage,hand
               name="totalCaratWeight"
               type="number"
               min="0.01"             
-              step="0.1"
+              step="0.01"
               value={totalCarat}
               onChange={(e) => setTotalCaratValue(e.target.value)}
               className="bg-[#D9D9D9] text-black w-42 h-11 px-4 rounded-full"
@@ -1186,9 +1186,9 @@ const RightPanel = ({loadingDesign,activeTab,upPreviewImages,aiPreviewimage,hand
         </div>
 
         {/* PRICE BOX */}
-        <div className="flex justify-between bg-[#D9D9D9] text-black p-4 rounded-lg text-xs font-medium mt-6 tracking-wide">
+        <div className="flex justify-between bg-[#D9D9D9] text-black p-2 md:p-4 rounded-lg text-xs font-medium mt-6 tracking-wide">
           <div className="flex items-center">
-            <p>Price: ${price}</p>
+            <p className="text-nowrap">Price: ${price}</p>
             <button
               type="button"
               onClick={() => setShowBreakdown(true)}
@@ -1219,7 +1219,9 @@ const RightPanel = ({loadingDesign,activeTab,upPreviewImages,aiPreviewimage,hand
                   centerCarat,
                   totalCarat,
                   price,
-                  commission
+                  commission,
+                  metalType,
+                  stoneType
                 )
               }
               className={`${loadingDesign?"bg-gray-600 cursor-not-allowed":"cursor-pointer bg-[#3A3A3A]"} absolute bottom-3 left-1/2 -translate-x-1/2  text-white px-10 py-2 rounded-full`}

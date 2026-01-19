@@ -109,8 +109,8 @@ export default function CommunityDesktop({ handleOpenModal }) {
         quality: selectedProductDetails.meta_data.quality,
         centerStoneCarat: selectedProductDetails.meta_data.centerStoneCarat,
         totalCaratWeight: selectedProductDetails.meta_data.totalCaratWeight,
-        metalType:selectedProductDetails.meta_data.metalType || "gold",
-        stoneType:selectedProductDetails.meta_data.stoneType || "diamond",
+        metalType:selectedProductDetails.meta_data.metalType,
+        stoneType:selectedProductDetails.meta_data.stoneType,
         
       });
     }
@@ -635,7 +635,7 @@ console.log(customData)
                               type="radio"
                               value={t}
                               name="metalType"
-                              checked={(t=="silver" && customData?.metalType == "silver") || ((t=="gold" && (customData?.metalType == undefined || customData?.metalType == "gold")))}
+                              checked={(t==customData?.metalType)}
                               onChange={() => setCustomData((prev)=>({...prev,metalType:t}))}
                               className="w-5 h-5 accent-black"
                             />
@@ -747,7 +747,7 @@ console.log(customData)
                               type="radio"
                               value={t}
                               name="stoneType"
-                              checked={(t=="monsinite" && customData?.stoneType == "monsinite") || ((t=="diamond" && (customData?.stoneType == undefined || customData?.stoneType == "diamond")))}
+                              checked={(t== customData?.stoneType) }
                               onChange={() => setCustomData((prev)=>({...prev,stoneType:t}))}
                               className="w-5 h-5 accent-black"
                             />

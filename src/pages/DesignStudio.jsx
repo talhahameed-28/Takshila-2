@@ -298,23 +298,35 @@ export default function DesignStudio() {
   const handleAiDesignUpload=async(e)=>{
     try {
       e.preventDefault()
+      setUploading(true)
       axios.defaults.withCredentials=true
       const formData = new FormData(e.target);
       const values = Object.fromEntries(formData.entries());
-      const {name}=values
+      const {name,description}=values
       if(!receivedAiImageId || !name){ 
         toast.error("Could not process your request")
         return
       }
-      const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/upload`,
+       const {data}=await axios.put(`${import.meta.env.VITE_BASE_URL}/api/product/${receivedAiImageId}/update`,
+            {name:name.trim(),
+              description:description.trim()
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+              withCredentials: true,
+            }
+          )
+      const {data:uploadData}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/upload`,
         {product_id:receivedAiImageId,
-          name:name
+          name:name.trim()
         },
       {headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`
       },withCredentials: true})
       console.log(data)
-      if(data.success){
+      if(uploadData.success){
         toast.success("Your design has been posted to community")
           navigate("/community")
       }else{ 
@@ -323,6 +335,8 @@ export default function DesignStudio() {
     } catch (error) {
       console.log(error)
       toast.error("Some error occurred")
+    }finally{
+      setUploading(false)
     }
   }
 

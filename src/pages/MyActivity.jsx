@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import PricingBreakdownModal from "../components/PriceBreakdown";
 
 // ================= DIAMOND SHAPE OPTIONS =================
 const DIAMOND_SHAPES = [
@@ -92,6 +93,8 @@ export default function MyActivity() {
   });
   const [saving, setSaving] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0)
+
+  const [showBreakdown, setShowBreakdown] = useState(false)
   const nameRef = React.useRef(null);
   const descRef = React.useRef(null);
 
@@ -110,9 +113,6 @@ export default function MyActivity() {
         stoneType:selectedProduct.meta_data.stoneType || "diamond",
         
       });
-      setPriceData({price: selectedProduct.price,
-        commission: selectedProduct.meta_data.commission})
-    
     }
   }, [selectedProduct]);
 
@@ -213,7 +213,7 @@ export default function MyActivity() {
           );
 
           if (data.success) {
-             setPriceData({commission:data.data.commission,price:data.data.totalPriceWithRoyalties});            
+             setPriceData(data.data);            
           }else{toast.error("Couldn't process your request")}
         } catch (error) {
           console.log(error);
@@ -442,6 +442,8 @@ export default function MyActivity() {
 
       {/* ======================= MODAL ========================== */}
       {selectedProduct && customData && (
+        <>
+        {showBreakdown && <PricingBreakdownModal setShowBreakdown={setShowBreakdown} breakdown={priceData}/>}
         <div className="fixed inset-0 flex items-end md:items-center justify-center z-[50] pt-[72px] md:pt-0">
           <div
             className="absolute inset-0 bg-black/40 backdrop-blur-md animate-blurFade z-[40]"
@@ -701,7 +703,16 @@ export default function MyActivity() {
 
                   {/* PRICE / COMMISSION */}
                   <div className="flex justify-between bg-[#D9D9D9] text-black p-4 rounded-lg text-xs mt-6">
-                    <p>Price: ${priceData?.price}</p>
+                    <div className="flex"> 
+                    <p>Price: ${priceData?.totalPriceWithRoyalties}</p>
+                        <button
+              type="button"
+              onClick={() => setShowBreakdown(true)}
+              className="cursor-pointer ml-2 w-4 h-4 bg-black text-white rounded-full text-[10px] flex items-center justify-center"
+            >
+              i
+            </button>
+                    </div>
                     <p>Commission: ${priceData?.commission}</p>
                   </div>
                 </div>
@@ -860,6 +871,7 @@ export default function MyActivity() {
             `}</style>
           </div>
         </div>
+        </>
       )}
     </div>
   );

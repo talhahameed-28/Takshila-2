@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect, useRef,useLayoutEffect, forwardRef } from "react";
 import toast from "react-hot-toast";
+import PricingBreakdownModal from "../components/PriceBreakdown";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 //diamond shapes options
@@ -782,80 +783,9 @@ export default function DesignStudio() {
 
       {/* PRICE BREAKDOWN POPUP */}
       {showBreakdown && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white w-[340px] rounded-2xl p-6 shadow-xl">
-            <h2 className="text-lg font-semibold mb-4 text-gray-800">
-              Price Breakdown
-            </h2>
-
-            <div className="space-y-2 text-sm text-gray-700">
-              <p>
-                Quality Cost:+$
-                {activeTab === "ai"
-                  ? aiPriceBreakdown.breakdown.qualityCost
-                  : upPriceBreakdown.breakdown.qualityCost}
-              </p>
-              <p>
-                Metal cost: +$
-                {activeTab === "ai"
-                  ? aiPriceBreakdown.breakdown.metalCost
-                  : upPriceBreakdown.breakdown.metalCost}
-              </p>
-              <p>
-                Working charges: +$
-                {activeTab === "ai"
-                  ? aiPriceBreakdown.breakdown.workingChargesCost
-                  : upPriceBreakdown.breakdown.workingChargesCost}
-              </p>
-              <p>
-                Setting cost: +$
-                {activeTab === "ai"
-                  ? aiPriceBreakdown.breakdown.diamondSettingCost
-                  : upPriceBreakdown.breakdown.diamondSettingCost}
-              </p>
-              <p>
-                Certification: +$
-                {activeTab === "ai"
-                  ? aiPriceBreakdown.breakdown.certificationCost
-                  : upPriceBreakdown.breakdown.certificationCost}
-              </p>
-              <p>
-                Shipping: +$
-                {activeTab === "ai"
-                  ? aiPriceBreakdown.breakdown.shipmentCost
-                  : upPriceBreakdown.breakdown.shipmentCost}
-              </p>
-              <p>
-                Designer royalties: +$
-                {activeTab === "ai"
-                  ? aiPriceBreakdown.royalties
-                  : upPriceBreakdown.royalties}
-              </p>
-
-              <hr className="my-3" />
-
-              <p className="font-semibold">
-                Final Price: $
-                {activeTab === "ai"
-                  ? aiPriceBreakdown.totalPriceWithRoyalties
-                  : upPriceBreakdown.totalPriceWithRoyalties}
-              </p>
-              <p className="font-semibold">
-                Commission: $
-                {activeTab === "ai"
-                  ? aiPriceBreakdown.commission
-                  : upPriceBreakdown.commission}
-              </p>
-            </div>
-
-            <button
-              onClick={() => setShowBreakdown(false)}
-              className="mt-6 w-full py-2 bg-black text-white rounded-full"
-            >
-              Close
-            </button>
-          </div>
-        </div>
+        <PricingBreakdownModal 
+        breakdown={activeTab=="ai"?aiPriceBreakdown:upPriceBreakdown}
+        setShowBreakdown={setShowBreakdown} />
       )}
     </div>
   </>
@@ -1262,7 +1192,7 @@ const RightPanel = ({loadingDesign,activeTab,upPreviewImages,aiPreviewimage,hand
             <button
               type="button"
               onClick={() => setShowBreakdown(true)}
-              className="ml-2 w-4 h-4 bg-black text-white rounded-full text-[10px] flex items-center justify-center"
+              className="cursor-pointer ml-2 w-4 h-4 bg-black text-white rounded-full text-[10px] flex items-center justify-center"
             >
               i
             </button>

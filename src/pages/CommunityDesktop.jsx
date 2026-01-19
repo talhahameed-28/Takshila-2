@@ -4,6 +4,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import PricingBreakdownModal from "../components/PriceBreakdown";
 
 // ================= DIAMOND SHAPE OPTIONS =================
 const DIAMOND_SHAPES = [
@@ -88,6 +89,7 @@ export default function CommunityDesktop({ handleOpenModal }) {
   const [adding, setAdding] = useState(false);
   const [commentsList, setCommentsList] = useState([]);
   // ⭐ Wishlist Context
+  const [showBreakdown, setShowBreakdown] = useState(false)
   // const { wishlistItems, toggleWishlist } = useWishlist();
 
   /* Lock scroll when modal opens */
@@ -111,8 +113,6 @@ export default function CommunityDesktop({ handleOpenModal }) {
         stoneType:selectedProductDetails.meta_data.stoneType || "diamond",
         
       });
-      setPriceData({price: selectedProductDetails.price,
-        commission: selectedProductDetails.meta_data.commission})
     }
   }, [selectedProductDetails]);
 
@@ -269,11 +269,8 @@ export default function CommunityDesktop({ handleOpenModal }) {
         );
 
         if (data.success) {
-          setPriceData({
-            
-            commission: data.data.commission,
-            price: data.data.totalPriceWithRoyalties,
-          });
+          setPriceData(
+            data.data);
         } else {
           toast.error("Couldn't process your request");
         }
@@ -588,6 +585,7 @@ console.log(customData)
       {/* MODAL  */}
       {selectedProductId && (
         <>
+          {showBreakdown && <PricingBreakdownModal setShowBreakdown={setShowBreakdown} breakdown={priceData}/>}
           <div className="fixed inset-0 flex items-end md:items-center justify-center z-[50] pt-[72px] md:pt-0">
             {/* BACKDROP */}
             <div
@@ -851,7 +849,17 @@ console.log(customData)
 
                   {/* PRICE / COMMISSION */}
                   <div className="flex justify-between bg-[#D9D9D9] text-black p-4 rounded-lg text-xs mt-6">
-                    <p>Price: ${priceData?.price}</p>
+                    <div className="flex">
+
+                    <p>Price: ${priceData?.totalPriceWithRoyalties}</p>
+                    <button
+                      type="button"
+                      onClick={() => setShowBreakdown(true)}
+                      className="ml-2 cursor-pointer w-4 h-4 bg-black text-white rounded-full text-[10px] flex items-center justify-center"
+                    >
+                      i
+                    </button>
+                    </div>
                     <p>Commission: ${priceData?.commission}</p>
                   </div>
                 </div>

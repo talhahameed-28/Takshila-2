@@ -22,13 +22,13 @@ export default function PricingBreakdownModal({setShowBreakdown,breakdown}) {
       {/* Modal */}
       
         <div onClick={()=>setShowBreakdown(false)} className="fixed inset-0 z-51 flex items-center justify-center backdrop-blur-sm bg-black/40">
-          <div onClick={(e)=>e.stopPropagation()} className="w-full h-[75vh] no-scrollbar overflow-auto max-w-md rounded-xl bg-[#8f8f8f] p-6 shadow-xl">
+          <div onClick={(e)=>e.stopPropagation()} className="w-full h-[75vh] no-scrollbar overflow-auto max-w-md rounded-xl bg-[#8f8f8f] p-1 md:p-6 shadow-xl">
             {/* Header */}
             <div className="text-center">
               <h2 className="text-2xl font-semibold text-teal-200">
                 Pricing Breakdown:
               </h2>
-              <div className="mt-2 flex justify-between text-xl font-semibold text-white">
+              <div className="mt-2  px-1 flex justify-between text-xl font-semibold text-white">
                 <span>Price:</span>
                 <span>${breakdown.totalPriceWithRoyalties}</span>
               </div>
@@ -135,7 +135,7 @@ export default function PricingBreakdownModal({setShowBreakdown,breakdown}) {
                   onClick={() => toggleSection("cert")}
                   className="flex w-full justify-between text-lg text-white"
                 >
-                <div className="flex gap-1">
+                <div className="flex ">
                     <img src="/assets/certAndShip.svg" alt="" />
 
                   <span className="text-nowrap">Certification & Shipment</span>

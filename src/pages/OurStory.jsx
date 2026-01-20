@@ -117,23 +117,23 @@ export default function OurStory() {
 
 
         <section className="pt-10 pb-14">
-          <div className="container w-full overflow-hidden px-1 flex flex-wrap">
+          <div className="container w-full mx-auto overflow-hidden px-1 flex flex-wrap">
                   
                     <div className="text-center w-full">
-                       <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" width={'180'} className="rounded-full mx-auto border border-zinc-400 mb-2 object-cover" />
-                        <h4 className="uppercase tracking-wider text-2xl font-normal"> Aikansh Tyagi </h4>
+                       <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" className="rounded-full mx-auto border border-zinc-400 mb-2 object-cover md:w-[180px] w-[95px]" />
+                        <h4 className="uppercase tracking-wider md:text-2xl text-lg font-normal"> Aikansh Tyagi </h4>
                         <p className="text-[15px] font-light tracking-wider"> Founder & CEO </p>
                     </div>
 
                     <div className="text-center basis-1/2 mt-5">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" width={'180'} className="rounded-full mx-auto border border-zinc-400 mb-2" />
-                        <h4 className="uppercase tracking-wider text-2xl font-normal"> Hemant Patil </h4>
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" className="rounded-full mx-auto border border-zinc-400 mb-2 md:w-[180px] w-[95px]" />
+                        <h4 className="uppercase tracking-wider md:text-2xl text-lg font-normal"> Hemant Patil </h4>
                         <p className="text-[15px] font-light tracking-wider"> Executive Technical Contributor </p>
                     </div>
 
                     <div className="text-center basis-1/2 mt-5">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" width={'180'} className="rounded-full mx-auto border border-zinc-400 mb-2" />
-                        <h4 className="uppercase tracking-wider text-2xl font-normal"> Gaurangi Tyagi </h4>
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" width={'180'} className="rounded-full mx-auto border border-zinc-400 mb-2 md:w-[180px] w-[95px]" />
+                        <h4 className="uppercase tracking-wider text-2xl font-normal text-lg font-normal"> Gaurangi Tyagi </h4>
                         <p className="text-[15px] font-light tracking-wider"> Head of Analytics & Testing </p>
                     </div>
                    
@@ -153,28 +153,28 @@ export default function OurStory() {
 
 
         <section className="pt-10 pb-14">
-          <div className="container w-full overflow-hidden px-1 flex flex-wrap">
+          <div className="container w-full mx-auto overflow-hidden px-1 flex flex-wrap">
                   
                 
-                    <div className="text-center basis-1/4 mt-5">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" width={'180'} className="rounded-full mx-auto border border-zinc-400 mb-2" />
-                        <h4 className="uppercase tracking-wider text-2xl font-normal"> Hasnat Khan </h4>
+                    <div className="text-center md:basis-1/4 basis-1/2 mt-5">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" className="rounded-full mx-auto border border-zinc-400 mb-2 md:w-[180px] w-[95px]" />
+                        <h4 className="uppercase tracking-wider md:text-2xl text-md font-normal"> Hasnat Khan </h4>
                         <p className="text-[15px] font-light tracking-wider"> Director Of Technology </p>
                     </div>
-                    <div className="text-center basis-1/4 mt-5">
-                       <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" width={'180'} className="rounded-full mx-auto border border-zinc-400 mb-2" />
-                        <h4 className="uppercase tracking-wider text-2xl font-normal"> Muhamaad Saad </h4>
+                    <div className="text-center md:basis-1/4 basis-1/2 mt-5">
+                       <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" className="rounded-full mx-auto border border-zinc-400 mb-2 md:w-[180px] w-[95px]" />
+                        <h4 className="uppercase tracking-wider md:text-2xl text-md font-normal"> Muhamaad Saad </h4>
                         <p className="text-[15px] font-light tracking-wider"> Sr. Analyst SEO and Front End Development</p>
                     </div>
-                    <div className="text-center basis-1/4 mt-5">
-                      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" width={'180'} className="rounded-full mx-auto border border-zinc-400 mb-2" />
-                        <h4 className="uppercase tracking-wider text-2xl font-normal"> Manav Sharma </h4>
+                    <div className="text-center md:basis-1/4 basis-1/2 mt-5">
+                      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" className="rounded-full mx-auto border border-zinc-400 mb-2 md:w-[180px] w-[95px]" />
+                        <h4 className="uppercase tracking-wider md:text-2xl text-md font-normal"> Manav Sharma </h4>
                         <p className="text-[15x] font-light tracking-wider"> Full Stack Developer </p>
                     </div>
 
-                    <div className="text-center basis-1/4 mt-5">
-                      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" width={'180'} className="rounded-full mx-auto border border-zinc-400 mb-2" />
-                        <h4 className="uppercase tracking-wider text-2xl font-normal"> Talha Hameed </h4>
+                    <div className="text-center md:basis-1/4 basis-1/2 mt-5">
+                      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" width={'180'} className="rounded-full mx-auto border border-zinc-400 mb-2 md:w-[180px] w-[95px]" />
+                        <h4 className="uppercase tracking-wider md:text-2xl text-md font-normal"> Talha Hameed </h4>
                         <p className="text-[15px] font-light tracking-wider"> Lead of User Experince </p>
                     </div>
           </div>
@@ -193,29 +193,29 @@ export default function OurStory() {
 
 
           <section className="pt-10 pb-16">
-          <div className="container w-full overflow-hidden px-1 flex flex-wrap">
+          <div className="container mx-auto w-full overflow-hidden px-1 flex flex-wrap">
                   
-                    <div className="text-center basis-1/4 mt-5">
-                      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" width={'180'} className="rounded-full mx-auto border border-zinc-400 mb-2" />
-                        <h4 className="uppercase tracking-wider text-2xl font-normal"> Vranda Tyagi </h4>
+                    <div className="text-center md:basis-1/4 basis-1/2 mt-5">
+                      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" className="rounded-full mx-auto border border-zinc-400 mb-2 md:w-[180px] w-[95px]" />
+                        <h4 className="uppercase tracking-wider md:text-2xl text-md font-normal"> Vranda Tyagi </h4>
                         <p className="text-[15x] font-light tracking-wider"> Lead Marketing Operation </p>
                     </div>
 
-                    <div className="text-center basis-1/4 mt-5">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" width={'180'} className="rounded-full mx-auto border border-zinc-400 mb-2" />
-                        <h4 className="uppercase tracking-wider text-2xl font-normal"> Bilal Khan </h4>
+                    <div className="text-center md:basis-1/4 basis-1/2 mt-5">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" className="rounded-full mx-auto border border-zinc-400 mb-2 md:w-[180px] w-[95px]" />
+                        <h4 className="uppercase tracking-wider md:text-2xl text-md font-normal"> Bilal Khan </h4>
                         <p className="text-[15px] font-light tracking-wider"> Lead Content Edits and  Platform Operation </p>
                     </div>
-                    <div className="text-center basis-1/4 mt-5">
-                       <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" width={'180'} className="rounded-full mx-auto border border-zinc-400 mb-2" />
-                        <h4 className="uppercase tracking-wider text-2xl font-normal"> Mubashir Ali </h4>
+                    <div className="text-center md:basis-1/4 basis-1/2 mt-5">
+                       <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" className="rounded-full mx-auto border border-zinc-400 mb-2 md:w-[180px] w-[95px]" />
+                        <h4 className="uppercase tracking-wider md:text-2xl text-md font-normal"> Mubashir Ali </h4>
                         <p className="text-[15px] font-light tracking-wider"> Sr. Graphics Designer </p>
                     </div>
                     
 
-                    <div className="text-center basis-1/4 mt-5">
-                      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" width={'180'} className="rounded-full mx-auto border border-zinc-400 mb-2" />
-                        <h4 className="uppercase tracking-wider text-2xl font-normal"> Manthan Gennur </h4>
+                    <div className="text-center md:basis-1/4 basis-1/2 mt-5">
+                      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2NIXc73ZgxZfbifJP3Bsv35sekQyklo-9JA&s" className="rounded-full mx-auto border border-zinc-400 mb-2 md:w-[180px] w-[95px]" />
+                        <h4 className="uppercase tracking-wider md:text-2xl text-md font-normal"> Manthan Gennur </h4>
                         <p className="text-[15px] font-light tracking-wider"> Graphic Designer & Video Editor (Intern) </p>
                     </div>
           </div>

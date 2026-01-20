@@ -1015,18 +1015,13 @@ const RightPanel = ({
         <button
           value="post-on-community"
           type="submit"
-          className={`${uploading ? "bg-gray-600 cursor-not-allowed" : "cursor-pointer bg-[#6B6B6B]"} flex-1 mx-2 py-3  text-white rounded-full text-center text-xs tracking-widest`}
+          className={`${uploading?"bg-gray-600 cursor-not-allowed":"cursor-pointer via-teal-500 to-green-500 bg-gradient-to-r from-emerald-500"} flex-1 mx-2 py-4 md:px-8 px-4 text-white rounded-full text-center text-xs tracking-widest leading-[1.5]`}
         >
-          {uploading ? "POSTING" : "POST ON COMMUNITY"}
+          {uploading?"POSTING":"POST ON COMMUNITY"}
         </button>
 
-        <button
-          type="button"
-          onClick={() =>
-            handleBuy(setCheckingOut, designDescription, designName)
-          }
-          className={`${checkingOut ? "bg-gray-600 cursor-not-allowed" : "cursor-pointer bg-[#6B6B6B]"} flex-1 mx-2 py-3  text-white rounded-full text-center text-xs tracking-widest`}
-        >
+        <button type="button" onClick={()=>handleBuy(setCheckingOut,designDescription,designName)} 
+          className={`${checkingOut?"bg-gray-600 cursor-not-allowed":"cursor-pointer bg-green-gradiant"} flex-1 mx-2 py-4 md:px-8 px-3 text-white rounded-full text-center text-xs tracking-widest leading-[1.5]`}>
           BUY NOW
         </button>
       </div>

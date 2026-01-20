@@ -827,45 +827,43 @@ export default function MyActivity() {
 
                   {/* ACTION BUTTONS */}
                   <div className="space-y-4">
-                    <div className="flex gap-4">
-                      <button
+                    <div className="flex md:flex-row flex-wrap gap-1">
+                       <button
                         disabled={saving}
                         onClick={handleSaveEdit}
-                        className={`px-10 py-4 rounded-full text-xs tracking-widest text-white ${
+                    className={`px-12 py-4 rounded-full text-xs tracking-widest text-white md:basis-1/5 basis-1/5 ${
                       saving ? "bg-gray-400 cursor-not-allowed" : "bg-[#6B6B6B] cursor-pointer hover:bg-[#2E4B45]"
                     }`}
-                      >
-                        SAVE CHANGES
+                  >
+                    {saving ? "SAVING..." : "SAVE"}
                       </button>
 
-                      <button
-                        disabled={uploading}
-                        onClick={handleCommunityStatus}
-                        className={`${
-                      uploading
-                        ? "bg-gradient-to-r from-red-900/50 via-rose-900/50 to-red-950/50 cursor-not-allowed opacity-70 shadow-none"
-                        : "cursor-pointer"
-                    } ml-auto px-8 py-4 ${
-                      selectedProduct.is_community_uploaded
-                        ? "bg-gradient-to-r from-red-800 via-rose-800 to-red-900"
-                        : "bg-gradient-to-r from-emerald-500 via-teal-500 to-green-500"
-                    } text-white rounded-full text-xs tracking-widest`}
-                      >
-                        {selectedProduct.is_community_uploaded
-                          ? "REMOVE FROM COMMUNITY"
-                          : "UPLOAD TO COMMUNITY"}
-                      </button>
-                    </div>
+                        <button
+                          disabled={uploading}
+                          onClick={handleCommunityStatus}
+                          className={`${
+                            uploading
+                              ? "bg-gradient-to-r from-red-900/50 via-rose-900/50 to-red-950/50 cursor-not-allowed opacity-70 shadow-none"
+                              : "cursor-pointer"
+                          } px-10 py-4 md:basis-1/2 basis-[52vw] ${
+                            selectedProduct.is_community_uploaded
+                              ? "bg-gradient-to-r from-red-800 via-rose-800 to-red-900"
+                              : "bg-gradient-to-r from-emerald-500 via-teal-500 to-green-500"
+                          } text-white rounded-full text-xs tracking-widest`}
+                        >
+                      {selectedProduct.is_community_uploaded
+                        ? "REMOVE FROM COMMUNITY"
+                        : "POST ON COMMUNITY"}
+                        </button>
+                    {/*</div>*/}
 
                     {/* BOTTOM ROW: BUY NOW */}
-                    <div className="flex justify-start">
+                    {/*<div className="flex justify-start">*/}
                       <button
-                        onClick={handleAddToWishlist}
-                        disabled={adding}
-                        className={`${adding ? "bg-green-gradiant cursor-not-allowed" : "bg-green-gradiant cursor-pointer"} ml-auto px-10 py-4  text-white rounded-full text-xs tracking-widest`}
-                      >
-                        BUY NOW
-                      </button>
+                            disabled={adding}
+                            onClick={handleAddToWishlist}
+                            className={`${adding ? "bg-green-gradiant cursor-not-allowed" : "bg-green-gradiant cursor-pointer"} ml-auto px-8 py-4  text-white rounded-full text-xs tracking-widest md:basis-1/4 basis-1/1`}
+                        > BUY NOW  </button>
                     </div>
                   </div>
                 </div>

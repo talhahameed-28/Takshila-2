@@ -167,7 +167,7 @@ export default function PricingBreakdownModal({setShowBreakdown,breakdown}) {
 
                 <span>Platform Fee</span>
                 </div>
-                <span className="text-teal-200">$289.56</span>
+                <span className="text-teal-200">${breakdown.platformFee}</span>
               </div>
             </div>
 

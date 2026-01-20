@@ -44,9 +44,9 @@ const GeneralTrackingModal = ({modalStage, id,setModalStage}) => {
     <div aria-labelledby="dialog-title" className="fixed inset-0 size-auto max-h-none max-w-4xl overflow-y-auto bg-transparent backdrop:bg-transparent mx-auto">
           <div className="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></div>
 
-          <div tabIndex="0" className="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
+          <div tabIndex="0" className="flex min-h-full justify-center p-4 text-center focus:outline-none items-center sm:p-0">
             <div className="relative transform overflow-hidden  bg-[#716F6DE0] text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-2lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 border rounded-xl border-gray-300">
-              <div className="px-6 pt-9 pb-6 sm:p-6 sm:pb-4">
+              <div className="px-3 sm:px-6 pt-6 sm:pt-9 pb-4 sm:pb-6 max-h-[60vh] sm:max-h-[85vh] overflow-y-auto">
                     {loading?<div className="flex flex-col items-center justify-center py-10">
                             <div className="h-10 w-10 border-4 border-gray-300 border-t-gray-700 rounded-full animate-spin"></div>
 
@@ -68,10 +68,12 @@ const GeneralTrackingModal = ({modalStage, id,setModalStage}) => {
                                         {submissions?.files.map(file=>{return (
                                             <div className='w-full p-3'>
                                                 <div>
+                                                  
                                                     {
                                                      file.extension=="pdf" && (
                                                          <>
-                                                        <iframe className="border border-gray-300 rounded-sm w-full h-[70vh]" src={file.url}></iframe>
+                                                        <iframe className="border border-gray-300 rounded-sm w-full h-[35vh] sm:h-[70vh]" src={file.url}></iframe>
+                                                        <a download className="text-white block w-full underline font-bold text-left" href={file.url}>Download PDF</a>
                                                         <p className="text-white text-start">{file.name}</p>
                                                         </>
                                                      ) 

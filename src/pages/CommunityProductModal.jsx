@@ -133,11 +133,11 @@ export default function CommunityProductModal({
       <div
         className="
           relative
-          w-90
+          w-110
           h-[60vh]
           lg:h-[85vh]
           md:w-2xl
-          bg-[#414141]
+          bg-[#1a1a1a]
           rounded-t-3xl lg:rounded-3xl
           rounded-b-2xl
           overflow-y-auto
@@ -155,7 +155,7 @@ export default function CommunityProductModal({
 
         {/* CONTENT */}
         <div className="p-4 lg:p-10">
-          <div className="bg-[#6C6C6C] rounded-3xl p-8 text-white">
+          <div className="bg-[#3f3e3e] rounded-3xl p-8  text-white">
             <h2 className="text-center text-xl tracking-[0.2em] font-semibold mb-6">
               Customizing Tools
             </h2>

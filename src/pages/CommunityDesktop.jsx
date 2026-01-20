@@ -4,7 +4,6 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import PricingBreakdownModal from "../components/PriceBreakdown";
 
 // ================= DIAMOND SHAPE OPTIONS =================
 const DIAMOND_SHAPES = [
@@ -82,14 +81,12 @@ export default function CommunityDesktop({ handleOpenModal }) {
   const [selectedProductDetails, setSelectedProductDetails] = useState({});
   // Customization states
   const [customData, setCustomData] = useState({});
-  const [priceData, setPriceData] = useState({})
 
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(0);
   const [adding, setAdding] = useState(false);
   const [commentsList, setCommentsList] = useState([]);
   // ⭐ Wishlist Context
-  const [showBreakdown, setShowBreakdown] = useState(false)
   // const { wishlistItems, toggleWishlist } = useWishlist();
 
   /* Lock scroll when modal opens */
@@ -102,16 +99,15 @@ export default function CommunityDesktop({ handleOpenModal }) {
   useEffect(() => {
     if (selectedProductDetails?.meta_data) {
       setCustomData({
-        goldType: selectedProductDetails.meta_data.goldType!="undefined"?selectedProductDetails.meta_data.goldType:"rose",
-        goldKarat:  selectedProductDetails.meta_data.goldKarat!="undefined"?selectedProductDetails.meta_data.goldKarat:"10K",
+        goldType: selectedProductDetails.meta_data.goldType,
+        goldKarat: selectedProductDetails.meta_data.goldKarat,
         ringSize: selectedProductDetails.meta_data.ringSize,
         diamondShape: selectedProductDetails.meta_data.diamondShape,
         quality: selectedProductDetails.meta_data.quality,
         centerStoneCarat: selectedProductDetails.meta_data.centerStoneCarat,
         totalCaratWeight: selectedProductDetails.meta_data.totalCaratWeight,
-        metalType:selectedProductDetails.meta_data.metalType,
-        stoneType:selectedProductDetails.meta_data.stoneType,
-        
+        price: selectedProductDetails.price,
+        commission: selectedProductDetails.meta_data.commission,
       });
     }
   }, [selectedProductDetails]);
@@ -261,7 +257,7 @@ export default function CommunityDesktop({ handleOpenModal }) {
 
   useEffect(() => {
     const getBreakdown = async () => {
-      try {    
+      try {
         axios.defaults.withCredentials = true;
         const { data } = await axios.post(
           `${import.meta.env.VITE_BASE_URL}/api/calculate/price`,
@@ -269,8 +265,11 @@ export default function CommunityDesktop({ handleOpenModal }) {
         );
 
         if (data.success) {
-          setPriceData(
-            data.data);
+          setCustomData((prev) => ({
+            ...prev,
+            commission: data.data.commission,
+            price: data.data.totalPriceWithRoyalties,
+          }));
         } else {
           toast.error("Couldn't process your request");
         }
@@ -284,7 +283,7 @@ export default function CommunityDesktop({ handleOpenModal }) {
     const timer = setTimeout(() => {
       getBreakdown();
     }, 1000);
-console.log(customData)
+
     return () => clearTimeout(timer);
   }, [customData]);
 
@@ -568,7 +567,7 @@ console.log(customData)
                           e.stopPropagation();
                           loadProduct(item.id,item); // ← opens modal
                         }}
-                        className="px-5 py-2 bg-[#555555] hover:bg-[#000000] text-white text-sm rounded-full 
+                        className="px-6 py-3 bg-green-gradiant hover:bg-[#555555] text-white text-sm rounded-full 
                  transition shadow-md hover:shadow-lg active:scale-95"
                       >
                         Buy Now
@@ -585,7 +584,6 @@ console.log(customData)
       {/* MODAL  */}
       {selectedProductId && (
         <>
-          {showBreakdown && <PricingBreakdownModal setShowBreakdown={setShowBreakdown} breakdown={priceData}/>}
           <div className="fixed inset-0 flex items-end md:items-center justify-center z-[50] pt-[72px] md:pt-0">
             {/* BACKDROP */}
             <div
@@ -620,41 +618,12 @@ console.log(customData)
                   <h2 className="text-center text-xl tracking-[0.2em] font-semibold mb-6">
                     Customizing Tools
                   </h2>
-                  <h3 className="font-semibold tracking-wide mb-3">Metal type</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
-                    <div>
-                      <p className="text-sm mb-2">Type</p>
 
-                      <div className="flex items-center gap-10">
-                        {["gold", "silver"].map((t) => (
-                          <label
-                            key={t}
-                            className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"
-                          >
-                            <input
-                              type="radio"
-                              value={t}
-                              name="metalType"
-                              checked={(t==customData?.metalType)}
-                              onChange={() => setCustomData((prev)=>({...prev,metalType:t}))}
-                              className="w-5 h-5 accent-black"
-                            />
-                            <span className="mt-1 capitalize">{t}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                    
-                    </div>
-                  </div>
-                  {customData.metalType!="silver" &&<>
                   <h3 className="font-semibold tracking-wide mb-3">
                     Gold Options
                   </h3>
 
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* GOLD TYPE */}
                     <div>
                       <p className="text-sm mb-2">Type</p>
@@ -694,7 +663,7 @@ console.log(customData)
                               }))
                             }
                             className={`px-3 py-1 rounded-full ${
-                              (customData?.goldKarat == k)
+                              customData?.goldKarat === k
                                 ? "bg-white text-black"
                                 : "bg-white/20"
                             }`}
@@ -705,12 +674,9 @@ console.log(customData)
                       </div>
                     </div>
                   </div>
-                  </>}
 
                   {/* RING SIZE */}
-                  <h3 className="font-semibold tracking-wide mt-4 mb-3">
-                    Ring Size
-                  </h3>
+                  <p className="text-sm mt-4 mb-2">Ring Size</p>
                   <select
                     value={customData?.ringSize}
                     onChange={(e) =>
@@ -731,36 +697,9 @@ console.log(customData)
                   </select>
 
                   <h3 className="font-semibold tracking-wide mt-6 mb-3">
-                    Stone Options
+                    Diamond Options
                   </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
-                    <div>
-                      <p className="text-sm mb-2">Type</p>
 
-                      <div className="flex items-center gap-10">
-                        {["diamond", "monsinite"].map((t) => (
-                          <label
-                            key={t}
-                            className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"
-                          >
-                            <input
-                              type="radio"
-                              value={t}
-                              name="stoneType"
-                              checked={(t== customData?.stoneType) }
-                              onChange={() => setCustomData((prev)=>({...prev,stoneType:t}))}
-                              className="w-5 h-5 accent-black"
-                            />
-                            <span className="mt-1 capitalize">{t}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                    
-                    </div>
-                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* SHAPE */}
                     <div>
@@ -777,7 +716,7 @@ console.log(customData)
                     </div>
 
                     {/* QUALITY */}
-                    {customData?.stoneType!="monsinite" && <div>
+                    <div>
                       <p className="text-sm mb-1">Quality</p>
                       <input
                         type="range"
@@ -809,7 +748,7 @@ console.log(customData)
                         <span>Premium</span>
                         <span>Excellent</span>
                       </div>
-                    </div>}
+                    </div>
                   </div>
 
                   {/* CARAT OPTIONS */}
@@ -849,18 +788,8 @@ console.log(customData)
 
                   {/* PRICE / COMMISSION */}
                   <div className="flex justify-between bg-[#D9D9D9] text-black p-4 rounded-lg text-xs mt-6">
-                    <div className="flex">
-
-                    <p>Price: ${priceData?.totalPriceWithRoyalties}</p>
-                    <button
-                      type="button"
-                      onClick={() => setShowBreakdown(true)}
-                      className="ml-2 cursor-pointer w-4 h-4 bg-black text-white rounded-full text-[10px] flex items-center justify-center"
-                    >
-                      i
-                    </button>
-                    </div>
-                    <p>Commission: ${priceData?.commission}</p>
+                    <p>Price: ${customData?.price}</p>
+                    <p>Commission: ${customData?.commission}</p>
                   </div>
                 </div>
 
@@ -1044,8 +973,8 @@ console.log(customData)
                       className={`${
                         adding
                           ? "bg-gray-600 cursor-not-allowed"
-                          : "cursor-pointer bg-[#6B6B6B]"
-                      } ml-auto px-12 py-3  text-white rounded-full text-xs tracking-widest`}
+                          : "cursor-pointer bg-green-gradiant"
+                      } ml-auto px-12 py-3  text-white rounded-full leading-[1.8] text-xs tracking-widest`}
                     >
                       {adding ? "Processing..." : "BUY NOW"}
                     </button>

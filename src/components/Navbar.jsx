@@ -263,7 +263,7 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
           <div className="hidden md:flex items-center space-x-3">
             <Link
               to="/design-studio"
-              className="bg-white/5 hover:bg-white/10 text-white px-4 py-1 rounded-full backdrop-blur-md transition text-sm"
+              className="bg-green-gradiant hover:bg-white/10 text-white px-4 py-2 rounded-full backdrop-blur-md transition text-sm"
             >
               Design Studio
             </Link>

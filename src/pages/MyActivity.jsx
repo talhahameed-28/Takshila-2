@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import PricingBreakdownModal from "../components/PriceBreakdown";
 
 // ================= DIAMOND SHAPE OPTIONS =================
 const DIAMOND_SHAPES = [
@@ -80,7 +81,8 @@ export default function MyActivity() {
   // MODAL STATE
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [customData, setCustomData] = useState({});
-
+  const [priceData, setPriceData] = useState({})
+  const [showBreakdown, setShowBreakdown] = useState(false)
   const [editingField, setEditingField] = useState(null);
   // possible values: "name" | "description" | null
   const [editingName, setEditingName] = useState(false);
@@ -99,6 +101,8 @@ export default function MyActivity() {
   useEffect(() => {
     if (selectedProduct?.meta_data) {
       setCustomData({
+        metalType:selectedProduct.meta_data.metalType,
+        stoneType:selectedProduct.meta_data.stoneType,
         goldType: selectedProduct.meta_data.goldType,
         goldKarat: selectedProduct.meta_data.goldKarat,
         ringSize: selectedProduct.meta_data.ringSize,
@@ -106,8 +110,7 @@ export default function MyActivity() {
         quality: selectedProduct.meta_data.quality,
         centerStoneCarat: selectedProduct.meta_data.centerStoneCarat,
         totalCaratWeight: selectedProduct.meta_data.totalCaratWeight,
-        price:selectedProduct.price,
-        commission:selectedProduct.meta_data.commission
+
       });
     }
   }, [selectedProduct]);
@@ -209,7 +212,8 @@ export default function MyActivity() {
           );
 
           if (data.success) {
-             setCustomData(prev=>({...prev,commission:data.data.commission,price:data.data.totalPriceWithRoyalties}));            
+            console.log(data.data)
+             setPriceData(data.data);            
           }else{toast.error("Couldn't process your request")}
         } catch (error) {
           console.log(error);
@@ -438,7 +442,9 @@ export default function MyActivity() {
 
       {/* ======================= MODAL ========================== */}
       {selectedProduct && customData && (
+        
         <div className="fixed inset-0 flex items-end md:items-center justify-center z-[50] pt-[72px] md:pt-0">
+          {showBreakdown && <PricingBreakdownModal breakdown={priceData} setShowBreakdown={setShowBreakdown}/>}
           <div
             className="absolute inset-0 bg-black/40 backdrop-blur-md animate-blurFade z-[40]"
             onClick={() => { setSelectedProduct(null);setCurrentIndex(0)}}
@@ -488,11 +494,7 @@ export default function MyActivity() {
                                   value={t}
                                   name="metalType"
                                   checked={
-                                    (t == "silver" &&
-                                      customData?.metalType == "silver") ||
-                                    (t == "gold" &&
-                                      (customData?.metalType == undefined ||
-                                        customData?.metalType == "gold"))
+                                    (t == customData?.metalType)
                                   }
                                   onChange={() =>
                                     setCustomData((prev) => ({

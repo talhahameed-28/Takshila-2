@@ -69,7 +69,7 @@ export default function Footer() {
                         className="h-4 w-4 invert"
                       />
                     </a>
-                  )
+                  ),
                 )}
               </div>
             </div>
@@ -80,19 +80,22 @@ export default function Footer() {
                 CUSTOMER SERVICES
               </h3>
               <ul className="space-y-2 text-sm text-gray-400">
-                {[{name:"Our Story",path:'/our-story'},
-                 {name:"FAQ's",path:'/faqs'},
-                  {name:"Contact us",path:""},
-                   {name:"Blogs",path:"/blogs"}
-                  ].map((item) => (
-                  
-                    <li key={item.name}>
+                {[
+                  { name: "Our Story", path: "/our-story" },
+                  { name: "FAQ's", path: "/faqs" },
+                  { name: "Contact us", path: "" },
+                  { name: "Blogs", path: "/blogs" },
+                ].map((item) => (
+                  <li key={item.name}>
                     <NavLink
-                        to={item.path}
-                        className={({isActive})=>`${isActive?"underline":""} transition-all text-gray-300 hover:text-white` }
-                      >{item.name}</NavLink>
+                      to={item.path}
+                      className={({ isActive }) =>
+                        `${isActive ? "underline" : ""} transition-all text-gray-300 hover:text-white`
+                      }
+                    >
+                      {item.name}
+                    </NavLink>
                   </li>
-               
                 ))}
               </ul>
             </div>
@@ -104,16 +107,20 @@ export default function Footer() {
               </h3>
               <ul className="space-y-2 text-sm text-gray-400">
                 {[
-                  {name:"Privacy Policy",path:"/privacy-policy"},
-                  {name:"Terms & Conditions",path:"/terms-&-conditions"},
-                  {name:"Refund Policy",path:"/refund-policy"},
-                  {name:"Shipping Policy",path:"/shipping-policy"},
+                  { name: "Privacy Policy", path: "/privacy-policy" },
+                  { name: "Terms & Conditions", path: "/terms-&-conditions" },
+                  { name: "Refund Policy", path: "/refund-policy" },
+                  { name: "Shipping Policy", path: "/shipping-policy" },
                 ].map((item) => (
                   <li key={item.name}>
                     <NavLink
-                        to={item.path}
-                        className={({isActive})=>`${isActive?"underline":""} transition-all text-gray-300 hover:text-white` }
-                      >{item.name}</NavLink>
+                      to={item.path}
+                      className={({ isActive }) =>
+                        `${isActive ? "underline" : ""} transition-all text-gray-300 hover:text-white`
+                      }
+                    >
+                      {item.name}
+                    </NavLink>
                   </li>
                 ))}
               </ul>
@@ -158,10 +165,10 @@ export default function Footer() {
       <button
         onClick={scrollToTop}
         aria-label="Scroll to top"
-        className="fixed bottom-6 right-6 w-14 h-14 rounded-full 
-                   bg-[#202020]/80 backdrop-blur-md border border-white/10 
-                   shadow-lg hover:shadow-[0_0_10px_rgba(255,255,255,0.2)] 
-                   flex items-center justify-center transition-all duration-300"
+        className="hidden md:flex fixed bottom-6 right-6 w-14 h-14 rounded-full 
+             bg-[#202020]/80 backdrop-blur-md border border-white/10 
+             shadow-lg hover:shadow-[0_0_10px_rgba(255,255,255,0.2)] 
+             items-center justify-center transition-all duration-300"
       >
         <svg
           className="absolute w-12 h-12 transform -rotate-90"

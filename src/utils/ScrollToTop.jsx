@@ -1,14 +1,19 @@
-import{ useEffect } from 'react'
-import { useLocation } from 'react-router-dom';
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 const ScrollToTop = () => {
-    const { pathname } = useLocation();
+  const { pathname } = useLocation();
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    // Tailwind lg breakpoint (desktop)
+    const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+
+    if (isDesktop) {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    }
   }, [pathname]);
 
   return null;
-}
+};
 
-export default ScrollToTop
+export default ScrollToTop;

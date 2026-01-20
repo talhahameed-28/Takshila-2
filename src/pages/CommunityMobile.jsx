@@ -13,6 +13,11 @@ export default function CommunityMobile({
   handleOpenModal,
   setHideMobileNavbar,
 }) {
+
+  const scrollRef = useRef(null);
+  const lastScrollY = useRef(0);
+
+
   const loadMoreDesignRef = useRef(null);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -72,6 +77,29 @@ export default function CommunityMobile({
     return () => observer.disconnect();
   }, [currentPage, totalPages]);
 
+    useEffect(() => {
+      let lastY = window.scrollY;
+
+      const handleScroll = () => {
+        const currentY = window.scrollY;
+
+        if (currentY > lastY + 10) {
+          // scrolling down
+          setHideMobileNavbar(true);
+        } else if (currentY < lastY - 10) {
+          // scrolling up
+          setHideMobileNavbar(false);
+        }
+
+        lastY = currentY;
+      };
+
+      window.addEventListener("scroll", handleScroll);
+      return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+
+
   if (jewelleryData.length === 0) {
     return (
       <div className="bg-black h-screen flex items-center justify-center text-white text-sm opacity-60">
@@ -83,7 +111,8 @@ export default function CommunityMobile({
   return (
     <>
       <div
-        className="bg-black h-screen overflow-y-scroll text-white"
+        ref={scrollRef}
+        className="bg-black h-screen l text-white"
         style={{ WebkitOverflowScrolling: "touch" }}
       >
         {/*{jewelleryData.map((item,idx) =>{

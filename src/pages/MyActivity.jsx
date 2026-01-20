@@ -20,7 +20,6 @@ const DIAMOND_SHAPES = [
   { name: "Heart", icon: "/assets/shapes/heart.png" },
 ];
 
-
 // ================= DROPDOWN COMPONENT =================
 const ShapeDropdown = ({ value, onChange }) => {
   const [open, setOpen] = useState(false);
@@ -76,12 +75,12 @@ export default function MyActivity() {
   const [designs, setDesigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
-  const [adding, setAdding] = useState(false)
+  const [adding, setAdding] = useState(false);
 
   // MODAL STATE
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [customData, setCustomData] = useState({});
-   const [priceData, setPriceData] = useState({})
+  const [priceData, setPriceData] = useState({});
   const [editingField, setEditingField] = useState(null);
   // possible values: "name" | "description" | null
   const [editingName, setEditingName] = useState(false);
@@ -92,26 +91,31 @@ export default function MyActivity() {
     description: "",
   });
   const [saving, setSaving] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  const [showBreakdown, setShowBreakdown] = useState(false)
+  const [showBreakdown, setShowBreakdown] = useState(false);
   const nameRef = React.useRef(null);
   const descRef = React.useRef(null);
 
   // INIT CUSTOM DATA WHEN MODAL OPENS
   useEffect(() => {
     if (selectedProduct?.meta_data) {
-     setCustomData({
-        goldType: selectedProduct.meta_data.goldType!="undefined"?selectedProduct.meta_data.goldType:"rose",
-        goldKarat:  selectedProduct.meta_data.goldKarat!="undefined"?selectedProduct.meta_data.goldKarat:"10K",
+      setCustomData({
+        goldType:
+          selectedProduct.meta_data.goldType != "undefined"
+            ? selectedProduct.meta_data.goldType
+            : "rose",
+        goldKarat:
+          selectedProduct.meta_data.goldKarat != "undefined"
+            ? selectedProduct.meta_data.goldKarat
+            : "10K",
         ringSize: selectedProduct.meta_data.ringSize,
         diamondShape: selectedProduct.meta_data.diamondShape,
         quality: selectedProduct.meta_data.quality,
         centerStoneCarat: selectedProduct.meta_data.centerStoneCarat,
         totalCaratWeight: selectedProduct.meta_data.totalCaratWeight,
-        metalType:selectedProduct.meta_data.metalType || "gold",
-        stoneType:selectedProduct.meta_data.stoneType || "diamond",
-        
+        metalType: selectedProduct.meta_data.metalType || "gold",
+        stoneType: selectedProduct.meta_data.stoneType || "diamond",
       });
     }
   }, [selectedProduct]);
@@ -144,9 +148,9 @@ export default function MyActivity() {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
-      console.log(data)
+      console.log(data);
       if (data.success) {
         toast.success("Changes saved");
 
@@ -158,12 +162,14 @@ export default function MyActivity() {
 
         setDesigns((prev) =>
           prev.map((p) =>
-            p.id === selectedProduct.id ? { ...p, name: editData.name,description: editData.description } : p
-          )
+            p.id === selectedProduct.id
+              ? { ...p, name: editData.name, description: editData.description }
+              : p,
+          ),
         );
       }
     } catch (e) {
-      console.log(e)
+      console.log(e);
       toast.error("Update failed");
     } finally {
       setSaving(false);
@@ -183,9 +189,9 @@ export default function MyActivity() {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
-          }
+          },
         );
-        console.log(data)
+        console.log(data);
         if (data.success) {
           setDesigns(data.data.products);
           setTotalProducts(data.data.pagination.total);
@@ -200,39 +206,33 @@ export default function MyActivity() {
     getMyDesigns();
   }, [currentPage]);
 
+  useEffect(() => {
+    const getBreakdown = async () => {
+      try {
+        axios.defaults.withCredentials = true;
+        const { data } = await axios.post(
+          `${import.meta.env.VITE_BASE_URL}/api/calculate/price`,
+          customData,
+        );
 
-   useEffect(() => {
-
-      
-  const getBreakdown = async () => {
-        try {
-          axios.defaults.withCredentials = true;
-          const { data } = await axios.post(
-            `${import.meta.env.VITE_BASE_URL}/api/calculate/price`,
-            customData
-          );
-
-          if (data.success) {
-             setPriceData(data.data);            
-          }else{toast.error("Couldn't process your request")}
-        } catch (error) {
-          console.log(error);
+        if (data.success) {
+          setPriceData(data.data);
+        } else {
+          toast.error("Couldn't process your request");
         }
-      };
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
+    if (Object.keys(customData).length === 0) return;
+    // debounce
+    const timer = setTimeout(() => {
+      getBreakdown();
+    }, 1000);
 
-    if( Object.keys(customData).length === 0) return;
-      // debounce
-      const timer = setTimeout(() => {
-        getBreakdown();
-      }, 1000);
-
-  
-  return () => clearTimeout(timer);
-}, [customData]);
-
-
-
+    return () => clearTimeout(timer);
+  }, [customData]);
 
   const handleCommunityStatus = async () => {
     setUploading(true);
@@ -250,7 +250,7 @@ export default function MyActivity() {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
             withCredentials: true,
-          }
+          },
         );
 
         if (data.success) {
@@ -269,7 +269,7 @@ export default function MyActivity() {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
             withCredentials: true,
-          }
+          },
         );
 
         if (data.success) {
@@ -285,54 +285,55 @@ export default function MyActivity() {
     }
   };
 
-
-  const handleAddToWishlist=async()=>{
-        setAdding(true)
-        try {
-          if(customData.totalCaratWeight<customData.centerStoneCarat){toast.error("Center stone weight cant be greater than total weight");return;}
-          axios.defaults.withCredentials=true
-          console.log(customData)
-          const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/wishlist/add`,
-              {product_id:selectedProduct.id,
-                ...customData
-              },
-              {
-                headers: {
-                  Authorization: `Bearer ${localStorage.getItem("token")}`,
-                  "Content-Type": "application/json",
-                },
-                withCredentials: true,
-              }
-            );
-            console.log(data)
-            if(data.success){
-              toast.success("Proceeding to checkout")
-              navigate("/checkout")
-            }
-        } catch (error) {
-          toast.error("Some error occurred")
-          console.log(error)
-        }finally{
-          setAdding(false)
-        }
+  const handleAddToWishlist = async () => {
+    setAdding(true);
+    try {
+      if (customData.totalCaratWeight < customData.centerStoneCarat) {
+        toast.error("Center stone weight cant be greater than total weight");
+        return;
       }
-  
+      axios.defaults.withCredentials = true;
+      console.log(customData);
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/wishlist/add`,
+        { product_id: selectedProduct.id, ...customData },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        },
+      );
+      console.log(data);
+      if (data.success) {
+        toast.success("Proceeding to checkout");
+        navigate("/checkout");
+      }
+    } catch (error) {
+      toast.error("Some error occurred");
+      console.log(error);
+    } finally {
+      setAdding(false);
+    }
+  };
 
   const goToPage = (p) => {
     if (p >= 1 && p <= totalPages) setCurrentPage(p);
   };
 
-
-   const prevSlide = () => {
-    if (selectedProduct) setCurrentIndex((prev) =>
-      prev === 0 ? selectedProduct?.images.length - 1 : prev - 1
-    );
+  const prevSlide = () => {
+    if (selectedProduct)
+      setCurrentIndex((prev) =>
+        prev === 0 ? selectedProduct?.images.length - 1 : prev - 1,
+      );
   };
 
   const nextSlide = () => {
-    if (selectedProduct) setCurrentIndex((prev) =>
-      prev === selectedProduct?.images.length - 1 ? 0 : prev + 1
-    );
+    if (selectedProduct)
+      setCurrentIndex((prev) =>
+        prev === selectedProduct?.images.length - 1 ? 0 : prev + 1,
+      );
   };
 
   return (
@@ -443,315 +444,70 @@ export default function MyActivity() {
       {/* ======================= MODAL ========================== */}
       {selectedProduct && customData && (
         <>
-        {showBreakdown && <PricingBreakdownModal setShowBreakdown={setShowBreakdown} breakdown={priceData}/>}
-        <div className="fixed inset-0 flex items-end md:items-center justify-center z-[50] pt-[72px] md:pt-0">
-          <div
-            className="absolute inset-0 bg-black/40 backdrop-blur-md animate-blurFade z-[40]"
-            onClick={() => { setSelectedProduct(null);setCurrentIndex(0)}}
-          />
+          {showBreakdown && (
+            <PricingBreakdownModal
+              setShowBreakdown={setShowBreakdown}
+              breakdown={priceData}
+            />
+          )}
+          <div className="fixed inset-0 flex items-end md:items-center justify-center z-[50] pt-[72px] md:pt-0">
+            <div
+              className="absolute inset-0 bg-black/40 backdrop-blur-md animate-blurFade z-[40]"
+              onClick={() => {
+                setSelectedProduct(null);
+                setCurrentIndex(0);
+              }}
+            />
 
-          <div
-            className="
+            <div
+              className="
               relative w-full max-w-7xl mx-auto
               h-[calc(100vh-72px)] md:max-h-[85vh] overflow-y-auto
               rounded-t-3xl md:rounded-3xl
               bg-[#E5E1DA] text-[#1a1a1a] font-serif
               border border-[#dcdcdc] shadow-2xl
-              p-6 md:p-10 mt-0 mb-0
+              p-4 md:p-10 mt-0 mb-0
               z-[45] animate-slideUp
             "
-          >
-            <button
-              onClick={() => { setSelectedProduct(null);setCurrentIndex(0)}}
-              className="absolute top-4 right-4 md:top-6 md:right-6 z-50 text-black/50 hover:text-black text-2xl"
             >
-              ✕
-            </button>
+              <button
+                onClick={() => {
+                  setSelectedProduct(null);
+                  setCurrentIndex(0);
+                }}
+                className="absolute top-4 right-4 md:top-6 md:right-6 z-50 text-black/50 hover:text-black text-2xl"
+              >
+                ✕
+              </button>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-stretch">
-              {/* ========== CUSTOMIZATION PANEL ========== */}
-              <div className="bg-[#6C6C6C] rounded-3xl p-8 text-white">
-                  <h2 className="text-center text-xl tracking-[0.2em] font-semibold mb-6">
-                    Customizing Tools
-                  </h2>
-                  <h3 className="font-semibold tracking-wide mb-3">Metal type</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
-                    <div>
-                      <p className="text-sm mb-2">Type</p>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-stretch">
+                {/* ========== IMAGE PANEL ========== */}
+                <div className="relative bg-white rounded-3xl shadow-md overflow-hidden group">
+                  {selectedProduct.images.length > 1 && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={prevSlide}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/60 text-white px-3 py-2 rounded-full hover:bg-black transition"
+                      >
+                        ◀
+                      </button>
 
-                      <div className="flex items-center gap-10">
-                        {["gold", "silver"].map((t) => (
-                          <label
-                            key={t}
-                            className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"
-                          >
-                            <input
-                              type="radio"
-                              value={t}
-                              name="metalType"
-                              checked={(t=="silver" && customData?.metalType == "silver") || ((t=="gold" && (customData?.metalType == undefined || customData?.metalType == "gold")))}
-                              onChange={() => setCustomData((prev)=>({...prev,metalType:t}))}
-                              className="w-5 h-5 accent-black"
-                            />
-                            <span className="mt-1 capitalize">{t}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                    
-                    </div>
-                  </div>
-                  {customData.metalType!="silver" &&<>
-                  <h3 className="font-semibold tracking-wide mb-3">
-                    Gold Options
-                  </h3>
-
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* GOLD TYPE */}
-                    <div>
-                      <p className="text-sm mb-2">Type</p>
-                      <div className="flex gap-3 text-xs capitalize">
-                        {["rose", "yellow", "white"].map((t) => (
-                          <button
-                            key={t}
-                            onClick={() =>
-                              setCustomData((prev) => ({
-                                ...prev,
-                                goldType: t,
-                              }))
-                            }
-                            className={`px-3 py-1 rounded-full ${
-                              customData?.goldType === t
-                                ? "bg-white text-black"
-                                : "bg-white/20"
-                            }`}
-                          >
-                            {t}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* GOLD KARAT */}
-                    <div>
-                      <p className="text-sm mb-2">Karat</p>
-                      <div className="flex gap-3 text-xs">
-                        {["10K", "14K", "18K"].map((k) => (
-                          <button
-                            key={k}
-                            onClick={() =>
-                              setCustomData((prev) => ({
-                                ...prev,
-                                goldKarat: k,
-                              }))
-                            }
-                            className={`px-3 py-1 rounded-full ${
-                              (customData?.goldKarat == k)
-                                ? "bg-white text-black"
-                                : "bg-white/20"
-                            }`}
-                          >
-                            {k}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  </>}
-
-                  {/* RING SIZE */}
-                  <h3 className="font-semibold tracking-wide mt-4 mb-3">
-                    Ring Size
-                  </h3>
-                  <select
-                    value={customData?.ringSize}
-                    onChange={(e) =>
-                      setCustomData((prev) => ({
-                        ...prev,
-                        ringSize: e.target.value,
-                      }))
-                    }
-                    className="bg-[#D9D9D9] text-black w-52 h-11 px-4 rounded-full"
-                  >
-                    {Array.from({ length: 21 }, (_, i) => 3 + i * 0.5).map(
-                      (size) => (
-                        <option key={size} value={size.toFixed(1)}>
-                          {size.toFixed(1)}
-                        </option>
-                      )
-                    )}
-                  </select>
-
-                  <h3 className="font-semibold tracking-wide mt-6 mb-3">
-                    Stone Options
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
-                    <div>
-                      <p className="text-sm mb-2">Type</p>
-
-                      <div className="flex items-center gap-10">
-                        {["diamond", "monsinite"].map((t) => (
-                          <label
-                            key={t}
-                            className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"
-                          >
-                            <input
-                              type="radio"
-                              value={t}
-                              name="stoneType"
-                              checked={(t=="monsinite" && customData?.stoneType == "monsinite") || ((t=="diamond" && (customData?.stoneType == undefined || customData?.stoneType == "diamond")))}
-                              onChange={() => setCustomData((prev)=>({...prev,stoneType:t}))}
-                              className="w-5 h-5 accent-black"
-                            />
-                            <span className="mt-1 capitalize">{t}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                    
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* SHAPE */}
-                    <div>
-                      <p className="text-sm mb-2">Shape</p>
-                      <ShapeDropdown
-                        value={customData?.diamondShape}
-                        onChange={(val) =>
-                          setCustomData((prev) => ({
-                            ...prev,
-                            diamondShape: val,
-                          }))
-                        }
-                      />
-                    </div>
-
-                    {/* QUALITY */}
-                    {customData?.stoneType!="monsinite" && <div>
-                      <p className="text-sm mb-1">Quality</p>
-                      <input
-                        type="range"
-                        min="0"
-                        max="2"
-                        value={
-                          customData?.quality === "good"
-                            ? 0
-                            : customData?.quality === "premium"
-                            ? 1
-                            : 2
-                        }
-                        onChange={(e) => {
-                          const val = Number(e.target.value);
-                          setCustomData((prev) => ({
-                            ...prev,
-                            quality:
-                              val === 0
-                                ? "good"
-                                : val === 1
-                                ? "premium"
-                                : "excellent",
-                          }));
-                        }}
-                        className="w-full opacity-90 cursor-pointer"
-                      />
-                      <div className="grid grid-cols-3 text-center text-xs mt-1">
-                        <span>Good</span>
-                        <span>Premium</span>
-                        <span>Excellent</span>
-                      </div>
-                    </div>}
-                  </div>
-
-                  {/* CARAT OPTIONS */}
-                  <div className="grid grid-cols-2 gap-6 mt-4">
-                    <div>
-                      <p className="text-sm mb-2">Center Stone Carat</p>
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={customData?.centerStoneCarat}
-                        onChange={(e) =>
-                          setCustomData((prev) => ({
-                            ...prev,
-                            centerStoneCarat: e.target.value,
-                          }))
-                        }
-                        className="bg-[#D9D9D9] text-black h-11 px-4 rounded-full w-full"
-                      />
-                    </div>
-
-                    <div>
-                      <p className="text-sm mb-2">Total Carat Weight</p>
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={customData?.totalCaratWeight}
-                        onChange={(e) =>
-                          setCustomData((prev) => ({
-                            ...prev,
-                            totalCaratWeight: e.target.value,
-                          }))
-                        }
-                        className="bg-[#D9D9D9] text-black h-11 px-4 rounded-full w-full"
-                      />
-                    </div>
-                  </div>
-
-                  {/* PRICE / COMMISSION */}
-                  <div className="flex justify-between bg-[#D9D9D9] text-black p-4 rounded-lg text-xs mt-6">
-                    <div className="flex"> 
-                    <p>Price: ${priceData?.totalPriceWithRoyalties}</p>
-                        <button
-              type="button"
-              onClick={() => setShowBreakdown(true)}
-              className="cursor-pointer ml-2 w-4 h-4 bg-black text-white rounded-full text-[10px] flex items-center justify-center"
-            >
-              i
-            </button>
-                    </div>
-                    <p>Commission: ${priceData?.commission}</p>
-                  </div>
+                      <button
+                        type="button"
+                        onClick={nextSlide}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/60 text-white px-3 py-2 rounded-full hover:bg-black transition"
+                      >
+                        ▶
+                      </button>
+                    </>
+                  )}
+                  <img
+                    src={selectedProduct.images[currentIndex]}
+                    className="w-full h-full object-cover transition duration-300"
+                  />
                 </div>
 
-              {/* ========== IMAGE PANEL ========== */}
-              <div className="relative bg-white rounded-3xl shadow-md overflow-hidden group">
-                
-                {selectedProduct.images.length>1 && (<>
-                <button
-                type="button"
-                  onClick={prevSlide}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/60 text-white px-3 py-2 rounded-full hover:bg-black transition"
-                >
-                  ◀
-                  </button>
-
-                  <button
-                  type="button"
-                    onClick={nextSlide}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/60 text-white px-3 py-2 rounded-full hover:bg-black transition"
-                    >
-                    ▶
-                  </button>
-                </>)
-                }
-                <img
-                  src={selectedProduct.images[currentIndex]}
-                  className="w-full h-full object-cover transition duration-300"
-                />
-              </div>
-
-              <div className="bg-[#6C6C6C] rounded-3xl p-6 text-white h-[200px]">
-                <p className="tracking-widest text-sm mb-2">COMMENTS</p>
-                <p className="text-xs opacity-70">
-                  (Comments will be available soon in MyActivity modal)
-                </p>
-              </div>
-
-              <div className="flex flex-col justify-between">
                 <div>
                   {/* NAME */}
                   <div className="flex items-center gap-3">
@@ -819,45 +575,330 @@ export default function MyActivity() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 mt-10">
-                  <button
-                    disabled={saving}
-                    onClick={handleSaveEdit}
-                    className={`px-12 py-3 rounded-full text-xs tracking-widest text-white ${
-                      saving ? "bg-gray-400 cursor-not-allowed" : "bg-[#2E4B45] cursor-pointer"
-                    }`}
-                  >
-                    {saving ? "SAVING..." : "SAVE CHANGES"}
-                  </button>
+                {/* ========== CUSTOMIZATION PANEL ========== */}
+                <div className="bg-[#6C6C6C] rounded-3xl p-8 text-white">
+                  <h2 className="text-center text-xl tracking-[0.2em] font-semibold mb-6">
+                    Customizing Tools
+                  </h2>
+                  <h3 className="font-semibold tracking-wide mb-3">
+                    Metal type
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
+                    <div>
+                      <p className="text-sm mb-2">Type</p>
 
-                  <button
-                    disabled={uploading}
-                    onClick={handleCommunityStatus}
-                    className={`${
-                      uploading
-                        ? "bg-gradient-to-r from-red-900/50 via-rose-900/50 to-red-950/50 cursor-not-allowed opacity-70 shadow-none"
-                        : "cursor-pointer"
-                    } ml-auto px-12 py-3 ${
-                      selectedProduct.is_community_uploaded
-                        ? "bg-gradient-to-r from-red-800 via-rose-800 to-red-900"
-                        : "bg-gradient-to-r from-emerald-500 via-teal-500 to-green-500"
-                    } text-white rounded-full text-xs tracking-widest`}
+                      <div className="flex items-center gap-10">
+                        {["gold", "silver"].map((t) => (
+                          <label
+                            key={t}
+                            className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"
+                          >
+                            <input
+                              type="radio"
+                              value={t}
+                              name="metalType"
+                              checked={
+                                (t == "silver" &&
+                                  customData?.metalType == "silver") ||
+                                (t == "gold" &&
+                                  (customData?.metalType == undefined ||
+                                    customData?.metalType == "gold"))
+                              }
+                              onChange={() =>
+                                setCustomData((prev) => ({
+                                  ...prev,
+                                  metalType: t,
+                                }))
+                              }
+                              className="w-5 h-5 accent-black"
+                            />
+                            <span className="mt-1 capitalize">{t}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div></div>
+                  </div>
+                  {customData.metalType != "silver" && (
+                    <>
+                      <h3 className="font-semibold tracking-wide mb-3">
+                        Gold Options
+                      </h3>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* GOLD TYPE */}
+                        <div>
+                          <p className="text-sm mb-2">Type</p>
+                          <div className="flex gap-3 text-xs capitalize">
+                            {["rose", "yellow", "white"].map((t) => (
+                              <button
+                                key={t}
+                                onClick={() =>
+                                  setCustomData((prev) => ({
+                                    ...prev,
+                                    goldType: t,
+                                  }))
+                                }
+                                className={`px-3 py-1 rounded-full ${
+                                  customData?.goldType === t
+                                    ? "bg-white text-black"
+                                    : "bg-white/20"
+                                }`}
+                              >
+                                {t}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* GOLD KARAT */}
+                        <div>
+                          <p className="text-sm mb-2">Karat</p>
+                          <div className="flex gap-3 text-xs">
+                            {["10K", "14K", "18K"].map((k) => (
+                              <button
+                                key={k}
+                                onClick={() =>
+                                  setCustomData((prev) => ({
+                                    ...prev,
+                                    goldKarat: k,
+                                  }))
+                                }
+                                className={`px-3 py-1 rounded-full ${
+                                  customData?.goldKarat == k
+                                    ? "bg-white text-black"
+                                    : "bg-white/20"
+                                }`}
+                              >
+                                {k}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* RING SIZE */}
+                  <h3 className="font-semibold tracking-wide mt-4 mb-3">
+                    Ring Size
+                  </h3>
+                  <select
+                    value={customData?.ringSize}
+                    onChange={(e) =>
+                      setCustomData((prev) => ({
+                        ...prev,
+                        ringSize: e.target.value,
+                      }))
+                    }
+                    className="bg-[#D9D9D9] text-black w-52 h-11 px-4 rounded-full"
                   >
-                    {selectedProduct.is_community_uploaded
-                      ? "REMOVE FROM COMMUNITY"
-                      : "UPLOAD TO COMMUNITY"}
-                  </button>
-                  <button
-                    onClick={handleAddToWishlist}
-                    className={`${adding ? "bg-gray-400 cursor-not-allowed" : "bg-[#6B6B6B] cursor-pointer"} ml-auto px-12 py-3  text-white rounded-full text-xs tracking-widest`}
-                  >
-                    BUY NOW
-                  </button>
+                    {Array.from({ length: 21 }, (_, i) => 3 + i * 0.5).map(
+                      (size) => (
+                        <option key={size} value={size.toFixed(1)}>
+                          {size.toFixed(1)}
+                        </option>
+                      ),
+                    )}
+                  </select>
+
+                  <h3 className="font-semibold tracking-wide mt-6 mb-3">
+                    Stone Options
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
+                    <div>
+                      <p className="text-sm mb-2">Type</p>
+
+                      <div className="flex items-center gap-10">
+                        {["diamond", "monsinite"].map((t) => (
+                          <label
+                            key={t}
+                            className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"
+                          >
+                            <input
+                              type="radio"
+                              value={t}
+                              name="stoneType"
+                              checked={
+                                (t == "monsinite" &&
+                                  customData?.stoneType == "monsinite") ||
+                                (t == "diamond" &&
+                                  (customData?.stoneType == undefined ||
+                                    customData?.stoneType == "diamond"))
+                              }
+                              onChange={() =>
+                                setCustomData((prev) => ({
+                                  ...prev,
+                                  stoneType: t,
+                                }))
+                              }
+                              className="w-5 h-5 accent-black"
+                            />
+                            <span className="mt-1 capitalize">{t}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div></div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* SHAPE */}
+                    <div>
+                      <p className="text-sm mb-2">Shape</p>
+                      <ShapeDropdown
+                        value={customData?.diamondShape}
+                        onChange={(val) =>
+                          setCustomData((prev) => ({
+                            ...prev,
+                            diamondShape: val,
+                          }))
+                        }
+                      />
+                    </div>
+
+                    {/* QUALITY */}
+                    {customData?.stoneType != "monsinite" && (
+                      <div>
+                        <p className="text-sm mb-1">Quality</p>
+                        <input
+                          type="range"
+                          min="0"
+                          max="2"
+                          value={
+                            customData?.quality === "good"
+                              ? 0
+                              : customData?.quality === "premium"
+                                ? 1
+                                : 2
+                          }
+                          onChange={(e) => {
+                            const val = Number(e.target.value);
+                            setCustomData((prev) => ({
+                              ...prev,
+                              quality:
+                                val === 0
+                                  ? "good"
+                                  : val === 1
+                                    ? "premium"
+                                    : "excellent",
+                            }));
+                          }}
+                          className="w-full opacity-90 cursor-pointer"
+                        />
+                        <div className="grid grid-cols-3 text-center text-xs mt-1">
+                          <span>Good</span>
+                          <span>Premium</span>
+                          <span>Excellent</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* CARAT OPTIONS */}
+                  <div className="grid grid-cols-2 gap-6 mt-4">
+                    <div>
+                      <p className="text-sm mb-2">Center Stone Carat</p>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={customData?.centerStoneCarat}
+                        onChange={(e) =>
+                          setCustomData((prev) => ({
+                            ...prev,
+                            centerStoneCarat: e.target.value,
+                          }))
+                        }
+                        className="bg-[#D9D9D9] text-black h-11 px-4 rounded-full w-full"
+                      />
+                    </div>
+
+                    <div>
+                      <p className="text-sm mb-2">Total Carat Weight</p>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={customData?.totalCaratWeight}
+                        onChange={(e) =>
+                          setCustomData((prev) => ({
+                            ...prev,
+                            totalCaratWeight: e.target.value,
+                          }))
+                        }
+                        className="bg-[#D9D9D9] text-black h-11 px-4 rounded-full w-full"
+                      />
+                    </div>
+                  </div>
+
+                  {/* PRICE / COMMISSION */}
+                  <div className="flex justify-between bg-[#D9D9D9] text-black p-4 rounded-lg text-xs mt-6">
+                    <div className="flex">
+                      <p>Price: ${priceData?.totalPriceWithRoyalties}</p>
+                      <button
+                        type="button"
+                        onClick={() => setShowBreakdown(true)}
+                        className="cursor-pointer ml-2 w-4 h-4 bg-black text-white rounded-full text-[10px] flex items-center justify-center"
+                      >
+                        i
+                      </button>
+                    </div>
+                    <p>Commission: ${priceData?.commission}</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col justify-between">
+                  <div className="-mt-5 space-y-5">
+                    {/* TOP ROW: SAVE + COMMUNITY */}
+                    <div className="flex items-center gap-3">
+                      <button
+                        disabled={saving}
+                        onClick={handleSaveEdit}
+                        className={`px-9 py-2 rounded-full text-xs tracking-widest text-white ${
+                          saving
+                            ? "bg-gray-400 cursor-not-allowed"
+                            : "bg-[#2E4B45] cursor-pointer"
+                        }`}
+                      >
+                        {saving ? "SAVING..." : "SAVE CHANGES"}
+                      </button>
+
+                      <button
+                        disabled={uploading}
+                        onClick={handleCommunityStatus}
+                        className={`px-12 py-2 text-xs tracking-widest rounded-full text-white ${
+                          uploading
+                            ? "bg-gradient-to-r from-red-900/50 via-rose-900/50 to-red-950/50 cursor-not-allowed opacity-70"
+                            : selectedProduct.is_community_uploaded
+                              ? "bg-gradient-to-r from-red-800 via-rose-800 to-red-900"
+                              : "bg-gradient-to-r from-emerald-500 via-teal-500 to-green-500"
+                        }`}
+                      >
+                        {selectedProduct.is_community_uploaded
+                          ? "REMOVE FROM COMMUNITY"
+                          : "UPLOAD TO COMMUNITY"}
+                      </button>
+                    </div>
+
+                    {/* BOTTOM ROW: BUY NOW */}
+                    <div className="flex justify-start">
+                      <button
+                        onClick={handleAddToWishlist}
+                        disabled={adding}
+                        className={`w-full px-16 py-4 rounded-full text-xs tracking-widest mb-14 text-white ${
+                          adding
+                            ? "bg-gray-400 cursor-not-allowed"
+                            : "bg-[#6B6B6B] cursor-pointer hover:bg-black transition"
+                        }`}
+                      >
+                        BUY NOW
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <style>{`
+              <style>{`
               @keyframes slideUp {
                 0% { opacity: 0; transform: translateY(40px) scale(0.97); }
                 100% { opacity: 1; transform: translateY(0) scale(1); }
@@ -869,8 +910,8 @@ export default function MyActivity() {
               .animate-slideUp { animation: slideUp .6s both ease-out; }
               .animate-blurFade { animation: blurFade .6s both; }
             `}</style>
+            </div>
           </div>
-        </div>
         </>
       )}
     </div>

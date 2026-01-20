@@ -4,70 +4,73 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 
-export default function CommunityMobile({setJewelleryData,totalPages,setTotalPages, jewelleryData = [], loadProduct ,handleOpenModal ,setHideMobileNavbar }) {
-  const loadMoreDesignRef = useRef(null)
-  const [currentPage, setCurrentPage] = useState(1)
+export default function CommunityMobile({
+  setJewelleryData,
+  totalPages,
+  setTotalPages,
+  jewelleryData = [],
+  loadProduct,
+  handleOpenModal,
+  setHideMobileNavbar,
+}) {
+  const loadMoreDesignRef = useRef(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
-   const loadingRef = useRef(false);
-   const {isLoggedIn}=useSelector(state=>state.user)
+  const loadingRef = useRef(false);
+  const { isLoggedIn } = useSelector((state) => state.user);
 
-      useEffect(() => {
-        if (!loadMoreDesignRef.current) return;
+  useEffect(() => {
+    if (!loadMoreDesignRef.current) return;
 
-        const loadMoreProducts = async () => {
-          if (loadingRef.current) return;
-          if (currentPage >= totalPages) return;
+    const loadMoreProducts = async () => {
+      if (loadingRef.current) return;
+      if (currentPage >= totalPages) return;
 
-          loadingRef.current = true;
+      loadingRef.current = true;
 
-          try {
-            const nextPage = currentPage + 1;
+      try {
+        const nextPage = currentPage + 1;
 
-            const { data } = await axios.get(
-              `${import.meta.env.VITE_BASE_URL}/api/product?per_page=9&page=${nextPage}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-              }
-            );
-            console.log(data)
-            if (data.success) {
-              setCurrentPage(nextPage);
-              setJewelleryData(prev => [
-                ...prev,
-                ...data.data.products
-              ]);
-              setTotalPages(data.data.pagination.last_page);
-            } else {
-              toast.error("Couldn't fetch products");
-            }
-          } catch (error) {
-            console.log(error);
-          } finally {
-            loadingRef.current = false;
-          }
-        };
-
-        const observer = new IntersectionObserver(
-          ([entry]) => {
-            if (entry.isIntersecting) {
-              loadMoreProducts();
-            }
-          },
+        const { data } = await axios.get(
+          `${import.meta.env.VITE_BASE_URL}/api/product?per_page=9&page=${nextPage}`,
           {
-            root: null,
-            rootMargin: "1000px 0px",
-            threshold: 0,
-          }
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          },
         );
+        console.log(data);
+        if (data.success) {
+          setCurrentPage(nextPage);
+          setJewelleryData((prev) => [...prev, ...data.data.products]);
+          setTotalPages(data.data.pagination.last_page);
+        } else {
+          toast.error("Couldn't fetch products");
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        loadingRef.current = false;
+      }
+    };
 
-        observer.observe(loadMoreDesignRef.current);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          loadMoreProducts();
+        }
+      },
+      {
+        root: null,
+        rootMargin: "1000px 0px",
+        threshold: 0,
+      },
+    );
 
-        return () => observer.disconnect();
-      }, [currentPage, totalPages]);
+    observer.observe(loadMoreDesignRef.current);
 
-
+    return () => observer.disconnect();
+  }, [currentPage, totalPages]);
 
   if (jewelleryData.length === 0) {
     return (
@@ -98,9 +101,10 @@ export default function CommunityMobile({setJewelleryData,totalPages,setTotalPag
         
       )})}*/}
 
-        {jewelleryData.map((item) => (
+        {jewelleryData.map((item, index) => (
           <ReelItem
             key={item.id}
+            isFirst={index === 0}
             handleOpenModal={handleOpenModal}
             isLoggedIn={isLoggedIn}
             item={item}
@@ -135,7 +139,7 @@ export default function CommunityMobile({setJewelleryData,totalPages,setTotalPag
 /* COMMENTS BOTTOM SHEET */
 /* ------------------------------------------------------------------ */
 
-function CommentsSheet({productId, onClose, isLoggedIn, handleOpenModal }) {
+function CommentsSheet({ productId, onClose, isLoggedIn, handleOpenModal }) {
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(true);
@@ -150,7 +154,7 @@ function CommentsSheet({productId, onClose, isLoggedIn, handleOpenModal }) {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
-          }
+          },
         );
 
         if (data.success) {
@@ -169,7 +173,7 @@ function CommentsSheet({productId, onClose, isLoggedIn, handleOpenModal }) {
   const handleComment = async () => {
     if (!comment.trim() || posting) return;
     if (!isLoggedIn) {
-      onClose()
+      onClose();
       handleOpenModal("login");
       return;
     }
@@ -179,12 +183,12 @@ function CommentsSheet({productId, onClose, isLoggedIn, handleOpenModal }) {
 
       const { data } = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/api/product/${productId}/engage`,
-        { type:"comment",comment },
+        { type: "comment", comment },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
 
       if (data.success) {
@@ -210,7 +214,7 @@ function CommentsSheet({productId, onClose, isLoggedIn, handleOpenModal }) {
     <>
       <div className="fixed inset-0 bg-black/50 z-40" onClick={onClose} />
 
-      <div className="fixed bottom-0 left-0 right-0 z-50 h-[75vh] bg-[#1c1c1e] rounded-t-2xl flex flex-col animate-slideUp">
+      <div className="fixed bottom-0 left-0 right-0 z-50 h-[65vh] bg-[#1c1c1e] rounded-t-2xl flex flex-col animate-slideUp">
         <div className="flex justify-center py-3">
           <div className="w-10 h-1 bg-white/30 rounded-full" />
         </div>
@@ -269,12 +273,19 @@ function CommentsSheet({productId, onClose, isLoggedIn, handleOpenModal }) {
 /* SINGLE REEL ITEM */
 /* ------------------------------------------------------------------ */
 
-function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal,setHideMobileNavbar }) {
+function ReelItem({
+  item,
+  loadProduct,
+  isLoggedIn,
+  handleOpenModal,
+  setHideMobileNavbar,
+  isFirst,
+}) {
   const [isLiked, setIsLiked] = useState(item.is_liked);
   const [likes, setLikes] = useState(item.likes_count || 0);
-  const [isRated, setIsRated] = useState(item.is_rated)
-  const [averageRating, setAverageRating] = useState(item.average_rating)
-  const [ratingsCount, setRatingsCount] = useState(item.ratings_count)
+  const [isRated, setIsRated] = useState(item.is_rated);
+  const [averageRating, setAverageRating] = useState(item.average_rating);
+  const [ratingsCount, setRatingsCount] = useState(item.ratings_count);
   const [expanded, setExpanded] = useState(false);
   const [showComments, setShowComments] = useState(false);
   useEffect(() => {
@@ -282,65 +293,56 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal,setHideMobileNa
   }, [showComments]);
   const descRef = useRef(null);
   const [showReadMore, setShowReadMore] = useState(false);
-   useEffect(() => {
-     if (descRef.current) {
-       const el = descRef.current;
-       setShowReadMore(el.scrollHeight > el.clientHeight);
-     }
-   }, [item.description]);
+  useEffect(() => {
+    if (descRef.current) {
+      const el = descRef.current;
+      setShowReadMore(el.scrollHeight > el.clientHeight);
+    }
+  }, [item.description]);
 
-
-
-  const handleEngage = async (type,rating=0) => {
+  const handleEngage = async (type, rating = 0) => {
     try {
       if (!isLoggedIn) {
         handleOpenModal("login");
         return;
       }
       axios.defaults.withCredentials = true;
-        const { data } = await axios.post(
-          `${
-            import.meta.env.VITE_BASE_URL
-          }/api/product/${item.id}/engage`,
-          {type,
-            ...(type=="rating"?{rating:rating/10}:{})
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/product/${item.id}/engage`,
+        { type, ...(type == "rating" ? { rating: rating / 10 } : {}) },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-            withCredentials: true,
-          }
-        );
-        console.log(data);
-        if (data.success) {
-          
-          toast.success(data.message);
-           if(type=="like"){ 
-            setIsLiked(data.data.liked)
-            setLikes(data.data.likes_count)
-            }
-            else if(type=="rating"){
-              setIsRated(true)
-              setAverageRating(data.data.average_rating)
-              setRatingsCount(data.data.ratings_count)
-            }  
-            // else if(type=="comment") {
-            //   setComment("")
-            //   setCommentsList((prev) => [
-            //               {
-            //                 id: Date.now(),
-            //                 review: comment,
-                            
-            //                 user: { name: data?.data?.comment?.user?.name },
-            //                 created_at: new Date(),
-            //               },
-            //               ...prev,
-            //             ]);
+          withCredentials: true,
+        },
+      );
+      console.log(data);
+      if (data.success) {
+        toast.success(data.message);
+        if (type == "like") {
+          setIsLiked(data.data.liked);
+          setLikes(data.data.likes_count);
+        } else if (type == "rating") {
+          setIsRated(true);
+          setAverageRating(data.data.average_rating);
+          setRatingsCount(data.data.ratings_count);
+        }
+        // else if(type=="comment") {
+        //   setComment("")
+        //   setCommentsList((prev) => [
+        //               {
+        //                 id: Date.now(),
+        //                 review: comment,
 
-            // }
-        } else toast.error("Couldn't process request");
-    
+        //                 user: { name: data?.data?.comment?.user?.name },
+        //                 created_at: new Date(),
+        //               },
+        //               ...prev,
+        //             ]);
+
+        // }
+      } else toast.error("Couldn't process request");
     } catch (error) {
       console.log(error);
       //toast.error("Some error occurred");
@@ -386,13 +388,35 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal,setHideMobileNa
   // };
 
   const designerAvatar = item.user?.avatar || null;
-  const designerCallname =
-    item.user?.name || item.user?.username || "takshila";
+  const designerCallname = item.user?.name || item.user?.username || "takshila";
 
   return (
-    <div className=" relative flex flex-col pt-16 -mb-20">
+    <div
+      className={`relative flex flex-col overflow-hidden ${
+        isFirst ? "pt-16" : "pt-0"
+      }`}
+    >
+      {/* BLURRED BACKGROUND */}
+      <div
+        className="absolute inset-0 z-0 scale-110"
+        style={{
+          backgroundImage: `
+      linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.25),
+        rgba(0,0,0,0.55),
+        rgba(0,0,0,0.8)
+      ),
+      url(${item.image})
+      `,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          filter: "blur(10px)",
+        }}
+      />
+
       {/* IMAGE + HEADER */}
-      <div className="flex flex-col items-center gap-4 pt-5 px-4">
+      <div className="relative z-10 flex flex-col items-center gap-4 pt-5 px-4">
         <div className="flex items-center gap-3 self-start">
           <svg
             width="38"
@@ -459,15 +483,15 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal,setHideMobileNa
             <button
               onClick={() => loadProduct(item.id)}
               className="
-    px-6 py-2
-    rounded-full
-    text-sm font-semibold
-    text-white
-    bg-transparent
-    border border-white
-    hover:bg-white/10
-    transition
-  "
+                  px-6 py-2
+                  rounded-full
+                  text-sm font-semibold
+                 text-white
+                  bg-transparent
+                  border border-white
+                 hover:bg-white/10
+                  transition
+                "
             >
               Customize
             </button>
@@ -541,7 +565,7 @@ function ReelItem({ item, loadProduct,isLoggedIn,handleOpenModal,setHideMobileNa
       </div>
 
       {/* DESCRIPTION */}
-      <div className="px-6 pt-2 pb-4">
+      <div className="relative z-10 px-6 pt-2 pb-8">
         <h2 className="text-2xl font-light">{item.name}</h2>
         {item.description && (
           <>

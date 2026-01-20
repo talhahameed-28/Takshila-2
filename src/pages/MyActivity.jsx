@@ -480,398 +480,389 @@ export default function MyActivity() {
                 ✕
               </button>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-stretch">
-                {/* ========== IMAGE PANEL ========== */}
-                <div className="relative bg-white rounded-3xl shadow-md overflow-hidden group">
-                  {selectedProduct.images.length > 1 && (
-                    <>
-                      <button
-                        type="button"
-                        onClick={prevSlide}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/60 text-white px-3 py-2 rounded-full hover:bg-black transition"
-                      >
-                        ◀
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={nextSlide}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/60 text-white px-3 py-2 rounded-full hover:bg-black transition"
-                      >
-                        ▶
-                      </button>
-                    </>
-                  )}
-                  <img
-                    src={selectedProduct.images[currentIndex]}
-                    className="w-full h-full object-cover transition duration-300"
-                  />
-                </div>
-
-                <div>
-                  {/* NAME */}
-                  <div className="flex items-center gap-3">
-                    {editingName ? (
-                      <input
-                        autoFocus
-                        value={editData.name}
-                        onChange={(e) =>
-                          setEditData((prev) => ({
-                            ...prev,
-                            name: e.target.value,
-                          }))
-                        }
-                        className="text-2xl font-semibold tracking-wide bg-transparent border-b border-gray-400 outline-none"
-                        onBlur={() => setEditingName(false)}
-                      />
-                    ) : (
-                      <h2 className="text-2xl font-semibold tracking-wide">
-                        {editData.name}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-15 items-start">
+                {/* ================= LEFT — CUSTOMIZATION (DESKTOP FIXED) ================= */}
+                <div className="order-2 lg:order-1">
+                  <div className="lg:sticky lg:top-10">
+                    <div className="bg-[#6C6C6C] rounded-3xl p-8  text-white">
+                      <h2 className="text-center text-xl tracking-[0.2em] font-semibold mb-6">
+                        Customizing Tools
                       </h2>
-                    )}
-
-                    <span
-                      className="text-gray-400 text-lg cursor-pointer"
-                      onClick={() => {
-                        setEditingName(true);
-                        setEditingDescription(false);
-                      }}
-                    >
-                      ✎Edit name
-                    </span>
-                  </div>
-
-                  {/* DESCRIPTION */}
-                  <div className="mt-4">
-                    {editingDescription ? (
-                      <textarea
-                        autoFocus
-                        value={editData.description}
-                        onChange={(e) =>
-                          setEditData((prev) => ({
-                            ...prev,
-                            description: e.target.value,
-                          }))
-                        }
-                        className="w-full text-sm text-gray-600 leading-relaxed bg-transparent border border-gray-300 rounded-md p-2 outline-none resize-none"
-                        rows={4}
-                        onBlur={() => setEditingDescription(false)}
-                      />
-                    ) : (
-                      <p className="text-sm text-gray-600 leading-relaxed">
-                        {editData.description}
-                      </p>
-                    )}
-
-                    <span
-                      className="text-gray-400 text-sm cursor-pointer mt-1 inline-block"
-                      onClick={() => {
-                        setEditingDescription(true);
-                        setEditingName(false);
-                      }}
-                    >
-                      ✎ Edit description
-                    </span>
-                  </div>
-                </div>
-
-                {/* ========== CUSTOMIZATION PANEL ========== */}
-                <div className="bg-[#6C6C6C] rounded-3xl p-8 text-white">
-                  <h2 className="text-center text-xl tracking-[0.2em] font-semibold mb-6">
-                    Customizing Tools
-                  </h2>
-                  <h3 className="font-semibold tracking-wide mb-3">
-                    Metal type
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
-                    <div>
-                      <p className="text-sm mb-2">Type</p>
-
-                      <div className="flex items-center gap-10">
-                        {["gold", "silver"].map((t) => (
-                          <label
-                            key={t}
-                            className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"
-                          >
-                            <input
-                              type="radio"
-                              value={t}
-                              name="metalType"
-                              checked={
-                                (t == "silver" &&
-                                  customData?.metalType == "silver") ||
-                                (t == "gold" &&
-                                  (customData?.metalType == undefined ||
-                                    customData?.metalType == "gold"))
-                              }
-                              onChange={() =>
-                                setCustomData((prev) => ({
-                                  ...prev,
-                                  metalType: t,
-                                }))
-                              }
-                              className="w-5 h-5 accent-black"
-                            />
-                            <span className="mt-1 capitalize">{t}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div></div>
-                  </div>
-                  {customData.metalType != "silver" && (
-                    <>
                       <h3 className="font-semibold tracking-wide mb-3">
-                        Gold Options
+                        Metal type
                       </h3>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* GOLD TYPE */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
                         <div>
                           <p className="text-sm mb-2">Type</p>
-                          <div className="flex gap-3 text-xs capitalize">
-                            {["rose", "yellow", "white"].map((t) => (
-                              <button
+
+                          <div className="flex items-center gap-10">
+                            {["gold", "silver"].map((t) => (
+                              <label
                                 key={t}
-                                onClick={() =>
-                                  setCustomData((prev) => ({
-                                    ...prev,
-                                    goldType: t,
-                                  }))
-                                }
-                                className={`px-3 py-1 rounded-full ${
-                                  customData?.goldType === t
-                                    ? "bg-white text-black"
-                                    : "bg-white/20"
-                                }`}
+                                className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"
                               >
-                                {t}
-                              </button>
+                                <input
+                                  type="radio"
+                                  value={t}
+                                  name="metalType"
+                                  checked={
+                                    (t == "silver" &&
+                                      customData?.metalType == "silver") ||
+                                    (t == "gold" &&
+                                      (customData?.metalType == undefined ||
+                                        customData?.metalType == "gold"))
+                                  }
+                                  onChange={() =>
+                                    setCustomData((prev) => ({
+                                      ...prev,
+                                      metalType: t,
+                                    }))
+                                  }
+                                  className="w-5 h-5 accent-black"
+                                />
+                                <span className="mt-1 capitalize">{t}</span>
+                              </label>
                             ))}
                           </div>
                         </div>
 
-                        {/* GOLD KARAT */}
-                        <div>
-                          <p className="text-sm mb-2">Karat</p>
-                          <div className="flex gap-3 text-xs">
-                            {["10K", "14K", "18K"].map((k) => (
-                              <button
-                                key={k}
-                                onClick={() =>
-                                  setCustomData((prev) => ({
-                                    ...prev,
-                                    goldKarat: k,
-                                  }))
-                                }
-                                className={`px-3 py-1 rounded-full ${
-                                  customData?.goldKarat == k
-                                    ? "bg-white text-black"
-                                    : "bg-white/20"
-                                }`}
-                              >
-                                {k}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
+                        <div></div>
                       </div>
-                    </>
-                  )}
+                      {customData.metalType != "silver" && (
+                        <>
+                          <h3 className="font-semibold tracking-wide mb-3">
+                            Gold Options
+                          </h3>
 
-                  {/* RING SIZE */}
-                  <h3 className="font-semibold tracking-wide mt-4 mb-3">
-                    Ring Size
-                  </h3>
-                  <select
-                    value={customData?.ringSize}
-                    onChange={(e) =>
-                      setCustomData((prev) => ({
-                        ...prev,
-                        ringSize: e.target.value,
-                      }))
-                    }
-                    className="bg-[#D9D9D9] text-black w-52 h-11 px-4 rounded-full"
-                  >
-                    {Array.from({ length: 21 }, (_, i) => 3 + i * 0.5).map(
-                      (size) => (
-                        <option key={size} value={size.toFixed(1)}>
-                          {size.toFixed(1)}
-                        </option>
-                      ),
-                    )}
-                  </select>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* GOLD TYPE */}
+                            <div>
+                              <p className="text-sm mb-2">Type</p>
+                              <div className="flex gap-3 text-xs capitalize">
+                                {["rose", "yellow", "white"].map((t) => (
+                                  <button
+                                    key={t}
+                                    onClick={() =>
+                                      setCustomData((prev) => ({
+                                        ...prev,
+                                        goldType: t,
+                                      }))
+                                    }
+                                    className={`px-3 py-1 rounded-full ${
+                                      customData?.goldType === t
+                                        ? "bg-white text-black"
+                                        : "bg-white/20"
+                                    }`}
+                                  >
+                                    {t}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
 
-                  <h3 className="font-semibold tracking-wide mt-6 mb-3">
-                    Stone Options
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
-                    <div>
-                      <p className="text-sm mb-2">Type</p>
+                            {/* GOLD KARAT */}
+                            <div>
+                              <p className="text-sm mb-2">Karat</p>
+                              <div className="flex gap-3 text-xs">
+                                {["10K", "14K", "18K"].map((k) => (
+                                  <button
+                                    key={k}
+                                    onClick={() =>
+                                      setCustomData((prev) => ({
+                                        ...prev,
+                                        goldKarat: k,
+                                      }))
+                                    }
+                                    className={`px-3 py-1 rounded-full ${
+                                      customData?.goldKarat == k
+                                        ? "bg-white text-black"
+                                        : "bg-white/20"
+                                    }`}
+                                  >
+                                    {k}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      )}
 
-                      <div className="flex items-center gap-10">
-                        {["diamond", "monsinite"].map((t) => (
-                          <label
-                            key={t}
-                            className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"
-                          >
+                      {/* RING SIZE */}
+                      <h3 className="font-semibold tracking-wide mt-4 mb-3">
+                        Ring Size
+                      </h3>
+                      <select
+                        value={customData?.ringSize}
+                        onChange={(e) =>
+                          setCustomData((prev) => ({
+                            ...prev,
+                            ringSize: e.target.value,
+                          }))
+                        }
+                        className="bg-[#D9D9D9] text-black w-52 h-11 px-4 rounded-full"
+                      >
+                        {Array.from({ length: 21 }, (_, i) => 3 + i * 0.5).map(
+                          (size) => (
+                            <option key={size} value={size.toFixed(1)}>
+                              {size.toFixed(1)}
+                            </option>
+                          ),
+                        )}
+                      </select>
+
+                      <h3 className="font-semibold tracking-wide mt-6 mb-3">
+                        Stone Options
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
+                        <div>
+                          <p className="text-sm mb-2">Type</p>
+
+                          <div className="flex items-center gap-10">
+                            {["diamond", "monsinite"].map((t) => (
+                              <label
+                                key={t}
+                                className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"
+                              >
+                                <input
+                                  type="radio"
+                                  value={t}
+                                  name="stoneType"
+                                  checked={
+                                    (t == "monsinite" &&
+                                      customData?.stoneType == "monsinite") ||
+                                    (t == "diamond" &&
+                                      (customData?.stoneType == undefined ||
+                                        customData?.stoneType == "diamond"))
+                                  }
+                                  onChange={() =>
+                                    setCustomData((prev) => ({
+                                      ...prev,
+                                      stoneType: t,
+                                    }))
+                                  }
+                                  className="w-5 h-5 accent-black"
+                                />
+                                <span className="mt-1 capitalize">{t}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div></div>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* SHAPE */}
+                        <div>
+                          <p className="text-sm mb-2">Shape</p>
+                          <ShapeDropdown
+                            value={customData?.diamondShape}
+                            onChange={(val) =>
+                              setCustomData((prev) => ({
+                                ...prev,
+                                diamondShape: val,
+                              }))
+                            }
+                          />
+                        </div>
+
+                        {/* QUALITY */}
+                        {customData?.stoneType != "monsinite" && (
+                          <div>
+                            <p className="text-sm mb-1">Quality</p>
                             <input
-                              type="radio"
-                              value={t}
-                              name="stoneType"
-                              checked={
-                                (t == "monsinite" &&
-                                  customData?.stoneType == "monsinite") ||
-                                (t == "diamond" &&
-                                  (customData?.stoneType == undefined ||
-                                    customData?.stoneType == "diamond"))
+                              type="range"
+                              min="0"
+                              max="2"
+                              value={
+                                customData?.quality === "good"
+                                  ? 0
+                                  : customData?.quality === "premium"
+                                    ? 1
+                                    : 2
                               }
-                              onChange={() =>
+                              onChange={(e) => {
+                                const val = Number(e.target.value);
                                 setCustomData((prev) => ({
                                   ...prev,
-                                  stoneType: t,
-                                }))
-                              }
-                              className="w-5 h-5 accent-black"
+                                  quality:
+                                    val === 0
+                                      ? "good"
+                                      : val === 1
+                                        ? "premium"
+                                        : "excellent",
+                                }));
+                              }}
+                              className="w-full opacity-90 cursor-pointer"
                             />
-                            <span className="mt-1 capitalize">{t}</span>
-                          </label>
-                        ))}
+                            <div className="grid grid-cols-3 text-center text-xs mt-1">
+                              <span>Good</span>
+                              <span>Premium</span>
+                              <span>Excellent</span>
+                            </div>
+                          </div>
+                        )}
                       </div>
-                    </div>
 
-                    <div></div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* SHAPE */}
-                    <div>
-                      <p className="text-sm mb-2">Shape</p>
-                      <ShapeDropdown
-                        value={customData?.diamondShape}
-                        onChange={(val) =>
-                          setCustomData((prev) => ({
-                            ...prev,
-                            diamondShape: val,
-                          }))
-                        }
-                      />
-                    </div>
+                      {/* CARAT OPTIONS */}
+                      <div className="grid grid-cols-2 gap-6 mt-4">
+                        <div>
+                          <p className="text-sm mb-2">Center Stone Carat</p>
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={customData?.centerStoneCarat}
+                            onChange={(e) =>
+                              setCustomData((prev) => ({
+                                ...prev,
+                                centerStoneCarat: e.target.value,
+                              }))
+                            }
+                            className="bg-[#D9D9D9] text-black h-11 px-4 rounded-full w-full"
+                          />
+                        </div>
 
-                    {/* QUALITY */}
-                    {customData?.stoneType != "monsinite" && (
-                      <div>
-                        <p className="text-sm mb-1">Quality</p>
-                        <input
-                          type="range"
-                          min="0"
-                          max="2"
-                          value={
-                            customData?.quality === "good"
-                              ? 0
-                              : customData?.quality === "premium"
-                                ? 1
-                                : 2
-                          }
-                          onChange={(e) => {
-                            const val = Number(e.target.value);
-                            setCustomData((prev) => ({
-                              ...prev,
-                              quality:
-                                val === 0
-                                  ? "good"
-                                  : val === 1
-                                    ? "premium"
-                                    : "excellent",
-                            }));
-                          }}
-                          className="w-full opacity-90 cursor-pointer"
-                        />
-                        <div className="grid grid-cols-3 text-center text-xs mt-1">
-                          <span>Good</span>
-                          <span>Premium</span>
-                          <span>Excellent</span>
+                        <div>
+                          <p className="text-sm mb-2">Total Carat Weight</p>
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={customData?.totalCaratWeight}
+                            onChange={(e) =>
+                              setCustomData((prev) => ({
+                                ...prev,
+                                totalCaratWeight: e.target.value,
+                              }))
+                            }
+                            className="bg-[#D9D9D9] text-black h-11 px-4 rounded-full w-full"
+                          />
                         </div>
                       </div>
-                    )}
-                  </div>
 
-                  {/* CARAT OPTIONS */}
-                  <div className="grid grid-cols-2 gap-6 mt-4">
-                    <div>
-                      <p className="text-sm mb-2">Center Stone Carat</p>
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={customData?.centerStoneCarat}
-                        onChange={(e) =>
-                          setCustomData((prev) => ({
-                            ...prev,
-                            centerStoneCarat: e.target.value,
-                          }))
-                        }
-                        className="bg-[#D9D9D9] text-black h-11 px-4 rounded-full w-full"
-                      />
+                      {/* PRICE / COMMISSION */}
+                      <div className="flex justify-between bg-[#D9D9D9] text-black p-4 rounded-lg text-xs mt-6">
+                        <div className="flex">
+                          <p>Price: ${priceData?.totalPriceWithRoyalties}</p>
+                          <button
+                            type="button"
+                            onClick={() => setShowBreakdown(true)}
+                            className="cursor-pointer ml-2 w-4 h-4 bg-black text-white rounded-full text-[10px] flex items-center justify-center"
+                          >
+                            i
+                          </button>
+                        </div>
+                        <p>Commission: ${priceData?.commission}</p>
+                      </div>
                     </div>
-
-                    <div>
-                      <p className="text-sm mb-2">Total Carat Weight</p>
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={customData?.totalCaratWeight}
-                        onChange={(e) =>
-                          setCustomData((prev) => ({
-                            ...prev,
-                            totalCaratWeight: e.target.value,
-                          }))
-                        }
-                        className="bg-[#D9D9D9] text-black h-11 px-4 rounded-full w-full"
-                      />
-                    </div>
-                  </div>
-
-                  {/* PRICE / COMMISSION */}
-                  <div className="flex justify-between bg-[#D9D9D9] text-black p-4 rounded-lg text-xs mt-6">
-                    <div className="flex">
-                      <p>Price: ${priceData?.totalPriceWithRoyalties}</p>
-                      <button
-                        type="button"
-                        onClick={() => setShowBreakdown(true)}
-                        className="cursor-pointer ml-2 w-4 h-4 bg-black text-white rounded-full text-[10px] flex items-center justify-center"
-                      >
-                        i
-                      </button>
-                    </div>
-                    <p>Commission: ${priceData?.commission}</p>
                   </div>
                 </div>
 
-                <div className="flex flex-col justify-between">
-                  <div className="-mt-5 space-y-5">
-                    {/* TOP ROW: SAVE + COMMUNITY */}
+                {/* ================= RIGHT — PRODUCT DETAILS ================= */}
+                <div className="order-1 lg:order-2 space-y-8">
+                  {/* IMAGE */}
+                  <div className="relative bg-white rounded-3xl shadow-md overflow-hidden">
+                    {selectedProduct.images.length > 1 && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={prevSlide}
+                          className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/60 text-white px-3 py-2 rounded-full"
+                        >
+                          ◀
+                        </button>
+                        <button
+                          type="button"
+                          onClick={nextSlide}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/60 text-white px-3 py-2 rounded-full"
+                        >
+                          ▶
+                        </button>
+                      </>
+                    )}
+                    <img
+                      src={selectedProduct.images[currentIndex]}
+                      className="w-full h-[420px] object-cover"
+                    />
+                  </div>
+
+                  {/* NAME + DESCRIPTION */}
+                  <div>
                     <div className="flex items-center gap-3">
+                      {editingName ? (
+                        <input
+                          autoFocus
+                          value={editData.name}
+                          onChange={(e) =>
+                            setEditData((prev) => ({
+                              ...prev,
+                              name: e.target.value,
+                            }))
+                          }
+                          className="text-2xl font-semibold bg-transparent border-b border-gray-400 outline-none"
+                          onBlur={() => setEditingName(false)}
+                        />
+                      ) : (
+                        <h2 className="text-2xl font-semibold">
+                          {editData.name}
+                        </h2>
+                      )}
+
+                      <span
+                        className="text-gray-400 cursor-pointer"
+                        onClick={() => {
+                          setEditingName(true);
+                          setEditingDescription(false);
+                        }}
+                      >
+                        ✎
+                      </span>
+                    </div>
+
+                    <div className="mt-4">
+                      {editingDescription ? (
+                        <textarea
+                          autoFocus
+                          value={editData.description}
+                          onChange={(e) =>
+                            setEditData((prev) => ({
+                              ...prev,
+                              description: e.target.value,
+                            }))
+                          }
+                          className="w-full text-sm bg-transparent border border-gray-300 rounded-md p-2 resize-none"
+                          rows={4}
+                          onBlur={() => setEditingDescription(false)}
+                        />
+                      ) : (
+                        <p className="text-sm text-gray-600">
+                          {editData.description}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* ACTION BUTTONS */}
+                  <div className="space-y-4">
+                    <div className="flex gap-4">
                       <button
                         disabled={saving}
                         onClick={handleSaveEdit}
-                        className={`px-9 py-2 rounded-full text-xs tracking-widest text-white ${
-                          saving
-                            ? "bg-gray-400 cursor-not-allowed"
-                            : "bg-[#2E4B45] cursor-pointer"
+                        className={`px-10 py-3 rounded-full text-xs tracking-widest text-white ${
+                          saving ? "bg-gray-400" : "bg-[#2E4B45]"
                         }`}
                       >
-                        {saving ? "SAVING..." : "SAVE CHANGES"}
+                        SAVE CHANGES
                       </button>
 
                       <button
                         disabled={uploading}
                         onClick={handleCommunityStatus}
-                        className={`px-12 py-2 text-xs tracking-widest rounded-full text-white ${
+                        className={`px-10 py-3 rounded-full text-xs tracking-widest text-white ${
                           uploading
-                            ? "bg-gradient-to-r from-red-900/50 via-rose-900/50 to-red-950/50 cursor-not-allowed opacity-70"
+                            ? "bg-gray-400"
                             : selectedProduct.is_community_uploaded
-                              ? "bg-gradient-to-r from-red-800 via-rose-800 to-red-900"
-                              : "bg-gradient-to-r from-emerald-500 via-teal-500 to-green-500"
+                              ? "bg-red-700"
+                              : "bg-emerald-600"
                         }`}
                       >
                         {selectedProduct.is_community_uploaded
@@ -880,20 +871,15 @@ export default function MyActivity() {
                       </button>
                     </div>
 
-                    {/* BOTTOM ROW: BUY NOW */}
-                    <div className="flex justify-start">
-                      <button
-                        onClick={handleAddToWishlist}
-                        disabled={adding}
-                        className={`w-full px-16 py-4 rounded-full text-xs tracking-widest mb-14 text-white ${
-                          adding
-                            ? "bg-gray-400 cursor-not-allowed"
-                            : "bg-[#6B6B6B] cursor-pointer hover:bg-black transition"
-                        }`}
-                      >
-                        BUY NOW
-                      </button>
-                    </div>
+                    <button
+                      onClick={handleAddToWishlist}
+                      disabled={adding}
+                      className={`w-full py-4 rounded-full text-xs tracking-widest text-white ${
+                        adding ? "bg-gray-400" : "bg-[#6B6B6B] hover:bg-black"
+                      }`}
+                    >
+                      BUY NOW
+                    </button>
                   </div>
                 </div>
               </div>

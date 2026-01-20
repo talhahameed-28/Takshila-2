@@ -101,6 +101,11 @@ a, span, button, label { font-family: "Montserrat", sans-serif; }
     letter-spacing: 0.3px;
     color: #413e3e;
 }
+@media (max-width: 639px) {
+  .track-table tbody tr td {
+    padding: 4px ;
+  }
+}
 .fill-check {
     background-color: #323131;
     color: #fff;

@@ -598,16 +598,16 @@ function ReelItem({
         <h2 className="text-2xl font-light">{item.name}</h2>
         {item.description && (
           <>
-            <p ref={descRef} className="text-xs opacity-80 line-clamp-1">
+            <p ref={descRef} className={`text-xs opacity-80  ${expanded?"line-clamp-none":"line-clamp-1"}`}>
               {item.description}
             </p>
 
             {showReadMore && (
               <button
-                onClick={() => setExpanded(true)}
+                onClick={() => setExpanded(prev=>!prev)}
                 className="text-xs text-white/70 mt-1"
               >
-                Read more
+                Read {expanded?"less":"more"}
               </button>
             )}
           </>

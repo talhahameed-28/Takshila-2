@@ -83,7 +83,7 @@ function OrderSuccess(){
 
                     <section className="max-w-[1024px] mx-auto md:px-0 py-8 leading-relaxed text-[#1a1a1a]/90">
                              <div className="container">
-                                <div className="grid grid-cols-2 gap-7">
+                                <div className="flex flex-col sm:grid sm:grid-cols-2 sm:gap-7">
                                     <div>
                                         <h2 className="text-xl font-bold mb-4">Product Details</h2>
                                             <div className="flex items-start gap-4 mb-7 border border-zinc-300 p-4 rounded-xl">
@@ -112,16 +112,24 @@ function OrderSuccess(){
                                                         <tbody>
                                                             <tr>
                                                                 <td> Customer Name </td>
-                                                                <td className="text-end">  {`${order?.customer_info?.firstName ?? ""}`.concat(" ",order?.customer_info?.lastName ?? "")} </td>
+                                                                <td > 
+                                                                     <div className="w-47  whitespace-normal wrap-break-word text-wrap text-end">
+                                                                        {`${order?.customer_info?.firstName ?? ""}`.concat(" ",order?.customer_info?.lastName ?? "")}
+                                                                    </div> 
+                                                                </td>
                                                             </tr>
                                                             
                                                             <tr>
                                                                 <td> Email </td>
-                                                                <td className="text-end"> {order?.customer_info?.email} </td>
+                                                                <td > 
+                                                                    <div className="w-47  whitespace-normal wrap-break-word text-wrap text-end">{order?.customer_info?.email}</div>
+                                                                     </td>
                                                             </tr>
                                                             <tr>
                                                                 <td> Additional Details </td>
-                                                                <td className="text-end"> {order?.additional_details} </td>
+                                                                <td >
+                                                                     <div className="w-47  whitespace-normal wrap-break-word text-wrap text-end">{order?.additional_details}</div>
+                                                                     </td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -136,7 +144,7 @@ function OrderSuccess(){
 
                       <section className="max-w-[1024px] mx-auto  md:px-0 py-7 leading-relaxed text-[#1a1a1a]/90">
                              <div className="container">
-                                <div className="grid grid-cols-2 gap-7">
+                                <div className="flex flex-col sm:grid sm:grid-cols-2 sm:gap-7">
                                         <div>
                                             <h2 className="text-xl font-bold mb-4">Custom Specifications</h2>
                                             <table className="w-full table order-info border border-zinc-300 font-montserrat text-[15px]">
@@ -189,21 +197,34 @@ function OrderSuccess(){
                                                         <tbody>
                                                             <tr>
                                                                 <td> Address </td>
-                                                                    <td className="text-end">  {order?.shipping_address?.address}
-                                                                                                        <br/> {order?.shipping_address?.address2} </td>
+                                                                    <td className="text-end">  
+                                                                        <div className="w-55 sm:w-auto whitespace-normal wrap-break-word text-wrap text-end">
+                                                                            {order?.shipping_address?.address}
+                                                                                                            <br/> {order?.shipping_address?.address2}
+                                                                        </div>
+                                                                                                         </td>
                                                                 </tr>
                                                                  <tr>
                                                                     <td> City </td>
-                                                                    <td className="text-end"> {order?.shipping_address?.city}</td>
+                                                                    <td className="text-end"> 
+                                                                        <div className="w-55 sm:w-auto  whitespace-normal wrap-break-word text-wrap text-end">{order?.shipping_address?.city}</div>
+
+                                                                    </td>
                                                                 </tr>
                                                                  <tr>
                                                                     <td> State, ZIP </td>
-                                                                    <td className="text-end"> {order?.shipping_address?.state},
-                                                                    {order?.shipping_address?.zip} </td>
+                                                                    <td className="text-end"> 
+                                                                        <div className="w-55 sm:w-auto  whitespace-normal wrap-break-word text-wrap text-end">
+                                                                            {order?.shipping_address?.state},{order?.shipping_address?.zip}
+                                                                        </div>
+                                                                    </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td> Country </td>
-                                                                    <td className="text-end">{order?.shipping_address?.country}</td>
+                                                                    <td className="text-end">
+                                                                        <div className="w-55 sm:w-auto  whitespace-normal wrap-break-word text-wrap text-end" >{order?.shipping_address?.country}</div>
+
+                                                                    </td>
                                                                 </tr>
                                                         </tbody>
 

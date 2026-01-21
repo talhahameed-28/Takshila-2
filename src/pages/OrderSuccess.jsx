@@ -108,31 +108,37 @@ function OrderSuccess(){
 
                                     <div className="">
                                             <h2 className="text-xl font-bold mb-4">Customer Information</h2>
-                                                <table className="w-full table order-info border border-zinc-300 font-montserrat text-[15px]">
-                                                        <tbody>
-                                                            <tr>
-                                                                <td> Customer Name </td>
-                                                                <td > 
-                                                                     <div className="w-47  whitespace-normal wrap-break-word text-wrap text-end">
-                                                                        {`${order?.customer_info?.firstName ?? ""}`.concat(" ",order?.customer_info?.lastName ?? "")}
-                                                                    </div> 
-                                                                </td>
-                                                            </tr>
-                                                            
-                                                            <tr>
-                                                                <td> Email </td>
-                                                                <td > 
-                                                                    <div className="w-47  whitespace-normal wrap-break-word text-wrap text-end">{order?.customer_info?.email}</div>
-                                                                     </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td> Additional Details </td>
-                                                                <td >
-                                                                     <div className="w-47  whitespace-normal wrap-break-word text-wrap text-end">{order?.additional_details}</div>
-                                                                     </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
+                                                <div className="w-full overflow-x-auto">
+    <table className="w-full table order-info border border-zinc-300 font-montserrat text-[15px] table-fixed">
+        <tbody>
+            <tr className="block sm:table-row">
+                <td className="block sm:table-cell pb-1 sm:pb-0 sm:w-1/3 font-medium"> Customer Name </td>
+                <td className="block sm:table-cell text-start sm:text-end pb-3 sm:pb-0 sm:w-2/3"> 
+                    <div className="break-all text-start sm:text-end">
+                        {`${order?.customer_info?.firstName ?? ""}`.concat(" ",order?.customer_info?.lastName ?? "")}
+                    </div> 
+                </td>
+            </tr>
+            
+            <tr className="block sm:table-row">
+                <td className="block sm:table-cell pb-1 sm:pb-0 sm:w-1/3 font-medium"> Email </td>
+                <td className="block sm:table-cell text-start sm:text-end pb-3 sm:pb-0 sm:w-2/3"> 
+                    <div className="break-all text-start sm:text-end">
+                        {order?.customer_info?.email}
+                    </div>
+                </td>
+            </tr>
+            <tr className="block sm:table-row">
+                <td className="block sm:table-cell pb-1 sm:pb-0 sm:w-1/3 font-medium"> Additional Details </td>
+                <td className="block sm:table-cell text-start sm:text-end pb-3 sm:pb-0 sm:w-2/3">
+                    <div className="break-all text-start sm:text-end">
+                        {order?.additional_details}
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
                                               </div>
                                         </div>
 
@@ -193,42 +199,45 @@ function OrderSuccess(){
 
                                              <div>
                                                     <h2 className="text-xl font-bold mb-4">Shipping Information</h2>
-                                                    <table className="w-full table order-info border border-zinc-300 font-montserrat text-[15px]">
-                                                        <tbody>
-                                                            <tr>
-                                                                <td> Address </td>
-                                                                    <td className="text-end">  
-                                                                        <div className="w-55 sm:w-auto whitespace-normal wrap-break-word text-wrap text-end">
-                                                                            {order?.shipping_address?.address}
-                                                                                                            <br/> {order?.shipping_address?.address2}
-                                                                        </div>
-                                                                                                         </td>
-                                                                </tr>
-                                                                 <tr>
-                                                                    <td> City </td>
-                                                                    <td className="text-end"> 
-                                                                        <div className="w-55 sm:w-auto  whitespace-normal wrap-break-word text-wrap text-end">{order?.shipping_address?.city}</div>
-
-                                                                    </td>
-                                                                </tr>
-                                                                 <tr>
-                                                                    <td> State, ZIP </td>
-                                                                    <td className="text-end"> 
-                                                                        <div className="w-55 sm:w-auto  whitespace-normal wrap-break-word text-wrap text-end">
-                                                                            {order?.shipping_address?.state},{order?.shipping_address?.zip}
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td> Country </td>
-                                                                    <td className="text-end">
-                                                                        <div className="w-55 sm:w-auto  whitespace-normal wrap-break-word text-wrap text-end" >{order?.shipping_address?.country}</div>
-
-                                                                    </td>
-                                                                </tr>
-                                                        </tbody>
-
-                                                    </table>
+                                                    <div className="w-full overflow-x-auto">
+    <table className="w-full table order-info border border-zinc-300 font-montserrat text-[15px] table-fixed">
+        <tbody>
+            <tr className="block sm:table-row">
+                <td className="block sm:table-cell pb-1 sm:pb-0 sm:w-1/3 font-medium"> Address </td>
+                <td className="block sm:table-cell text-start sm:text-end pb-3 sm:pb-0 sm:w-2/3">  
+                    <div className="break-all text-start sm:text-end">
+                        {order?.shipping_address?.address}
+                        <br/> {order?.shipping_address?.address2}
+                    </div>
+                </td>
+            </tr>
+            <tr className="block sm:table-row">
+                <td className="block sm:table-cell pb-1 sm:pb-0 sm:w-1/3 font-medium"> City </td>
+                <td className="block sm:table-cell text-start sm:text-end pb-3 sm:pb-0 sm:w-2/3"> 
+                    <div className="break-all text-start sm:text-end">
+                        {order?.shipping_address?.city}
+                    </div>
+                </td>
+            </tr>
+            <tr className="block sm:table-row">
+                <td className="block sm:table-cell pb-1 sm:pb-0 sm:w-1/3 font-medium"> State, ZIP </td>
+                <td className="block sm:table-cell text-start sm:text-end pb-3 sm:pb-0 sm:w-2/3"> 
+                    <div className="break-all text-start sm:text-end">
+                        {order?.shipping_address?.state},{order?.shipping_address?.zip}
+                    </div>
+                </td>
+            </tr>
+            <tr className="block sm:table-row">
+                <td className="block sm:table-cell pb-1 sm:pb-0 sm:w-1/3 font-medium"> Country </td>
+                <td className="block sm:table-cell text-start sm:text-end pb-3 sm:pb-0 sm:w-2/3">
+                    <div className="break-all text-start sm:text-end">
+                        {order?.shipping_address?.country}
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
                                                     
                                             </div>
                                     </div>

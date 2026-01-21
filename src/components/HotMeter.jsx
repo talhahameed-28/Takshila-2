@@ -124,9 +124,9 @@ export default function HotMeter({
         </div>
 
         {/* LABEL + AVERAGE */}
-        <div className="flex items-center gap-2 min-w-[90px] justify-end">
-          <span className="text-sm text-white/80">{getLabel(value)}</span>
-          <span className="text-sm font-semibold">{Number((average*10)).toFixed(1)}</span>
+        <div className="flex items-center gap-2 w-[140px] justify-end shrink-0">
+          <span className="text-sm text-white/80 whitespace-nowrap">{getLabel(value)}</span>
+          <span className="text-sm font-semibold whitespace-nowrap">{Number((average*10)).toFixed(1)}</span>
         </div>
       </div>
 
@@ -149,6 +149,7 @@ export default function HotMeter({
           background: transparent;
           cursor: pointer;
           border: none;
+          opacity: 0;
         }
         
         input[type=range]::-moz-range-thumb {
@@ -158,6 +159,7 @@ export default function HotMeter({
           background: transparent;
           border: none;
           cursor: pointer;
+          opacity: 0;
         }
         
         input[type=range]::-webkit-slider-runnable-track {

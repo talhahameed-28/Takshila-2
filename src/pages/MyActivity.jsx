@@ -613,11 +613,7 @@ export default function MyActivity() {
                                   value={t}
                                   name="stoneType"
                                   checked={
-                                    (t == "monzonite" &&
-                                      customData?.stoneType == "monzonite") ||
-                                    (t == "diamond" &&
-                                      (customData?.stoneType == undefined ||
-                                        customData?.stoneType == "diamond"))
+                                    (t == customData?.stoneType)
                                   }
                                   onChange={() =>
                                     setCustomData((prev) => ({

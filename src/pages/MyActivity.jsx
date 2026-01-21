@@ -603,7 +603,7 @@ export default function MyActivity() {
                           <p className="text-sm mb-2">Type</p>
 
                           <div className="flex items-center gap-10">
-                            {["diamond", "monsinite"].map((t) => (
+                            {["diamond", "monzonite"].map((t) => (
                               <label
                                 key={t}
                                 className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"
@@ -613,8 +613,8 @@ export default function MyActivity() {
                                   value={t}
                                   name="stoneType"
                                   checked={
-                                    (t == "monsinite" &&
-                                      customData?.stoneType == "monsinite") ||
+                                    (t == "monzonite" &&
+                                      customData?.stoneType == "monzonite") ||
                                     (t == "diamond" &&
                                       (customData?.stoneType == undefined ||
                                         customData?.stoneType == "diamond"))
@@ -651,7 +651,7 @@ export default function MyActivity() {
                         </div>
 
                         {/* QUALITY */}
-                        {customData?.stoneType != "monsinite" && (
+                        {customData?.stoneType != "monzonite" && (
                           <div>
                             <p className="text-sm mb-1">Quality</p>
                             <input

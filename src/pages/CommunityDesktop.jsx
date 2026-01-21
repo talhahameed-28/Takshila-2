@@ -738,7 +738,7 @@ console.log(customData)
                       <p className="text-sm mb-2">Type</p>
 
                       <div className="flex items-center gap-10">
-                        {["diamond", "monsinite"].map((t) => (
+                        {["diamond", "monzonite"].map((t) => (
                           <label
                             key={t}
                             className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"
@@ -777,7 +777,7 @@ console.log(customData)
                     </div>
 
                     {/* QUALITY */}
-                    {customData?.stoneType!="monsinite" && <div>
+                    {customData?.stoneType!="monzonite" && <div>
                       <p className="text-sm mb-1">Quality</p>
                       <input
                         type="range"

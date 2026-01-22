@@ -612,7 +612,7 @@ export default function MyActivity() {
                           <p className="text-sm mb-2">Type</p>
 
                           <div className="flex items-center gap-10">
-                            {["diamond", "monsinite"].map((t) => (
+                            {["diamond", "monzonite"].map((t) => (
                               <label
                                 key={t}
                                 className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"
@@ -743,6 +743,14 @@ export default function MyActivity() {
                         <p>Commission: ${priceData?.commission}</p>
                       </div>
                     </div>
+                    <div className="pt-2">
+                      <button
+                              disabled={adding}
+                              onClick={handleAddToWishlist}
+                              className={ `block md:hidden ${adding ? "bg-green-gradiant cursor-not-allowed" : "bg-green-gradiant cursor-pointer"} ml-auto md:px-8 px-4 py-4 w-full  text-white rounded-full text-xs tracking-widest`}
+                          > BUY NOW
+                          </button>
+                    </div>
                   </div>
                 </div>
 
@@ -867,8 +875,8 @@ export default function MyActivity() {
                       <button
                             disabled={adding}
                             onClick={handleAddToWishlist}
-                            className={`${adding ? "bg-green-gradiant cursor-not-allowed" : "bg-green-gradiant cursor-pointer"} ml-auto md:px-8 px-4 py-4 w-full  text-white rounded-full text-xs tracking-widest`}
-                        > BUY NOW  </button>
+                            className={ `hidden md:block ${adding ? "bg-green-gradiant cursor-not-allowed" : "bg-green-gradiant cursor-pointer"} ml-auto md:px-8 px-4 py-4 w-full  text-white rounded-full text-xs tracking-widest`}
+                        > BUY NOW </button>
                     </div>
                   </div>
                 </div>

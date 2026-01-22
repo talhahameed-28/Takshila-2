@@ -1,28 +1,38 @@
 import { Route, Routes, Navigate } from "react-router-dom";
-import Home from "../pages/Home";
+import { lazy, Suspense } from "react";
 import { ROUTES } from "./routes";
-import Community from "../pages/Community";
-import CommunityProduct from "../pages/CommunityProduct";
-import OurStory from "../pages/OurStory";
-import Blogs from "../pages/Blogs";
-import EmailVerify from "../pages/EmailVerify";
-import Orders from "../pages/Orders";
-import Catalogue from "../pages/Catalogue";
-import MyActivity from "../pages/MyActivity";
-import Wishlist from "../pages/Wishlist";
-import VerifyOtp from '../pages/ResetPassword';
-import DesignStudio from "../pages/DesignStudio";
-import ProtectedRoute from "./protectedRoute";
-import PrivacyPolicy from "../pages/Privacypolicy"
-import Refundpolicy from "../pages/Refundpolicy"
-import Shippingpolicy from "../pages/Shippingpolicy"
-import TermConditions from "../pages/TermsConditions"
-import Faqs from "../pages/Faqs";
-import Checkout from "../pages/Checkout";
-import OrderSuccess from "../pages/OrderSuccess";
-import OrderCancel from "../pages/OrderCancel";
-
 import ScrollToTop from "../utils/ScrollToTop";
+
+// Eager load critical routes
+import Community from "../pages/Community";
+import ProtectedRoute from "./protectedRoute";
+
+// Lazy load non-critical pages
+const CommunityProduct = lazy(() => import("../pages/CommunityProduct"));
+const OurStory = lazy(() => import("../pages/OurStory"));
+const Blogs = lazy(() => import("../pages/Blogs"));
+const EmailVerify = lazy(() => import("../pages/EmailVerify"));
+const Orders = lazy(() => import("../pages/Orders"));
+const Catalogue = lazy(() => import("../pages/Catalogue"));
+const MyActivity = lazy(() => import("../pages/MyActivity"));
+const Wishlist = lazy(() => import("../pages/Wishlist"));
+const VerifyOtp = lazy(() => import("../pages/ResetPassword"));
+const DesignStudio = lazy(() => import("../pages/DesignStudio"));
+const PrivacyPolicy = lazy(() => import("../pages/Privacypolicy"));
+const Refundpolicy = lazy(() => import("../pages/Refundpolicy"));
+const Shippingpolicy = lazy(() => import("../pages/Shippingpolicy"));
+const TermConditions = lazy(() => import("../pages/TermsConditions"));
+const Faqs = lazy(() => import("../pages/Faqs"));
+const Checkout = lazy(() => import("../pages/Checkout"));
+const OrderSuccess = lazy(() => import("../pages/OrderSuccess"));
+const OrderCancel = lazy(() => import("../pages/OrderCancel"));
+
+// Loading fallback component
+const PageLoader = () => (
+  <div className="bg-black h-screen flex items-center justify-center text-white text-sm opacity-60">
+    Loading...
+  </div>
+);
 const MainRoutes = ({
   setIsMobileMenuOpen,
   setModalOpen,
@@ -40,44 +50,46 @@ const MainRoutes = ({
     <>
       <ScrollToTop />
 
-      <Routes>
-        <Route
-          path={ROUTES.HOME}
-          element={<Navigate to={ROUTES.COMMUNITY} replace />}
-        />
-        <Route
-          path={ROUTES.COMMUNITY}
-          element={
-            <Community
-              handleOpenModal={handleOpenModal}
-              setHideMobileNavbar={setHideMobileNavbar}
-            />
-          }
-        />
-        <Route
-          path={ROUTES.COMMUNITYPRODUCT}
-          element={<CommunityProduct handleOpenModal={handleOpenModal} />}
-        />
-        <Route path={ROUTES.CATALOGUE} element={<Catalogue />} />
-        <Route path={ROUTES.ABOUT} element={<OurStory />} />
-        <Route path={ROUTES.BLOG} element={<Blogs />} />
-        <Route path={ROUTES.FAQS} element={<Faqs />} />
-        <Route path={ROUTES.EMAILVERIFY} element={<EmailVerify />} />
-        <Route path={ROUTES.RESETPASSWORD} element={<VerifyOtp />} />
-        <Route path={ROUTES.PRIVACYPOLICY} element={<PrivacyPolicy />} />
-        <Route path={ROUTES.TERMSCONDITIONS} element={<TermConditions />} />
-        <Route path={ROUTES.REFUNDPOLICY} element={<Refundpolicy />} />
-        <Route path={ROUTES.SHIPPINGPOLICY} element={<Shippingpolicy />} />
-        <Route element={<ProtectedRoute handleOpenModal={handleOpenModal} />}>
-          <Route path={ROUTES.ACTIVITY} element={<MyActivity />} />
-          <Route path={ROUTES.DESIGNSTUDIO} element={<DesignStudio />} />
-          <Route path={ROUTES.WISHLIST} element={<Wishlist />} />
-          <Route path={ROUTES.ORDER} element={<Orders />} />
-          <Route path={ROUTES.CHECKOUT} element={<Checkout />} />
-          <Route path={ROUTES.ORDERSUCCESS} element={<OrderSuccess />} />
-          <Route path={ROUTES.ORDERCANCEL} element={<OrderCancel />} />
-        </Route>
-      </Routes>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route
+            path={ROUTES.HOME}
+            element={<Navigate to={ROUTES.COMMUNITY} replace />}
+          />
+          <Route
+            path={ROUTES.COMMUNITY}
+            element={
+              <Community
+                handleOpenModal={handleOpenModal}
+                setHideMobileNavbar={setHideMobileNavbar}
+              />
+            }
+          />
+          <Route
+            path={ROUTES.COMMUNITYPRODUCT}
+            element={<CommunityProduct handleOpenModal={handleOpenModal} />}
+          />
+          <Route path={ROUTES.CATALOGUE} element={<Catalogue />} />
+          <Route path={ROUTES.ABOUT} element={<OurStory />} />
+          <Route path={ROUTES.BLOG} element={<Blogs />} />
+          <Route path={ROUTES.FAQS} element={<Faqs />} />
+          <Route path={ROUTES.EMAILVERIFY} element={<EmailVerify />} />
+          <Route path={ROUTES.RESETPASSWORD} element={<VerifyOtp />} />
+          <Route path={ROUTES.PRIVACYPOLICY} element={<PrivacyPolicy />} />
+          <Route path={ROUTES.TERMSCONDITIONS} element={<TermConditions />} />
+          <Route path={ROUTES.REFUNDPOLICY} element={<Refundpolicy />} />
+          <Route path={ROUTES.SHIPPINGPOLICY} element={<Shippingpolicy />} />
+          <Route element={<ProtectedRoute handleOpenModal={handleOpenModal} />}>
+            <Route path={ROUTES.ACTIVITY} element={<MyActivity />} />
+            <Route path={ROUTES.DESIGNSTUDIO} element={<DesignStudio />} />
+            <Route path={ROUTES.WISHLIST} element={<Wishlist />} />
+            <Route path={ROUTES.ORDER} element={<Orders />} />
+            <Route path={ROUTES.CHECKOUT} element={<Checkout />} />
+            <Route path={ROUTES.ORDERSUCCESS} element={<OrderSuccess />} />
+            <Route path={ROUTES.ORDERCANCEL} element={<OrderCancel />} />
+          </Route>
+        </Routes>
+      </Suspense>
     </>
   );
 };

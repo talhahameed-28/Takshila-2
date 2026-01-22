@@ -667,7 +667,7 @@ export default function DesignStudio() {
   // -----------------------------------
   return (
     <>
-      <Helmet>
+      {/* <Helmet>
         <title> AI Designer | Custom Diamond & Gold Jewelry | Takshila </title>
         <meta
           name="description"
@@ -675,7 +675,7 @@ export default function DesignStudio() {
         />
         <meta name="keywords" content="AI jewelry designer, AI jewelry generator, text-to-jewelry design, Custom ring Design AI, Custom Pendant design AI, AI jewelry design tool, Generative AI jewelry" />
         <link rel="canonical" href="https://takshila.co/design-studio" />
-      </Helmet>
+      </Helmet> */}
       <div className="w-full min-h-screen bg-[#E5E1DA] pt-24 pb-20 flex flex-col items-center">
         {/* TITLE */}
         <section className="text-center mt-20 mb-2 ">

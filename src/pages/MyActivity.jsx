@@ -338,12 +338,12 @@ export default function MyActivity() {
 
   return (
     <>
-         <Helmet>
+         {/* <Helmet>
               <title> My Activity | Your Designs, Orders & Earnings | Takshila </title>
               <meta name="description" content="Track your designs (rings, pendants, necklaces, and more), orders, and earnings on your Takshila dashboard – view saved pieces, monitor orders, and manage your jewelry brand all in one place." />
               <meta name="keywords" content="My Jewelry Designs, Order tracking, Commission Earnings, Jewelry Design portfolio, Account Management, Generative AI jewelry" />  
               <link rel="canonical" href="https://takshila.co/my-activity" />
-          </Helmet>
+          </Helmet> */}
    
     <div className="bg-[#e5e2df] min-h-screen flex flex-col text-[#1a1a1a]">
       <main className="flex-grow pt-40 px-6 md:px-12 lg:px-20 pb-24 transition-all duration-500">

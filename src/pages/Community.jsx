@@ -68,13 +68,13 @@ export default function Community({ setHideMobileNavbar, ...props }) {
   return (
     <>
 
-       <Helmet>
+       {/* <Helmet>
               <title> Community Jewelry Marketplace | Share Designs & Earn | Takshila </title>
               <meta name="description" content="Launch your jewelry brand with no upfront cost. Design pieces like rings, pendants, earrings, bracelets, or even cufflinks to sell and earn commissions on every sale, while our artisans handle production and delivery with transparent price breakdowns."
               />
               <meta name="keywords" content="Jewelry Community marketplace, Sell Jewelry Designs online, Launch Jewelry Brand, Earn Commission on Jewelry, User-designed jewelry, Social Commerce Jewelry, Sell Ring Designs Online, sell necklace designs online" />
               <link rel="canonical" href="https://takshila.co/community" />
-            </Helmet>
+            </Helmet> */}
             
       {/* MOBILE */}
       <div className="block lg:hidden">

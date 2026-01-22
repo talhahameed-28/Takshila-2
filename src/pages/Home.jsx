@@ -14,12 +14,12 @@ export default function Home() {
 
   return (
     <>
-    <Helmet>
+    {/* <Helmet>
         <title> Takshila | AI-Powered Custom Diamond & Gold Jewelry Marketplace </title>
       <meta name="description" content="AI-powered custom jewelry platform – create unique pieces, from rings, necklaces, pendants, and bracelets to diamond jewelry. Experience a behind-the-scenes crafting journey, transparent pricing, and launch your own jewelry line." />
-      {/* <meta name="keywords" content="AI jewelry design, custom jewelry, personalized jewelry, Rings, Diamond jewelry, Luxury jewelry, Bespoke jewelry online" /> */}
+      <meta name="keywords" content="AI jewelry design, custom jewelry, personalized jewelry, Rings, Diamond jewelry, Luxury jewelry, Bespoke jewelry online" />
       <link rel="canonical" href="https://takshila.cloud/" />
-      </Helmet>
+      </Helmet> */}
       <div>
         {showLoader && <VideoLoader onFinish={() => setShowLoader(false)} />}
 

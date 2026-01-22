@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-
+import PricingBreakdownModal from '../components/PriceBreakdown';
 
 const DIAMOND_SHAPES = [
   { name: "Round", icon: "/assets/shapes/round.png" },
@@ -74,7 +74,8 @@ const CommunityProduct = ({handleOpenModal}) => {
     const [rating, setRating] = useState(0);
     const [adding, setAdding] = useState(false)
     const [comment, setComment] = useState("");
-    
+    const [priceData, setPriceData] = useState({})
+    const [showBreakdown, setShowBreakdown] = useState(false)
     
       // SHARE URL
     const shareUrl = `${window.location.origin}/product/${productId}`;
@@ -90,8 +91,8 @@ const CommunityProduct = ({handleOpenModal}) => {
           quality: selectedProductDetails.meta_data.quality,
           centerStoneCarat: selectedProductDetails.meta_data.centerStoneCarat,
           totalCaratWeight: selectedProductDetails.meta_data.totalCaratWeight,
-          price:selectedProductDetails.price,
-          commission:selectedProductDetails.meta_data.commission
+          metalType:selectedProductDetails.meta_data.metalType,
+          stoneType:selectedProductDetails.meta_data.stoneType,
         });
       }
     }, [selectedProductDetails]);
@@ -142,7 +143,7 @@ const CommunityProduct = ({handleOpenModal}) => {
                   );
         
                   if (data.success) {
-                     setCustomData(prev=>({...prev,commission:data.data.commission,price:data.data.totalPriceWithRoyalties}));            
+                     setPriceData(data.data);            
                   }else{toast.error("Couldn't process your request")}
                 } catch (error) {
                   console.log(error);
@@ -261,7 +262,7 @@ const CommunityProduct = ({handleOpenModal}) => {
      <>
           <div className="inset-0 flex items-end md:items-center justify-center z-[50] pt-[72px] md:pt-0">
             {/* BACKDROP */}
-           
+          {showBreakdown && <PricingBreakdownModal setShowBreakdown={setShowBreakdown} breakdown={priceData}/>}
 
             {/* MODAL PANEL */}
             <div
@@ -284,12 +285,41 @@ const CommunityProduct = ({handleOpenModal}) => {
                   <h2 className="text-center text-xl tracking-[0.2em] font-semibold mb-6">
                     Customizing Tools
                   </h2>
+                  <h3 className="font-semibold tracking-wide mb-3">Metal type</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
+                    <div>
+                      <p className="text-sm mb-2">Type</p>
 
+                      <div className="flex items-center gap-10">
+                        {["gold", "silver"].map((t) => (
+                          <label
+                            key={t}
+                            className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"
+                          >
+                            <input
+                              type="radio"
+                              value={t}
+                              name="metalType"
+                              checked={(t==customData?.metalType)}
+                              onChange={() => setCustomData((prev)=>({...prev,metalType:t}))}
+                              className="w-5 h-5 accent-black"
+                            />
+                            <span className="mt-1 capitalize">{t}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                    
+                    </div>
+                  </div>
+                  {customData.metalType!="silver" &&<>
                   <h3 className="font-semibold tracking-wide mb-3">
                     Gold Options
                   </h3>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* GOLD TYPE */}
                     <div>
                       <p className="text-sm mb-2">Type</p>
@@ -329,7 +359,7 @@ const CommunityProduct = ({handleOpenModal}) => {
                               }))
                             }
                             className={`px-3 py-1 rounded-full ${
-                              customData?.goldKarat === k
+                              (customData?.goldKarat == k)
                                 ? "bg-white text-black"
                                 : "bg-white/20"
                             }`}
@@ -340,9 +370,12 @@ const CommunityProduct = ({handleOpenModal}) => {
                       </div>
                     </div>
                   </div>
+                  </>}
 
                   {/* RING SIZE */}
-                  <p className="text-sm mt-4 mb-2">Ring Size</p>
+                  <h3 className="font-semibold tracking-wide mt-4 mb-3">
+                    Ring Size
+                  </h3>
                   <select
                     value={customData?.ringSize}
                     onChange={(e) =>
@@ -363,9 +396,36 @@ const CommunityProduct = ({handleOpenModal}) => {
                   </select>
 
                   <h3 className="font-semibold tracking-wide mt-6 mb-3">
-                    Diamond Options
+                    Stone Options
                   </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
+                    <div>
+                      <p className="text-sm mb-2">Type</p>
 
+                      <div className="flex items-center gap-10">
+                        {["diamond", "monzonite"].map((t) => (
+                          <label
+                            key={t}
+                            className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"
+                          >
+                            <input
+                              type="radio"
+                              value={t}
+                              name="stoneType"
+                              checked={(t== customData?.stoneType) }
+                              onChange={() => setCustomData((prev)=>({...prev,stoneType:t}))}
+                              className="w-5 h-5 accent-black"
+                            />
+                            <span className="mt-1 capitalize">{t}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                    
+                    </div>
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* SHAPE */}
                     <div>
@@ -382,7 +442,7 @@ const CommunityProduct = ({handleOpenModal}) => {
                     </div>
 
                     {/* QUALITY */}
-                    <div>
+                    {customData?.stoneType!="monzonite" && <div>
                       <p className="text-sm mb-1">Quality</p>
                       <input
                         type="range"
@@ -414,7 +474,7 @@ const CommunityProduct = ({handleOpenModal}) => {
                         <span>Premium</span>
                         <span>Excellent</span>
                       </div>
-                    </div>
+                    </div>}
                   </div>
 
                   {/* CARAT OPTIONS */}
@@ -454,8 +514,18 @@ const CommunityProduct = ({handleOpenModal}) => {
 
                   {/* PRICE / COMMISSION */}
                   <div className="flex justify-between bg-[#D9D9D9] text-black p-4 rounded-lg text-xs mt-6">
-                    <p>Price: ${customData?.price}</p>
-                    <p>Commission: ${customData?.commission}</p>
+                    <div className="flex">
+
+                    <p>Price: ${priceData?.totalPriceWithRoyalties}</p>
+                    <button
+                      type="button"
+                      onClick={() => setShowBreakdown(true)}
+                      className="ml-2 cursor-pointer w-4 h-4 bg-black text-white rounded-full text-[10px] flex items-center justify-center"
+                    >
+                      i
+                    </button>
+                    </div>
+                    <p>Commission: ${priceData?.commission}</p>
                   </div>
                 </div>
 

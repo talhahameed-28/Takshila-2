@@ -93,9 +93,9 @@ export default function Orders() {
        {tab ==="orders" && (<div className="w-full max-w-4xl space-y-6">
            
             {orders.map(order=>(
-              <div key={order.id}>
+              <div className={` transition-all ${selectedOrder!=null?"":"hover:bg-[#7e7e7e]"} duration-200 hover:scale-102 bg-[#d8d8d8] rounded-2xl shadow-sm `} key={order.id}>
               <div
-                className="w-full cursor-pointer hover:scale-102 transition-all duration-200 hover:bg-[#7e7e7e] bg-[#d8d8d8] rounded-2xl px-1 py-2 md:p-5 flex items-center justify-between shadow-sm"
+                className={`w-full cursor-pointer transition-all ${selectedOrder!=null?"hover:bg-[#7e7e7e]":""}  duration-200 rounded-2xl  px-1 py-2 md:p-5 flex items-center justify-between `}
                 onClick={() => {
                   selectedOrder?.id == order.id
                     ? setSelectedOrder(null)
@@ -128,15 +128,26 @@ export default function Orders() {
                 </div>
 
                 {/* Right Side */}
-                <div className="text-xs md:text-base flex flex-col text-right shrink-0"> {/* ✅ */}
-                  <span className="font-semibold text-left">
+                <div className="text-xs md:text-base flex flex-col flex-wrap text-right shrink-0"> {/* ✅ */}
+                  <span className="font-semibold ">
                     ${order.amount}
                   </span>
-                  <span className="mt-1 text-left sm:text-end text-gray-600 capitalize">
+                  <span className="mt-1  sm:text-end text-gray-600 capitalize">
                     {order.payment_status}
                   </span>
                 </div>
               </div>
+                  {(order.payment_status=="cancelled" || order.payment_status=="pending") && (
+                    <div className="flex justify-center pb-1  ">
+                      <button onClick={()=>{
+                        window.location.href=order.complete_payment_url
+                      }}
+                       type="button"
+                        className="bg-green-gradiant cursor-pointer w-full md:w-1/2 hover:bg-white/10 text-white px-1 py-2 rounded-full backdrop-blur-md transition text-xs sm:text-base">
+                          Complete Payment
+                        </button>
+                    </div>
+                )}
              {/* {(selectedOrder && selectedOrder.id==order.id) && */}
             {(selectedOrder && selectedOrder.id==order.id) && (
               <div className="pb-3 border-bottom mb-4 border-dark">

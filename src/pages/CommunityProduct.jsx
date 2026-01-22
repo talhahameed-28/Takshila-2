@@ -161,70 +161,55 @@ const CommunityProduct = ({handleOpenModal}) => {
           return () => clearTimeout(timer);
         }, [customData]);
     
-         const handleLike = async() => {
-                try {
-                 
-                    axios.defaults.withCredentials=true
-                    const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/${productId}/like`,
-                     {},
-                    {
-                      headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                      },
-                      withCredentials: true,
-                    }
-                  );
-                  console.log(data);
-                  if (data.success) {
-                    toast.success(data.message);
-                    setSelectedProductDetails({
-                      ...selectedProductDetails,
-                      user_liked: data.liked,
-                      likes_count:data.likes_count
-                    });
-                  } else toast.error("Couldn't process request");
-                } catch (error) {
-                  console.log(error)
-                  toast.error("Some error occurred")
-                }
+         const handleEngagement = async (type) => {
+    try {
+      axios.defaults.withCredentials = true;
+        const { data } = await axios.post(
+          `${
+            import.meta.env.VITE_BASE_URL
+          }/api/product/${selectedProductId}/engage`,
+          {type,
+            ...(type=="comment"?{comment}:{})
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            withCredentials: true,
+          }
+        );
+        console.log(data);
+        if (data.success) {
+          toast.success(data.message);
+          if(type=="like"){
+            setSelectedProductDetails({
+              ...selectedProductDetails,
+              is_liked: data.data.liked,
+              likes_count: data.data.likes_count,
+            });}
+            else if(type=="comment") {
+              setCommentsList((prev) => [
+                {
+                  id: Date.now(),
+                  comment: comment,
+                  
+                  user: { name: data?.data?.comment?.user?.name },
+                  created_at: new Date(),
+                },
+                ...prev,
+              ]);
+              setComment("")
+
+            }
+        } else toast.error("Couldn't process request");
+    
+    } catch (error) {
+      console.log(error);
+      toast.error("Some error occurred");
+    }
+  };
             
-              };
-            
-        const handleComment=async()=>{
-                  try {
-                    axios.defaults.withCredentials=true
-                    const {data}=await axios.post(`${import.meta.env.VITE_BASE_URL}/api/product/${productId}/review`,
-                      {review:comment,
-                        rating:rating
-                      },
-                    {
-                    headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`
-                },withCredentials: true
-              })
-              console.log(data)
-              if (data.success) {
-                toast.success("Review added successfully");
-            
-                setCommentsList((prev) => [
-                  {
-                    id: Date.now(),
-                    review: comment,
-                    rating,
-                    user: { name: data?.data?.comment?.user?.name },
-                    created_at: new Date(),
-                  },
-                  ...prev,
-                ]);
-            
-                setComment("");
-                setRating(0);
-              } else toast.error("Couldn't process request");
-                  } catch (error) {
-                    console.log(error)
-                    toast.error("Some error occurred")
-                  }
-                }
+        
             
             
                 const handleAddToWishlist=async()=>{
@@ -547,7 +532,7 @@ const CommunityProduct = ({handleOpenModal}) => {
                   {/* LIKE BUTTON — BOTTOM RIGHT */}
                   {isLoggedIn && (
                     <button
-                      onClick={handleLike}
+                      onClick={()=>handleEngagement("like")}
                       className="
                       absolute bottom-4 right-4
                       flex items-center gap-2
@@ -641,7 +626,7 @@ const CommunityProduct = ({handleOpenModal}) => {
                         />
 
                         <button
-                          onClick={handleComment}
+                          onClick={()=>handleComment("comment")}
                           disabled={!rating || !comment.trim()}
                           className={`absolute bottom-2 left-1/2 -translate-x-1/2 px-6 py-1.5 rounded-full text-xs ${
                             !rating || !comment.trim()

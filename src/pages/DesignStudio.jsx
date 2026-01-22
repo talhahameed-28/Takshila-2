@@ -1170,7 +1170,7 @@ const LeftPanelTop = forwardRef(
             <p className="text-sm mb-2">Type</p>
 
             <div className="flex items-center gap-10">
-              {["diamond", "monsinite"].map((t) => (
+              {["diamond", "monzonite"].map((t) => (
                 <label
                   key={t}
                   className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"

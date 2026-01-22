@@ -684,8 +684,8 @@ const CommunityProduct = ({handleOpenModal}) => {
                       className={`${
                         adding
                           ? "bg-gray-600 cursor-not-allowed"
-                          : "cursor-pointer bg-[#6B6B6B]"
-                      } ml-auto px-12 py-3  text-white rounded-full text-xs tracking-widest`}
+                          : "cursor-pointer bg-green-gradiant"
+                      } ml-auto px-12 py-4  text-white rounded-full leading-[1.5] text-xs tracking-widest`}
                     >
                       {adding ? "Processing..." : "BUY NOW"}
                     </button>

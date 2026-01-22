@@ -5,6 +5,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import PricingBreakdownModal from "../components/PriceBreakdown";
+import { Helmet } from "react-helmet-async";
 
 // ================= DIAMOND SHAPE OPTIONS =================
 const DIAMOND_SHAPES = [
@@ -336,6 +337,14 @@ export default function MyActivity() {
   };
 
   return (
+    <>
+         <Helmet>
+              <title> My Activity | Your Designs, Orders & Earnings | Takshila </title>
+              <meta name="description" content="Track your designs (rings, pendants, necklaces, and more), orders, and earnings on your Takshila dashboard – view saved pieces, monitor orders, and manage your jewelry brand all in one place." />
+              <meta name="keywords" content="My Jewelry Designs, Order tracking, Commission Earnings, Jewelry Design portfolio, Account Management, Generative AI jewelry" />  
+              <link rel="canonical" href="https://takshila.co/my-activity" />
+          </Helmet>
+   
     <div className="bg-[#e5e2df] min-h-screen flex flex-col text-[#1a1a1a]">
       <main className="flex-grow pt-40 px-6 md:px-12 lg:px-20 pb-24 transition-all duration-500">
         {/* Header */}
@@ -603,7 +612,7 @@ export default function MyActivity() {
                           <p className="text-sm mb-2">Type</p>
 
                           <div className="flex items-center gap-10">
-                            {["diamond", "monzonite"].map((t) => (
+                            {["diamond", "monsinite"].map((t) => (
                               <label
                                 key={t}
                                 className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"
@@ -613,7 +622,7 @@ export default function MyActivity() {
                                   value={t}
                                   name="stoneType"
                                   checked={
-                                    (t == customData?.stoneType)
+                                    (t ==  customData?.stoneType )
                                   }
                                   onChange={() =>
                                     setCustomData((prev) => ({
@@ -823,11 +832,11 @@ export default function MyActivity() {
 
                   {/* ACTION BUTTONS */}
                   <div className="space-y-4">
-                    <div className="flex md:flex-row flex-wrap gap-1">
+                    <div className="grid md:grid-cols-4 grid-cols-3 gap-1">
                        <button
                         disabled={saving}
                         onClick={handleSaveEdit}
-                    className={`px-12 py-4 rounded-full text-xs tracking-widest text-white md:basis-1/5 basis-1/5 ${
+                    className={`px-5 py-4 w-full rounded-full text-xs tracking-widest text-white  ${
                       saving ? "bg-gray-400 cursor-not-allowed" : "bg-[#6B6B6B] cursor-pointer hover:bg-[#2E4B45]"
                     }`}
                   >
@@ -841,7 +850,7 @@ export default function MyActivity() {
                             uploading
                               ? "bg-gradient-to-r from-red-900/50 via-rose-900/50 to-red-950/50 cursor-not-allowed opacity-70 shadow-none"
                               : "cursor-pointer"
-                          } px-10 py-4 md:basis-1/2 basis-[52vw] ${
+                          } px-10 py-4 col-span-2 ${
                             selectedProduct.is_community_uploaded
                               ? "bg-gradient-to-r from-red-800 via-rose-800 to-red-900"
                               : "bg-gradient-to-r from-emerald-500 via-teal-500 to-green-500"
@@ -858,7 +867,7 @@ export default function MyActivity() {
                       <button
                             disabled={adding}
                             onClick={handleAddToWishlist}
-                            className={`${adding ? "bg-green-gradiant cursor-not-allowed" : "bg-green-gradiant cursor-pointer"} ml-auto px-8 py-4  text-white rounded-full text-xs tracking-widest md:basis-1/4 basis-1/1`}
+                            className={`${adding ? "bg-green-gradiant cursor-not-allowed" : "bg-green-gradiant cursor-pointer"} ml-auto md:px-8 px-4 py-4 w-full  text-white rounded-full text-xs tracking-widest`}
                         > BUY NOW  </button>
                     </div>
                   </div>
@@ -881,5 +890,7 @@ export default function MyActivity() {
         </div>
       )}
     </div>
+      </>
   );
+  
 }

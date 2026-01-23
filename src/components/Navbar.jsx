@@ -192,7 +192,7 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
           <nav className="hidden md:flex space-x-6 text-sm font-medium text-white">
             {[
               // { name: "Home", path: "/" },
-              { name: "Community", path: "/community" },
+              { name: "Home", path: "/community" },
               // { name: "Catalogue", path: "/catalogue" },
               { name: "My Activity", path: "/my-activity" },
             ].map((item) => (

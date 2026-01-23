@@ -647,6 +647,7 @@ function ReelItem({
           <HotMeter
             isRated={isRated}
             average={averageRating || 0}
+            ratingsCount={ratingsCount}
             userRating={item.user_rating || null}
             onRate={(rating) => {
               handleEngage("rating", rating);

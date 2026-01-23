@@ -84,7 +84,7 @@ export default function HotMeter({
     <div className="w-full px-2">
       <div className="flex items-center gap-4">
         {/* SLIDER + FAKE THUMB WRAPPER */}
-        <div className="relative flex-1">
+        <div className="relative flex-2">
           {/* RANGE INPUT (native thumb hidden) */}
           <input
             type="range"
@@ -123,12 +123,13 @@ export default function HotMeter({
               }`}
             />
           </div>
+
         </div>
+          <span className="text-sm  whitespace-nowrap">{ratingsCount}</span>
 
         {/* LABEL + AVERAGE */}
-        <div className="flex items-center gap-2 w-[140px] justify-end shrink-0">
-          <span className="text-sm text-white/80 whitespace-nowrap">{getLabel(Number((average*10)).toFixed(1))}</span>
-          <span className="text-sm font-semibold whitespace-nowrap">({ratingsCount})</span>
+        <div className="flex items-center gap-2 w-[70px] justify-end shrink-0">
+          {isRated && <span className="text-sm text-white/80 whitespace-nowrap">{getLabel(Number((average*10)).toFixed(1))}</span>}
         </div>
       </div>
 

@@ -44,7 +44,7 @@ export default function MobileTopBar() {
         </h1>
 
         {/* 🔍 SEARCH */}
-        <button onClick={() => setShowSearch(true)} className="text-white">
+        {/* <button onClick={() => setShowSearch(true)} className="text-white">
           <svg
             viewBox="0 0 24 24"
             className="w-6 h-6"
@@ -55,11 +55,11 @@ export default function MobileTopBar() {
             <circle cx="11" cy="11" r="7" />
             <path d="M21 21l-4.3-4.3" />
           </svg>
-        </button>
+        </button> */}
       </div>
 
       {/* SEARCH OVERLAY */}
-      {showSearch && (
+      {/* {showSearch && (
         <div className="absolute inset-0 bg-black/70 backdrop-blur-xl">
           <div className="flex items-center gap-3 px-4 py-4">
             <input
@@ -76,7 +76,7 @@ export default function MobileTopBar() {
             </button>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

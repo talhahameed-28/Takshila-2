@@ -191,9 +191,9 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-6 text-sm font-medium text-white">
             {[
-              { name: "Home", path: "/" },
+              // { name: "Home", path: "/" },
               { name: "Community", path: "/community" },
-              { name: "Catalogue", path: "/catalogue" },
+              // { name: "Catalogue", path: "/catalogue" },
               { name: "My Activity", path: "/my-activity" },
             ].map((item) => (
               <Link
@@ -269,7 +269,7 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
             </Link>
 
             {/* Search */}
-            <div ref={searchRef} className="relative z-9999">
+            {/* <div ref={searchRef} className="relative z-9999">
               <button
                 onClick={() => setShowSearch(!showSearch)}
                 className="p-2 rounded-full hover:bg-white/10 transition"
@@ -303,7 +303,7 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
                   </button>
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* <Link
               to="/wishlist"
@@ -379,14 +379,14 @@ export default function Navbar({isMobileMenuOpen,setIsMobileMenuOpen,modalOpen,s
                     Your Orders
                   </Link>
 
-                  <Link
+                  {/* <Link
                     to="/wishlist"
                     className="relative w-32.5 text-center text-white font-medium py-2 rounded-full
                      bg-white/10 hover:bg-white/20 backdrop-blur-sm ring-1 ring-white/12
                      border border-white/6 transition-all shadow-[0_4px_12px_rgba(0,0,0,0.4)]"
                   >
                     Your Wishlist
-                  </Link>
+                  </Link> */}
                 </div>
               )}
             </div>

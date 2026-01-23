@@ -109,13 +109,13 @@ export default function MobileNavbar({modalOpen,setModalOpen,modalType,setModalT
                animate-fadeIn"
           >
             {/* Common links */}
-            <Link
+            {/* <Link
               to="/profile"
               onClick={() => setMenuOpen(false)}
               className="px-6 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white"
             >
               Profile
-            </Link>
+            </Link> */}
 
             <Link
               to="/orders"
@@ -133,13 +133,13 @@ export default function MobileNavbar({modalOpen,setModalOpen,modalType,setModalT
               Blogs
             </Link>
 
-            <Link
+            {/* <Link
               to="/wishlist"
               onClick={() => setMenuOpen(false)}
               className="px-6 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white"
             >
               Wishlist
-            </Link>
+            </Link> */}
 
             {/* AUTH SECTION */}
             {!isLoggedIn ? (

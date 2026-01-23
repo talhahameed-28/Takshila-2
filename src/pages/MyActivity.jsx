@@ -226,7 +226,7 @@ export default function MyActivity() {
       // debounce
       const timer = setTimeout(() => {
         getBreakdown();
-      }, 1000);
+      }, 300);
 
   
   return () => clearTimeout(timer);
@@ -612,7 +612,7 @@ export default function MyActivity() {
                           <p className="text-sm mb-2">Type</p>
 
                           <div className="flex items-center gap-10">
-                            {["diamond", "monzonite"].map((t) => (
+                            {["diamond", "moissanite"].map((t) => (
                               <label
                                 key={t}
                                 className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"
@@ -656,7 +656,7 @@ export default function MyActivity() {
                         </div>
 
                         {/* QUALITY */}
-                        {customData?.stoneType != "monzonite" && (
+                        {customData?.stoneType != "moissanite" && (
                           <div>
                             <p className="text-sm mb-1">Quality</p>
                             <input

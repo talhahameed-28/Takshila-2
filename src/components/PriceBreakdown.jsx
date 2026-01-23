@@ -54,7 +54,7 @@ export default function PricingBreakdownModal({setShowBreakdown,breakdown}) {
                 {openSections.raw && (
                   <div className="mt-2 space-y-1 pl-4 text-sm text-white/80">
                     <div className="flex justify-between">
-                      <span>Diamond</span>
+                      <span>Stone</span>
                       <span>${breakdown.breakdown.qualityCost}</span>
                     </div>
                     <div className="flex justify-between">
@@ -92,7 +92,7 @@ export default function PricingBreakdownModal({setShowBreakdown,breakdown}) {
                       <span>${breakdown.breakdown.workingChargesCost}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Diamond Setting</span>
+                      <span>Stone Setting</span>
                       <span>${breakdown.breakdown.diamondSettingCost}</span>
                     </div>
                   </div>

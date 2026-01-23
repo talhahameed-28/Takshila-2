@@ -481,11 +481,7 @@ function ReelItem({
                         </a>
       
                         <a
-                          href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-                            `${
-                              import.meta.env.VITE_BASE_URL
-                            }/community/234`
-                          )}`}
+                          href={item.facebook_share_url}
                           target="_blank"
                         >
                           <img src="/assets/facebook.svg" className="w-8 mx-auto" />

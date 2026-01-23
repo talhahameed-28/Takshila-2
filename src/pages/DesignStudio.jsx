@@ -76,6 +76,10 @@ export default function DesignStudio() {
   const [activeTab, setActiveTab] = useState("ai"); // "ai" | "upload"
   const [uploading, setUploading] = useState(false);
 
+  const [showShare, setShowShare] = useState(false);
+  
+    // SHARE URL
+  // const shareUrl = `${window.location.origin}/product/234`;
   // -----------------------------------
   // AI DESIGNER STATES
   // -----------------------------------
@@ -108,6 +112,7 @@ export default function DesignStudio() {
   const [upStoneType, setUpStoneType] = useState("diamond");
   const [upPrice, setUpPrice] = useState(2186.33);
   const [upCommission, setUpCommission] = useState(76.52);
+  const [receivedUpImageId, setReceivedUpImageId] = useState(null)
   const [upPreviewImages, setUpPreviewImages] = useState([]);
   const [upPreviewImageFiles, setUpPreviewImageFiles] = useState([]);
   const [royalty, setRoyalty] = useState(0);
@@ -445,7 +450,11 @@ export default function DesignStudio() {
           },
         );
         console.log(data);
-        if (data.success) toast.success("Product updated succesfully");
+        if (data.success) {
+          setReceivedUpImageId(data.data.product.id)
+          toast.success("Product updated succesfully");
+
+        }
         else toast.error("Couldn't process your request");
       }
     } catch (error) {
@@ -614,6 +623,7 @@ export default function DesignStudio() {
 
     const getBreakdown = async (active) => {
       try {
+        toast.success("calling")
         console.log(active);
         axios.defaults.withCredentials = true;
         const { data } = await axios.post(
@@ -635,7 +645,7 @@ export default function DesignStudio() {
     // ⏳ debounce
     const timer = setTimeout(() => {
       getBreakdown(active);
-    }, 1000);
+    }, 300);
 
     // 🧹 cleanup on dependency change
     return () => clearTimeout(timer);
@@ -785,6 +795,9 @@ export default function DesignStudio() {
               handleUpdateDetails={handleUpdateDetails}
               uploading={uploading}
               handleBuy={handleBuy}
+              shareProductId={receivedAiImageId}
+              showShare={showShare}
+              setShowShare={setShowShare}
             />
           </form>
         )}
@@ -859,6 +872,9 @@ export default function DesignStudio() {
               handleUpdateDetails={handleUpdateDetails}
               uploading={uploading}
               handleBuy={handleBuy}
+              shareProductId={receivedUpImageId}
+              setShowShare={setShowShare}
+              showShare={showShare}
             />
           </form>
         )}
@@ -894,18 +910,28 @@ const RightPanel = ({
   handleUpdateDetails,
   uploading,
   handleBuy,
+  setShowShare,
+  showShare,
+  shareProductId
 }) => {
+  console.log(shareProductId)
   const [designName, setDesignName] = useState("");
   const [designDescription, setDesignDescription] = useState("");
   const [updating, setUpdating] = useState(false);
   const [checkingOut, setCheckingOut] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [shareUrl, setshareUrl] = useState(`${window.location.origin}/product/${shareProductId}`)
+
+  useEffect(() => {
+    setshareUrl(`${window.location.origin}/product/${shareProductId}`)
+  }, [shareProductId])
+  
   const prevSlide = () => {
     setCurrentIndex((prev) =>
       prev === 0 ? upPreviewImages.length - 1 : prev - 1,
     );
   };
-
+  
   const nextSlide = () => {
     setCurrentIndex((prev) =>
       prev === upPreviewImages.length - 1 ? 0 : prev + 1,
@@ -1000,8 +1026,13 @@ const RightPanel = ({
       </div>
 
       <div className="flex justify-between items-center mt-10 mx-2">
-        <button className="cursor-pointer w-12 h-12 flex items-center justify-center bg-[#C3C3C3] rounded-full">
-          <img src="/assets/Share.svg" className="w-6 h-6" />
+        <button
+        onClick={() =>{console.log(shareUrl); shareProductId==null
+          ? toast.error("Please create and submit a design before sharing")
+          :setShowShare(true)}}
+        type="button"
+        className="cursor-pointer w-12 h-12 flex items-center justify-center bg-[#C3C3C3] rounded-full">
+          <img  src="/assets/grp32.svg" className="w-6 bg-transparent h-6" />
         </button>
 
         {/* <button className="cursor-pointer w-12 h-12 flex items-center justify-center bg-[#C3C3C3] rounded-full mx-2">
@@ -1025,6 +1056,71 @@ const RightPanel = ({
           BUY NOW
         </button>
       </div>
+      {showShare && (
+                  <div className="fixed inset-0 z-[60] flex items-center justify-center">
+                    <div
+                      className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+                      onClick={() => setShowShare(false)}
+                    />
+      
+                    <div className="relative text-black bg-white rounded-2xl w-[360px] p-6 shadow-xl">
+                      <h3 className="text-lg font-semibold mb-4 text-center">
+                        Share this design
+                      </h3>
+      
+                      <div className="flex items-center bg-gray-100 rounded-lg px-3 py-2 mb-4">
+                        <input
+                          readOnly
+                          value={shareUrl}
+                          className="flex-1 bg-transparent text-sm outline-none"
+                        />
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(shareUrl);
+                            toast.success("Link copied!");
+                          }}
+                          className="text-sm font-medium text-[#2E4B45]"
+                        >
+                          Copy
+                        </button>
+                      </div>
+      
+                      <div className="grid grid-cols-3 gap-4 text-xs text-center">
+                        <a href="https://www.instagram.com" target="_blank">
+                          <img src="/assets/instagram.svg" className="w-8 mx-auto" />
+                          Instagram
+                        </a>
+      
+                        <a
+                          href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+                            `${
+                              import.meta.env.VITE_BASE_URL
+                            }/community/234`
+                          )}`}
+                          target="_blank"
+                        >
+                          <img src="/assets/facebook.svg" className="w-8 mx-auto" />
+                          Facebook
+                        </a>
+      
+                        <a
+                          href={`https://wa.me/?text=${encodeURIComponent(shareUrl)}`}
+                          target="_blank"
+                        >
+                          <img src="/assets/whatsapp.svg" className="w-8 mx-auto" />
+                          WhatsApp
+                        </a>
+                      </div>
+      
+                      <button
+                        onClick={() => setShowShare(false)}
+                        className="absolute top-3 right-3 text-gray-400"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+                )}
     </div>
   );
 };
@@ -1170,7 +1266,7 @@ const LeftPanelTop = forwardRef(
             <p className="text-sm mb-2">Type</p>
 
             <div className="flex items-center gap-10">
-              {["diamond", "monzonite"].map((t) => (
+              {["diamond", "moissanite"].map((t) => (
                 <label
                   key={t}
                   className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"

@@ -1,30 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, lazy, Suspense } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { fetchUser } from "./store/slices/userSlice";
-import MobileTopBar from "./components/MobileTopBar";
-import ResponsiveNavbar from "./components/ResponsiveNavbar";
-
-import Footer from "./components/Footer";
-
-import Home from "./pages/Home";
-import Community from "./pages/Community";
-import Catalogue from "./pages/Catalogue";
-import MyActivity from "./pages/MyActivity";
-import OurStory from "./pages/OurStory";
-import Blogs from "./pages/Blogs";
-import ResetPassword from "./pages/ResetPassword";
-import Orders from "./pages/Orders";
-
-import EmailVerify from "./pages/EmailVerify";
-import Wishlist from "./pages/Wishlist";
-import MainRoutes from "./router";
-
-import DesignStudio from "./pages/DesignStudio";
-
-// ⬇️ Video Loader Component
-// import VideoLoader from "./components/VideoLoader";
 import { HelmetProvider } from "react-helmet-async";
+
+// Lazy load components
+const MobileTopBar = lazy(() => import("./components/MobileTopBar"));
+const ResponsiveNavbar = lazy(() => import("./components/ResponsiveNavbar"));
+const Footer = lazy(() => import("./components/Footer"));
+const MainRoutes = lazy(() => import("./router"));
+
+// Loading fallback component
+const ComponentLoader = () => (
+  <div className="flex items-center justify-center min-h-screen bg-[#111]">
+    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+  </div>
+);
 
 export default function App() {
   const [loading, setLoading] = useState(false); // loader state
@@ -54,40 +45,42 @@ export default function App() {
       {/* Main Website (hidden until loader ends) */}
       {!loading && (
         <div className="bg-[#111] text-white min-h-screen">
-          <MobileTopBar />
+          <Suspense fallback={<ComponentLoader />}>
+            <MobileTopBar />
 
-          <ResponsiveNavbar
-            hideMobileNavbar={hideMobileNavbar}
-            showAboutMenu={showAboutMenu}
-            setShowAboutMenu={setShowAboutMenu}
-            isMobileMenuOpen={isMobileMenuOpen}
-            setIsMobileMenuOpen={setIsMobileMenuOpen}
-            modalOpen={modalOpen}
-            setModalOpen={setModalOpen}
-            modalType={modalType}
-            setModalType={setModalType}
-            showProfileMenu={showProfileMenu}
-            setShowProfileMenu={setShowProfileMenu}
-          />
-
-          <Routes>
-            {/* MainRoutes for Auth related routes */}
-            <Route
-              path="/*"
-              element={
-                <MainRoutes
-                  setIsMobileMenuOpen={setIsMobileMenuOpen}
-                  setModalOpen={setModalOpen}
-                  setModalType={setModalType}
-                  setShowProfileMenu={setShowProfileMenu}
-                  setHideMobileNavbar={setHideMobileNavbar}
-                />
-              }
+            <ResponsiveNavbar
+              hideMobileNavbar={hideMobileNavbar}
+              showAboutMenu={showAboutMenu}
+              setShowAboutMenu={setShowAboutMenu}
+              isMobileMenuOpen={isMobileMenuOpen}
+              setIsMobileMenuOpen={setIsMobileMenuOpen}
+              modalOpen={modalOpen}
+              setModalOpen={setModalOpen}
+              modalType={modalType}
+              setModalType={setModalType}
+              showProfileMenu={showProfileMenu}
+              setShowProfileMenu={setShowProfileMenu}
             />
-          </Routes>
 
-          {/* ✅ Footer hidden on Community */}
-          {!shouldHideFooter && <Footer />}
+            <Routes>
+              {/* MainRoutes for Auth related routes */}
+              <Route
+                path="/*"
+                element={
+                  <MainRoutes
+                    setIsMobileMenuOpen={setIsMobileMenuOpen}
+                    setModalOpen={setModalOpen}
+                    setModalType={setModalType}
+                    setShowProfileMenu={setShowProfileMenu}
+                    setHideMobileNavbar={setHideMobileNavbar}
+                  />
+                }
+              />
+            </Routes>
+
+            {/* ✅ Footer hidden on Community */}
+            {!shouldHideFooter && <Footer />}
+          </Suspense>
         </div>
       )}
     </>

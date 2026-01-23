@@ -155,7 +155,7 @@ const CommunityProduct = ({handleOpenModal}) => {
               // debounce
               const timer = setTimeout(() => {
                 getBreakdown();
-              }, 1000);
+              }, 300);
         
           
           return () => clearTimeout(timer);
@@ -388,7 +388,7 @@ const CommunityProduct = ({handleOpenModal}) => {
                       <p className="text-sm mb-2">Type</p>
 
                       <div className="flex items-center gap-10">
-                        {["diamond", "monzonite"].map((t) => (
+                        {["diamond", "moissanite"].map((t) => (
                           <label
                             key={t}
                             className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"
@@ -427,7 +427,7 @@ const CommunityProduct = ({handleOpenModal}) => {
                     </div>
 
                     {/* QUALITY */}
-                    {customData?.stoneType!="monzonite" && <div>
+                    {customData?.stoneType!="moissanite" && <div>
                       <p className="text-sm mb-1">Quality</p>
                       <input
                         type="range"
@@ -658,7 +658,7 @@ const CommunityProduct = ({handleOpenModal}) => {
                       onClick={() => setShowShare(true)}
                       className="w-12 h-12 bg-[#C3C3C3] rounded-full flex items-center justify-center hover:bg-[#b5b5b5]"
                     >
-                      <img src="/assets/Share.svg" className="w-5 h-5" />
+                      <img src="/assets/grp32.svg" className="w-5 h-5" />
                     </button>
 
                     {/* WISHLIST (NO LOGIC YET) */}
@@ -790,7 +790,7 @@ const CommunityProduct = ({handleOpenModal}) => {
                   </a>
 
                   <a
-                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`http://localhost:5173/product/${productId}`)}`}
+                    href={`${selectedProductDetails.facebook_share_url}`}
                     target="_blank"
                   >
                     <img src="/assets/facebook.svg" className="w-8 mx-auto" />

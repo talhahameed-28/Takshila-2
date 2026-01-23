@@ -317,6 +317,8 @@ function ReelItem({
   const [ratingsCount, setRatingsCount] = useState(item.ratings_count);
   const [expanded, setExpanded] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  const [showShare, setShowShare] = useState(false)
+  const [shareUrl, setShareUrl] = useState(`${window.location.origin}/product/${item?.id}`)
   useEffect(() => {
     setHideMobileNavbar(showComments);
   }, [showComments]);
@@ -443,7 +445,71 @@ function ReelItem({
           filter: "blur(10px)",
         }}
       />
-
+  {showShare && (
+                  <div className="fixed inset-0 z-[60] flex items-center justify-center">
+                    <div
+                      className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+                      onClick={() => setShowShare(false)}
+                    />
+      
+                    <div className="relative text-black bg-white rounded-2xl w-[360px] p-6 shadow-xl">
+                      <h3 className="text-lg font-semibold mb-4 text-center">
+                        Share this design
+                      </h3>
+      
+                      <div className="flex items-center bg-gray-100 rounded-lg px-3 py-2 mb-4">
+                        <input
+                          readOnly
+                          value={shareUrl}
+                          className="flex-1 bg-transparent text-sm outline-none"
+                        />
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(shareUrl);
+                            toast.success("Link copied!");
+                          }}
+                          className="text-sm font-medium text-[#2E4B45]"
+                        >
+                          Copy
+                        </button>
+                      </div>
+      
+                      <div className="grid grid-cols-3 gap-4 text-xs text-center">
+                        <a href="https://www.instagram.com" target="_blank">
+                          <img src="/assets/instagram.svg" className="w-8 mx-auto" />
+                          Instagram
+                        </a>
+      
+                        <a
+                          href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+                            `${
+                              import.meta.env.VITE_BASE_URL
+                            }/community/234`
+                          )}`}
+                          target="_blank"
+                        >
+                          <img src="/assets/facebook.svg" className="w-8 mx-auto" />
+                          Facebook
+                        </a>
+      
+                        <a
+                          href={`https://wa.me/?text=${encodeURIComponent(shareUrl)}`}
+                          target="_blank"
+                        >
+                          <img src="/assets/whatsapp.svg" className="w-8 mx-auto" />
+                          WhatsApp
+                        </a>
+                      </div>
+      
+                      <button
+                        onClick={() => setShowShare(false)}
+                        className="absolute top-3 right-3 text-gray-400"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+                )}
       {/* IMAGE + HEADER */}
       <div className="relative z-10 flex flex-col items-center gap-4 pt-5 px-4">
         <div className="flex items-center gap-3 self-start">
@@ -570,7 +636,9 @@ function ReelItem({
               </>
 
               {/* SHARE */}
-              <button>
+              <button
+               onClick={() =>{console.log(shareUrl);setShowShare(true)}}
+                      type="button">
                 <img src="/assets/grp32.svg" className="w-6 h-6" />
               </button>
             </div>

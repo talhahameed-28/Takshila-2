@@ -1,6 +1,0 @@
-
-
-User-Agent: *
-Allow: /
-Disallow:
-Sitemap: https://takshila.cloud/sitemap.xml

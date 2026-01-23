@@ -75,7 +75,7 @@ export default function CommunityProductModal({
     // debounce
     const timer = setTimeout(() => {
       getBreakdown();
-    }, 1000);
+    }, 300);
     console.log(customData);
     return () => clearTimeout(timer);
   }, [customData]);
@@ -275,7 +275,7 @@ export default function CommunityProductModal({
                 <p className="text-sm mb-2">Type</p>
 
                 <div className="flex items-center gap-10">
-                  {["diamond", "monzonite"].map((t) => (
+                  {["diamond", "moissanite"].map((t) => (
                     <label
                       key={t}
                       className="flex flex-col items-center gap-2 text-xs tracking-wide cursor-pointer"
@@ -314,7 +314,7 @@ export default function CommunityProductModal({
               </div>
 
               {/* QUALITY */}
-              {customData?.stoneType != "monzonite" && (
+              {customData?.stoneType != "moissanite" && (
                 <div>
                   <p className="text-sm mb-1">Quality</p>
                   <input

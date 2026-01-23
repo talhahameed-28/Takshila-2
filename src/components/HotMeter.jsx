@@ -6,7 +6,8 @@ export default function HotMeter({
   userRating = null,
   onRate,
   isLoggedIn,
-  handleOpenModal
+  handleOpenModal,
+  ratingsCount
 }) {
   const [value, setValue] = useState(userRating != null ? userRating * 10 : 0);
   const [isInteracting, setIsInteracting] = useState(false);
@@ -52,9 +53,10 @@ export default function HotMeter({
      🏷 Label helper
   -------------------------------------------------- */
   const getLabel = (v) => {
-    if (v <= 25) return "😬 Not great";
-    if (v <= 50) return "😐 Meh";
-    if (v <= 75) return "🙂 Nice";
+    if (v <= 20) return "😬 Not It";
+    if (v <= 40) return "😐 Meh";
+    if (v <= 60) return "🙂 Nice";
+    if (v <= 80) return "🤩 Solid";
     return "🔥 Hot";
   };
 
@@ -125,8 +127,8 @@ export default function HotMeter({
 
         {/* LABEL + AVERAGE */}
         <div className="flex items-center gap-2 w-[140px] justify-end shrink-0">
-          <span className="text-sm text-white/80 whitespace-nowrap">{getLabel(value)}</span>
-          <span className="text-sm font-semibold whitespace-nowrap">{Number((average*10)).toFixed(1)}</span>
+          <span className="text-sm text-white/80 whitespace-nowrap">{getLabel(Number((average*10)).toFixed(1))}</span>
+          <span className="text-sm font-semibold whitespace-nowrap">({ratingsCount})</span>
         </div>
       </div>
 

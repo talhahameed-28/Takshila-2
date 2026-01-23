@@ -3,9 +3,11 @@ import { Route, Routes, Navigate } from "react-router-dom";
 import { ROUTES } from "./routes";
 import ScrollToTop from "../utils/ScrollToTop";
 
-// Lazy load all pages for better performance
+// ⚡ Critical pages - load immediately (no lazy loading)
+import Community from "../pages/Community";
+
+// 📦 Lazy load all other pages for better performance
 const Home = lazy(() => import("../pages/Home"));
-const Community = lazy(() => import("../pages/Community"));
 const CommunityProduct = lazy(() => import("../pages/CommunityProduct"));
 const OurStory = lazy(() => import("../pages/OurStory"));
 const Blogs = lazy(() => import("../pages/Blogs"));

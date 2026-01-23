@@ -8,7 +8,7 @@ import ShippingAndDeliveryModal from "../components/ShippingAndDeliveryModal";
 
 export default function Orders() {
   const [tab, setTab] = useState("orders"); // "orders" or "delivered"
-   const [loadingTrackingInfo, setLoadingTrackingInfo] = useState(false);
+   const [retryingOrderId, setRetryingOrderId] = useState(null);
   const [orders, setOrders] = useState([])
   const [selectedOrder, setSelectedOrder] = useState(null)
   const [modalStage, setModalStage] = useState("")
@@ -139,12 +139,32 @@ export default function Orders() {
               </div>
                   {(order.payment_status=="cancelled" || order.payment_status=="pending") && (
                     <div className="flex justify-center pb-1  ">
-                      <button onClick={()=>{
-                        window.location.href=order.complete_payment_url
+                      <button onClick={async()=>{
+                       try {
+                        setRetryingOrderId(order.id)
+                         axios.defaults.withCredentials=true
+                         const {data}=await axios.post(
+                               `${order.complete_payment_url}`,
+                               {},
+                               {
+                                 headers: {
+                                   Authorization: `Bearer ${localStorage.getItem("token")}`,
+                                 },
+                               }
+                         );
+                         if(data.success){
+                          window.location.href=data.data.checkout_url
+                         }else{toast.error("Cannot process payment at the moment")}
+                       } catch (error) {
+                        console.log(error)
+                       }finally{
+                        setRetryingOrderId(null)
+                       }
                       }}
+                      disabled={retryingOrderId==order.id}
                        type="button"
-                        className="bg-green-gradiant cursor-pointer w-full md:w-1/2 hover:bg-white/10 text-white px-1 py-2 rounded-full backdrop-blur-md transition text-xs sm:text-base">
-                          Complete Payment
+                        className={`bg-green-gradiant  ${retryingOrderId==order.id?"cursor-not-allowed":"cursor-pointer"} w-full md:w-1/2 hover:bg-white/10 text-white px-1 py-2 rounded-full backdrop-blur-md transition text-xs sm:text-base`}>
+                          {retryingOrderId==order.id?"Processing...":"Complete Payment"}
                         </button>
                     </div>
                 )}

@@ -79,6 +79,42 @@ export default function MyActivity() {
   const [uploading, setUploading] = useState(false);
   const [adding, setAdding] = useState(false)
 
+  const [menuOpenId, setMenuOpenId] = useState(null);
+
+  const handleRemoveDesign = async (productId) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to remove this design?",
+    );
+    if (!confirmDelete) return;
+
+    try {
+      axios.defaults.withCredentials = true;
+
+      const { data } = await axios.delete(
+        `${import.meta.env.VITE_BASE_URL}/api/product/${productId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      );
+
+      if (data.success) {
+        toast.success("Design removed");
+        setDesigns((prev) => prev.filter((d) => d.id !== productId));
+      } else {
+        toast.error("Could not remove design");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Deletion failed");
+    } finally {
+      setMenuOpenId(null);
+    }
+  };
+  
+
+
   // MODAL STATE
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [customData, setCustomData] = useState({});
@@ -338,144 +374,181 @@ export default function MyActivity() {
 
   return (
     <>
-         {/* <Helmet>
+      {/* <Helmet>
               <title> My Activity | Your Designs, Orders & Earnings | Takshila </title>
               <meta name="description" content="Track your designs (rings, pendants, necklaces, and more), orders, and earnings on your Takshila dashboard – view saved pieces, monitor orders, and manage your jewelry brand all in one place." />
               <meta name="keywords" content="My Jewelry Designs, Order tracking, Commission Earnings, Jewelry Design portfolio, Account Management, Generative AI jewelry" />  
               <link rel="canonical" href="https://takshila.co/my-activity" />
           </Helmet> */}
-   
-    <div className="bg-[#e5e2df] min-h-screen flex flex-col text-[#1a1a1a]">
-      <main className="flex-grow pt-40 px-6 md:px-12 lg:px-20 pb-24 transition-all duration-500">
-        {/* Header */}
-        <section className="text-center mb-12">
-          <h1 className="text-5xl md:text-5xl font-serif font-light tracking-wide text-[#1a1a1a]">
-            MY ACTIVITY
-          </h1>
-          <div className="w-full max-w-4xl mx-auto border-t border-gray-400 mt-6"></div>
-        </section>
 
-        {/* Loading */}
-        {loading && (
-          <p className="text-center text-gray-500 text-sm mt-10">
-            Loading your designs...
-          </p>
-        )}
+      <div className="bg-[#e5e2df] min-h-screen flex flex-col text-[#1a1a1a]">
+        <main className="flex-grow pt-40 px-6 md:px-12 lg:px-20 pb-24 transition-all duration-500">
+          {/* Header */}
+          <section className="text-center mb-12">
+            <h1 className="text-5xl md:text-5xl font-serif font-light tracking-wide text-[#1a1a1a]">
+              MY ACTIVITY
+            </h1>
+            <div className="w-full max-w-4xl mx-auto border-t border-gray-400 mt-6"></div>
+          </section>
 
-        {/* Empty */}
-        {!loading && designs.length === 0 && (
-          <div className="flex flex-col items-center justify-center text-center mt-20 h-[40vh]">
-            <h2 className="text-2xl font-medium text-gray-700 mb-6">
-              No Designs Yet
-            </h2>
-            <button
-              onClick={() => navigate("/design-studio")}
-              className="px-10 py-4 bg-[#555555] hover:bg-[#000000] text-white rounded-full text-sm shadow-sm transition cursor-pointer"
-            >
-              Add Some Designs
-            </button>
-          </div>
-        )}
+          {/* Loading */}
+          {loading && (
+            <p className="text-center text-gray-500 text-sm mt-10">
+              Loading your designs...
+            </p>
+          )}
 
-        {/* Grid */}
-        {designs.length > 0 && (
-          <section>
-            <div className="flex justify-center items-center gap-3 mb-14">
+          {/* Empty */}
+          {!loading && designs.length === 0 && (
+            <div className="flex flex-col items-center justify-center text-center mt-20 h-[40vh]">
+              <h2 className="text-2xl font-medium text-gray-700 mb-6">
+                No Designs Yet
+              </h2>
               <button
-                onClick={() => goToPage(currentPage - 1)}
-                disabled={currentPage === 1}
-                className={`w-10 h-10 rounded-full text-lg font-bold ${
-                  currentPage === 1
-                    ? "text-gray-400"
-                    : "text-[#1a1a1a] hover:text-[#2E4B45]"
-                }`}
+                onClick={() => navigate("/design-studio")}
+                className="px-10 py-4 bg-[#555555] hover:bg-[#000000] text-white rounded-full text-sm shadow-sm transition cursor-pointer"
               >
-                &lt;
+                Add Some Designs
               </button>
+            </div>
+          )}
 
-              {Array.from({ length: totalPages }, (_, p) => (
+          {/* Grid */}
+          {designs.length > 0 && (
+            <section>
+              <div className="flex justify-center items-center gap-3 mb-14">
                 <button
-                  key={p}
-                  onClick={() => goToPage(p + 1)}
-                  className={`w-9 h-9 rounded-full text-sm flex items-center justify-center ${
-                    currentPage === p + 1
-                      ? "bg-[#2E4B45] text-white"
-                      : "bg-white text-[#1a1a1a] hover:bg-[#d8d6d3]"
+                  onClick={() => goToPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className={`w-10 h-10 rounded-full text-lg font-bold ${
+                    currentPage === 1
+                      ? "text-gray-400"
+                      : "text-[#1a1a1a] hover:text-[#2E4B45]"
                   }`}
                 >
-                  {p + 1}
+                  &lt;
                 </button>
-              ))}
 
-              <button
-                onClick={() => goToPage(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className={`w-10 h-10 rounded-full text-lg font-bold ${
-                  currentPage === totalPages
-                    ? "text-gray-400"
-                    : "text-[#1a1a1a] hover:text-[#2E4B45]"
-                }`}
-              >
-                &gt;
-              </button>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-10 gap-y-16">
-              {designs.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex flex-col items-center text-center"
-                >
-                  <div
-                    onClick={() => setSelectedProduct(item)}
-                    className="w-full bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 p-4 cursor-pointer"
+                {Array.from({ length: totalPages }, (_, p) => (
+                  <button
+                    key={p}
+                    onClick={() => goToPage(p + 1)}
+                    className={`w-9 h-9 rounded-full text-sm flex items-center justify-center ${
+                      currentPage === p + 1
+                        ? "bg-[#2E4B45] text-white"
+                        : "bg-white text-[#1a1a1a] hover:bg-[#d8d6d3]"
+                    }`}
                   >
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-full h-56 object-cover rounded-xl"
-                    />
+                    {p + 1}
+                  </button>
+                ))}
+
+                <button
+                  onClick={() => goToPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className={`w-10 h-10 rounded-full text-lg font-bold ${
+                    currentPage === totalPages
+                      ? "text-gray-400"
+                      : "text-[#1a1a1a] hover:text-[#2E4B45]"
+                  }`}
+                >
+                  &gt;
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-10 gap-y-16">
+                {designs.map((item) => (
+                  <div className="relative w-full bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 p-4 cursor-pointer">
+                    {/* THREE DOTS BUTTON */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setMenuOpenId(menuOpenId === item.id ? null : item.id);
+                      }}
+                      className="absolute top-1 right-1 text-gray-600 hover:text-black 
+             text-2xl leading-none p-1"
+                    >
+                      ⋮
+                    </button>
+
+                    {/* DROPDOWN MENU */}
+                    {menuOpenId === item.id && (
+                      <div className="absolute top-10 right-3 bg-white shadow-lg rounded-xl w-28 py-2 z-50">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedProduct(item); // opens modal
+                            setMenuOpenId(null);
+                          }}
+                          className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveDesign(item.id); // delete handler
+                          }}
+                          className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    )}
+
+                    {/* IMAGE */}
+                    <div onClick={() => setSelectedProduct(item)}>
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-56 object-cover rounded-xl"
+                      />
+                    </div>
                   </div>
+                ))}
+              </div>
+            </section>
+          )}
+        </main>
 
-                  <h2 className="text-sm font-semibold mt-4 tracking-wide text-gray-800 uppercase">
-                    {item.name}
-                  </h2>
+        {/* ======================= MODAL ========================== */}
+        {selectedProduct && customData && (
+          <div className="fixed inset-0 flex items-end md:items-center justify-center z-[50] pt-10 md:pt-10">
+            {showBreakdown && (
+              <PricingBreakdownModal
+                breakdown={priceData}
+                setShowBreakdown={setShowBreakdown}
+              />
+            )}
+            <div
+              className="absolute inset-0 bg-black/40 backdrop-blur-md animate-blurFade z-[40]"
+              onClick={() => {
+                setSelectedProduct(null);
+                setCurrentIndex(0);
+              }}
+            />
 
-                  <p className="text-gray-600 text-sm mt-1">${item.price}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-      </main>
-
-      {/* ======================= MODAL ========================== */}
-      {selectedProduct && customData && (
-        
-        <div className="fixed inset-0 flex items-end md:items-center justify-center z-[50] pt-[72px] md:pt-0">
-          {showBreakdown && <PricingBreakdownModal breakdown={priceData} setShowBreakdown={setShowBreakdown}/>}
-          <div
-            className="absolute inset-0 bg-black/40 backdrop-blur-md animate-blurFade z-[40]"
-            onClick={() => { setSelectedProduct(null);setCurrentIndex(0)}}
-          />
-
-          <div
-            className="
+            <div
+              className="
               relative w-full max-w-7xl mx-auto
-              h-[calc(100vh-72px)] md:max-h-[85vh] overflow-y-auto
+              h-[calc(100vh-100px)] md:max-h-[85vh] overflow-y-auto
               rounded-t-3xl md:rounded-3xl
               bg-[#E5E1DA] text-[#1a1a1a] font-serif
               border border-[#dcdcdc] shadow-2xl
               p-6 md:p-10 mt-0 mb-0
               z-[45] animate-slideUp
             "
-          >
-            <button
-              onClick={() => { setSelectedProduct(null);setCurrentIndex(0)}}
-              className="absolute top-4 right-4 md:top-6 md:right-6 z-50 text-black/50 hover:text-black text-2xl"
             >
-              ✕
-            </button>
+              <button
+                onClick={() => {
+                  setSelectedProduct(null);
+                  setCurrentIndex(0);
+                }}
+                className="absolute top-4 right-4 md:top-6 md:right-6 z-50 text-black/50 hover:text-black text-2xl"
+              >
+                ✕
+              </button>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-15 items-start">
                 {/* ================= LEFT — CUSTOMIZATION (DESKTOP FIXED) ================= */}
@@ -502,9 +575,7 @@ export default function MyActivity() {
                                   type="radio"
                                   value={t}
                                   name="metalType"
-                                  checked={
-                                    (t == customData?.metalType)
-                                  }
+                                  checked={t == customData?.metalType}
                                   onChange={() =>
                                     setCustomData((prev) => ({
                                       ...prev,
@@ -621,9 +692,7 @@ export default function MyActivity() {
                                   type="radio"
                                   value={t}
                                   name="stoneType"
-                                  checked={
-                                    (t ==  customData?.stoneType )
-                                  }
+                                  checked={t == customData?.stoneType}
                                   onChange={() =>
                                     setCustomData((prev) => ({
                                       ...prev,
@@ -745,11 +814,13 @@ export default function MyActivity() {
                     </div>
                     <div className="pt-2">
                       <button
-                              disabled={adding}
-                              onClick={handleAddToWishlist}
-                              className={ `block md:hidden ${adding ? "bg-green-gradiant cursor-not-allowed" : "bg-green-gradiant cursor-pointer"} ml-auto md:px-8 px-4 py-4 w-full  text-white rounded-full text-xs tracking-widest`}
-                          > BUY NOW
-                          </button>
+                        disabled={adding}
+                        onClick={handleAddToWishlist}
+                        className={`block md:hidden ${adding ? "bg-green-gradiant cursor-not-allowed" : "bg-green-gradiant cursor-pointer"} ml-auto md:px-8 px-4 py-4 w-full  text-white rounded-full text-xs tracking-widest`}
+                      >
+                        {" "}
+                        BUY NOW
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -841,48 +912,53 @@ export default function MyActivity() {
                   {/* ACTION BUTTONS */}
                   <div className="space-y-4">
                     <div className="grid md:grid-cols-4 grid-cols-3 gap-1">
-                       <button
+                      <button
                         disabled={saving}
                         onClick={handleSaveEdit}
-                    className={`px-5 py-4 w-full rounded-full text-xs tracking-widest text-white  ${
-                      saving ? "bg-gray-400 cursor-not-allowed" : "bg-[#6B6B6B] cursor-pointer hover:bg-[#2E4B45]"
-                    }`}
-                  >
-                    {saving ? "SAVING..." : "SAVE"}
+                        className={`px-5 py-3 w-full rounded-full text-xs tracking-widest text-white  ${
+                          saving
+                            ? "bg-gray-400 cursor-not-allowed"
+                            : "bg-[#6B6B6B] cursor-pointer hover:bg-[#2E4B45]"
+                        }`}
+                      >
+                        {saving ? "SAVING..." : "SAVE"}
                       </button>
 
-                        <button
-                          disabled={uploading}
-                          onClick={handleCommunityStatus}
-                          className={`${
-                            uploading
-                              ? "bg-gradient-to-r from-red-900/50 via-rose-900/50 to-red-950/50 cursor-not-allowed opacity-70 shadow-none"
-                              : "cursor-pointer"
-                          } px-10 py-4 col-span-2 ${
-                            selectedProduct.is_community_uploaded
-                              ? "bg-gradient-to-r from-red-800 via-rose-800 to-red-900"
-                              : "bg-gradient-to-r from-emerald-500 via-teal-500 to-green-500"
-                          } text-white rounded-full text-xs tracking-widest`}
-                        >
-                      {selectedProduct.is_community_uploaded
-                        ? "REMOVE FROM COMMUNITY"
-                        : "POST ON COMMUNITY"}
-                        </button>
-                    {/*</div>*/}
-
-                    {/* BOTTOM ROW: BUY NOW */}
-                    {/*<div className="flex justify-start">*/}
                       <button
-                            disabled={adding}
-                            onClick={handleAddToWishlist}
-                            className={ `hidden md:block ${adding ? "bg-green-gradiant cursor-not-allowed" : "bg-green-gradiant cursor-pointer"} ml-auto md:px-8 px-4 py-4 w-full  text-white rounded-full text-xs tracking-widest`}
-                        > BUY NOW </button>
+                        disabled={uploading}
+                        onClick={handleCommunityStatus}
+                        className={`${
+                          uploading
+                            ? "bg-gradient-to-r from-red-900/50 via-rose-900/50 to-red-950/50 cursor-not-allowed opacity-70 shadow-none"
+                            : "cursor-pointer"
+                        } px-10 py-4 col-span-2 ${
+                          selectedProduct.is_community_uploaded
+                            ? "bg-gradient-to-r from-red-800 via-rose-800 to-red-900"
+                            : "bg-gradient-to-r from-emerald-500 via-teal-500 to-green-500"
+                        } text-white rounded-full text-xs tracking-widest`}
+                      >
+                        {selectedProduct.is_community_uploaded
+                          ? "REMOVE FROM COMMUNITY"
+                          : "POST ON COMMUNITY"}
+                      </button>
+                      {/*</div>*/}
+
+                      {/* BOTTOM ROW: BUY NOW */}
+                      {/*<div className="flex justify-start">*/}
+                      <button
+                        disabled={adding}
+                        onClick={handleAddToWishlist}
+                        className={`hidden md:block ${adding ? "bg-green-gradiant cursor-not-allowed" : "bg-green-gradiant cursor-pointer"} ml-auto md:px-8 px-4 py-4 w-full  text-white rounded-full text-xs tracking-widest`}
+                      >
+                        {" "}
+                        BUY NOW{" "}
+                      </button>
                     </div>
                   </div>
                 </div>
               </div>
 
-            <style>{`
+              <style>{`
               @keyframes slideUp {
                 0% { opacity: 0; transform: translateY(40px) scale(0.97); }
                 100% { opacity: 1; transform: translateY(0) scale(1); }
@@ -894,11 +970,11 @@ export default function MyActivity() {
               .animate-slideUp { animation: slideUp .6s both ease-out; }
               .animate-blurFade { animation: blurFade .6s both; }
             `}</style>
+            </div>
           </div>
-        </div>
-      )}
-    </div>
-      </>
+        )}
+      </div>
+    </>
   );
   
 }

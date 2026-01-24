@@ -187,7 +187,7 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
 
       {/* Centered Modal */}
       <div
-        className={`fixed inset-0 z-1000 flex items-end md:items-center pb-20 justify-center transition-all duration-300 ${
+        className={`fixed inset-0 z-1000 flex items-start md:items-start md:pb-20 pt-20 md:pt-12 justify-center transition-all duration-300 ${
           isOpen
             ? "opacity-100 scale-100 translate-y-0"
             : "opacity-0 scale-95 translate-y-5 pointer-events-none"
@@ -197,15 +197,18 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
           className={`relative bg-white/15 backdrop-blur-2xl border border-white/30 shadow-2xl rounded-2xl
   w-[92%] md:w-[90%] max-w-4xl
   text-sm md:text-base text-white
-  pt-12 md:pt-16 px-4 md:px-5 pb-4 md:pb-6
-  max-h-[80vh] md:max-h-[85vh]
-  overflow-visible${
-    type === "login" ? "flex flex-col md:flex-row" : "flex flex-col"
-  }`}
+  pt-26 md:pt-16 px-4 md:px-5 pb-4 md:pb-6 md:max-h-none
+  overflow-y-auto md:overflow-visible
+max-h-[80vh] md:max-h-[85vh]${
+            type === "login" ? "flex flex-col md:flex-row" : "flex flex-col"
+          }`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Logo Circle */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black backdrop-blur-md rounded-full w-20 h-20 shadow-xl flex items-center justify-center border border-white/30">
+          <div
+            className="absolute top-14 md:top-0
+ left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black backdrop-blur-md rounded-full w-20 h-20 shadow-xl flex items-center justify-center border border-white/30"
+          >
             <img
               src="assets/logoo.svg"
               alt="Logo"
@@ -392,6 +395,14 @@ export default function AuthModals({ isOpen, type, onClose, switchType }) {
                   required
                   type="tel"
                   placeholder="Phone Number"
+                  className="input-style"
+                />
+
+                <input
+                  name="schoolName"
+                  required
+                  type="text"
+                  placeholder="School Name"
                   className="input-style"
                 />
 

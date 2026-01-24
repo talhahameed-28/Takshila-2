@@ -1,4 +1,4 @@
-
+import { Link } from "react-router-dom";
 
 export default function OurStory() {
   return (
@@ -55,6 +55,10 @@ export default function OurStory() {
                 an open, borderless network where creativity itself is the primary
                 currency.
               </p>
+              
+              <div className="mt-10">
+                  <Link to="https://womensinsider.com/takshila-reinventing-jewelry-with-collaboration-and-personal-choice/" target="_blank"><img src="assets/womens-insider.png" className="w-[280px] mt-5 mx-auto"  /></Link>
+                </div>
             </div>
       </section>
 
@@ -293,5 +297,6 @@ export default function OurStory() {
         </div>
       </section> */}
     </div>
+  
   );
 }

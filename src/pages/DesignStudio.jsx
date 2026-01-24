@@ -435,6 +435,8 @@ export default function DesignStudio() {
             quality: upQuality,
             ringSize: upRingSize,
             royalties: royalty,
+            metalType:upMetalType,
+            stoneType:upStoneType,
             totalCaratWeight: upTotalCarat,
           },
         };

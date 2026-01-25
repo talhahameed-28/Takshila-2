@@ -339,7 +339,7 @@ max-h-[80vh] md:max-h-[85vh]${
                 onSubmit={handleRegister}
                 className="space-y-4 w-full text-xs max-w-2xl"
               >
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <input
                     name="name"
                     required
@@ -369,34 +369,39 @@ max-h-[80vh] md:max-h-[85vh]${
                   placeholder="Email ID"
                   className="input-style"
                 />
-                <input
-                  name="password"
-                  required
-                  type="password"
-                  placeholder="Password"
-                  className="input-style"
-                />
-                <input
-                  name="password_confirmation"
-                  required
-                  type="password"
-                  placeholder="Confirm Password"
-                  className="input-style"
-                />
-                <input
-                  name="dob"
-                  required
-                  type="date"
-                  placeholder="Date of Birth"
-                  className="input-style"
-                />
-                <input
-                  name="phone"
-                  required
-                  type="tel"
-                  placeholder="Phone Number"
-                  className="input-style"
-                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <input
+                    name="password"
+                    required
+                    type="password"
+                    placeholder="Password"
+                    className="input-style"
+                  />
+                  <input
+                    name="password_confirmation"
+                    required
+                    type="password"
+                    placeholder="Confirm Password"
+                    className="input-style"
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <input
+                    name="dob"
+                    required
+                    type="date"
+                    placeholder="Date of Birth"
+                    className="input-style"
+                  />
+
+                  <input
+                    name="phone"
+                    required
+                    type="tel"
+                    placeholder="Phone Number"
+                    className="input-style"
+                  />
+                </div>
 
                 <input
                   name="schoolName"

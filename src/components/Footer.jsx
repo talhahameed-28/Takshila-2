@@ -156,7 +156,8 @@ export default function Footer() {
 
           {/* Copyright */}
           <div className="relative mt-12 text-center text-xs border-t pt-6 border-white/10 text-gray-500">
-            Copyright © 2025 Takshila. All Rights Reserved.
+            <div>Copyright © 2025 Takshila. All Rights Reserved.</div>
+            <div className="mt-2 text-gray-600">v{__APP_VERSION__} • Built: {__BUILD_TIME__}</div>
           </div>
         </footer>
       </div>

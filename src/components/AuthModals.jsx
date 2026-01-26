@@ -344,7 +344,7 @@ max-h-[80vh] md:max-h-[85vh]${
                     name="name"
                     required
                     type="text"
-                    placeholder="Full Name"
+                    placeholder="Name"
                     className=" w-1/2 input-style"
                   />
                   {/* <input

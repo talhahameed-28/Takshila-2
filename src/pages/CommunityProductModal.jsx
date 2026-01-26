@@ -340,7 +340,17 @@ export default function CommunityProductModal({
                               : "excellent",
                       }));
                     }}
-                    className="w-full opacity-90 cursor-pointer"
+                    className="w-full opacity-90 cursor-pointer 
+  [::-webkit-slider-thumb]:appearance-none
+  [::-webkit-slider-thumb]:h-4
+  [::-webkit-slider-thumb]:w-4
+  [::-webkit-slider-thumb]:rounded-full
+  [::-webkit-slider-thumb]:bg-gray-400
+  [::-moz-range-thumb]:h-4
+  [::-moz-range-thumb]:w-4
+  [::-moz-range-thumb]:rounded-full
+  [::-moz-range-thumb]:bg-gray-400
+"
                   />
                   <div className="grid grid-cols-3 text-center text-xs mt-1">
                     <span>Good</span>

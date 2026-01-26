@@ -21,7 +21,7 @@ export default function PricingBreakdownModal({setShowBreakdown,breakdown}) {
 
       {/* Modal */}
       
-        <div onClick={()=>setShowBreakdown(false)} className="fixed inset-0 z-51 flex items-center justify-center backdrop-blur-sm bg-black/40">
+        <div onClick={()=>setShowBreakdown(false)} className="fixed inset-0 z-100 flex items-center justify-center backdrop-blur-sm bg-black/40">
           <div onClick={(e)=>e.stopPropagation()} className="w-full h-[75vh] no-scrollbar overflow-auto max-w-md rounded-xl bg-[#8f8f8f] p-1 md:p-6 shadow-xl">
             {/* Header */}
             <div className="text-center">

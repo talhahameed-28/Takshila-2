@@ -561,217 +561,227 @@ export default function MyActivity() {
                         const readOnly = true;
 
                         return (
-                          <>
-                            {/* METAL TYPE */}
-                            <h3 className="font-semibold mb-3">Metal type</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
-                              <div>
-                                <p className="text-sm mb-2">Type</p>
-                                <div className="flex items-center gap-10">
-                                  {["gold", "silver"].map((t) => (
-                                    <label
-                                      key={t}
-                                      className="flex flex-col items-center gap-2 text-xs cursor-pointer opacity-70"
-                                    >
-                                      <input
-                                        disabled
-                                        type="radio"
-                                        value={t}
-                                        checked={t === customData.metalType}
-                                        className="w-5 h-5 accent-black"
-                                      />
-                                      <span className="mt-1 capitalize">
-                                        {t}
-                                      </span>
-                                    </label>
-                                  ))}
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* GOLD OPTIONS */}
-                            {customData.metalType !== "silver" && (
-                              <>
-                                <h3 className="font-semibold mt-4 mb-3">
-                                  Gold Options
-                                </h3>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                  {/* GOLD TYPE */}
-                                  <div>
-                                    <p className="text-sm mb-2">Type</p>
-                                    <div className="flex gap-3 text-xs">
-                                      {["rose", "yellow", "white"].map((t) => (
-                                        <button
-                                          key={t}
-                                          disabled
-                                          className={`px-3 py-1 rounded-full ${
-                                            customData.goldType === t
-                                              ? "bg-white text-black"
-                                              : "bg-white/20 opacity-40"
-                                          }`}
-                                        >
-                                          {t}
-                                        </button>
-                                      ))}
-                                    </div>
-                                  </div>
-
-                                  {/* GOLD KARAT */}
-                                  <div>
-                                    <p className="text-sm mb-2">Karat</p>
-                                    <div className="flex gap-3 text-xs">
-                                      {["10K", "14K", "18K"].map((k) => (
-                                        <button
-                                          key={k}
-                                          disabled
-                                          className={`px-3 py-1 rounded-full ${
-                                            customData.goldKarat === k
-                                              ? "bg-white text-black"
-                                              : "bg-white/20 opacity-40"
-                                          }`}
-                                        >
-                                          {k}
-                                        </button>
-                                      ))}
-                                    </div>
-                                  </div>
-                                </div>
-                              </>
-                            )}
-
-                            {/* RING SIZE */}
-                            <h3 className="font-semibold tracking-wide mt-6 mb-3">
-                              Ring Size
-                            </h3>
-                            <select
-                              disabled
-                              value={customData.ringSize}
-                              className="bg-[#D9D9D9] text-black w-52 h-11 px-4 rounded-full opacity-70 cursor-not-allowed"
-                            >
-                              {Array.from(
-                                { length: 21 },
-                                (_, i) => 3 + i * 0.5,
-                              ).map((size) => (
-                                <option key={size} value={size.toFixed(1)}>
-                                  {size.toFixed(1)}
-                                </option>
-                              ))}
-                            </select>
-
-                            {/* STONE OPTIONS */}
-                            <h3 className="font-semibold tracking-wide mt-6 mb-3">
-                              Stone Options
-                            </h3>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
-                              <div>
-                                <p className="text-sm mb-2">Type</p>
-
-                                <div className="flex items-center gap-10">
-                                  {["diamond", "moissanite"].map((t) => (
-                                    <label
-                                      key={t}
-                                      className="flex flex-col items-center gap-2 text-xs opacity-70"
-                                    >
-                                      <input
-                                        disabled
-                                        type="radio"
-                                        checked={t === customData.stoneType}
-                                        className="w-5 h-5 accent-black"
-                                      />
-                                      <span className="mt-1 capitalize">
-                                        {t}
-                                      </span>
-                                    </label>
-                                  ))}
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                              {/* SHAPE */}
-                              <div>
-                                <p className="text-sm mb-2">Shape</p>
-                                <ShapeDropdown
-                                  value={customData.diamondShape}
-                                  onChange={() => {}}
-                                  readOnly={true}
-                                />
-                              </div>
-
-                              {/* QUALITY */}
-                              {customData.stoneType !== "moissanite" && (
+                          
+                            <>
+                              {/* METAL TYPE */}
+                              <h3 className="font-semibold mb-3">Metal type</h3>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
                                 <div>
-                                  <p className="text-sm mb-2">Quality</p>
-                                  <input
-                                    disabled
-                                    type="range"
-                                    min="0"
-                                    max="2"
-                                    value={
-                                      customData.quality === "good"
-                                        ? 0
-                                        : customData.quality === "premium"
+                                  <p className="text-sm mb-2">Type</p>
+                                  <div className="flex items-center gap-10">
+                                    {["gold", "silver"].map((t) => (
+                                      <label
+                                        key={t}
+                                        className="flex flex-col items-center gap-2 text-xs cursor-pointer"
+                                      >
+                                        <input
+                                          type="radio"
+                                          value={t}
+                                          checked={t === customData.metalType}
+                                          onChange={() =>
+                                            setCustomData((prev) => ({ ...prev, metalType: t }))
+                                          }
+                                          className="w-5 h-5 accent-black"
+                                        />
+                                        <span className="mt-1 capitalize">{t}</span>
+                                      </label>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* GOLD OPTIONS */}
+                              {customData.metalType !== "silver" && (
+                                <>
+                                  <h3 className="font-semibold mt-4 mb-3">Gold Options</h3>
+
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {/* GOLD TYPE */}
+                                    <div>
+                                      <p className="text-sm mb-2">Type</p>
+                                      <div className="flex gap-3 text-xs">
+                                        {["rose", "yellow", "white"].map((t) => (
+                                          <button
+                                            key={t}
+                                            onClick={() =>
+                                              setCustomData((prev) => ({ ...prev, goldType: t }))
+                                            }
+                                            className={`px-3 py-1 rounded-full ${
+                                              customData.goldType === t
+                                                ? "bg-white text-black"
+                                                : "bg-white/20"
+                                            }`}
+                                          >
+                                            {t}
+                                          </button>
+                                        ))}
+                                      </div>
+                                    </div>
+
+                                    {/* GOLD KARAT */}
+                                    <div>
+                                      <p className="text-sm mb-2">Karat</p>
+                                      <div className="flex gap-3 text-xs">
+                                        {["10K", "14K", "18K"].map((k) => (
+                                          <button
+                                            key={k}
+                                            onClick={() =>
+                                              setCustomData((prev) => ({ ...prev, goldKarat: k }))
+                                            }
+                                            className={`px-3 py-1 rounded-full ${
+                                              customData.goldKarat === k
+                                                ? "bg-white text-black"
+                                                : "bg-white/20"
+                                            }`}
+                                          >
+                                            {k}
+                                          </button>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </>
+                              )}
+
+                              {/* RING SIZE */}
+                              <h3 className="font-semibold tracking-wide mt-6 mb-3">Ring Size</h3>
+                              <select
+                                value={customData.ringSize}
+                                onChange={(e) =>
+                                  setCustomData((prev) => ({ ...prev, ringSize: e.target.value }))
+                                }
+                                className="bg-[#D9D9D9] text-black w-52 h-11 px-4 rounded-full"
+                              >
+                                {Array.from({ length: 21 }, (_, i) => 3 + i * 0.5).map((size) => (
+                                  <option key={size} value={size.toFixed(1)}>
+                                    {size.toFixed(1)}
+                                  </option>
+                                ))}
+                              </select>
+
+                              {/* STONE OPTIONS */}
+                              <h3 className="font-semibold tracking-wide mt-6 mb-3">Stone Options</h3>
+
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
+                                <div>
+                                  <p className="text-sm mb-2">Type</p>
+
+                                  <div className="flex items-center gap-10">
+                                    {["diamond", "moissanite"].map((t) => (
+                                      <label key={t} className="flex flex-col items-center gap-2 text-xs">
+                                        <input
+                                          type="radio"
+                                          value={t}
+                                          checked={t === customData.stoneType}
+                                          onChange={() =>
+                                            setCustomData((prev) => ({ ...prev, stoneType: t }))
+                                          }
+                                          className="w-5 h-5 accent-black"
+                                        />
+                                        <span className="mt-1 capitalize">{t}</span>
+                                      </label>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* SHAPE */}
+                                <div>
+                                  <p className="text-sm mb-2">Shape</p>
+                                  <ShapeDropdown
+                                    value={customData.diamondShape}
+                                    onChange={(val) =>
+                                      setCustomData((prev) => ({ ...prev, diamondShape: val }))
+                                    }
+                                    readOnly={false}
+                                  />
+                                </div>
+
+                                {/* QUALITY */}
+                                {customData.stoneType !== "moissanite" && (
+                                  <div>
+                                    <p className="text-sm mb-2">Quality</p>
+                                    <input
+                                      type="range"
+                                      min="0"
+                                      max="2"
+                                      value={
+                                        customData.quality === "good"
+                                          ? 0
+                                          : customData.quality === "premium"
                                           ? 1
                                           : 2
-                                    }
-                                    className="w-full opacity-50 cursor-not-allowed"
-                                  />
-                                  <div className="grid grid-cols-3 text-center text-xs mt-1 opacity-70">
-                                    <span>Good</span>
-                                    <span>Premium</span>
-                                    <span>Excellent</span>
+                                      }
+                                      onChange={(e) => {
+                                        const val = Number(e.target.value);
+                                        setCustomData((prev) => ({
+                                          ...prev,
+                                          quality:
+                                            val === 0 ? "good" : val === 1 ? "premium" : "excellent",
+                                        }));
+                                      }}
+                                      className="w-full cursor-pointer"
+                                    />
+                                    <div className="grid grid-cols-3 text-center text-xs mt-1">
+                                      <span>Good</span>
+                                      <span>Premium</span>
+                                      <span>Excellent</span>
+                                    </div>
                                   </div>
+                                )}
+                              </div>
+
+                              {/* CARATS */}
+                              <div className="grid grid-cols-1 gap-2 mt-4">
+                                <div>
+                                  <p className="text-sm mb-2">Center Stone Carat</p>
+                                  <input
+                                    type="number"
+                                    step="0.01"
+                                    value={customData.centerStoneCarat}
+                                    onChange={(e) =>
+                                      setCustomData((prev) => ({
+                                        ...prev,
+                                        centerStoneCarat: e.target.value,
+                                      }))
+                                    }
+                                    className="bg-[#D9D9D9] text-black h-11 px-4 rounded-full w-full"
+                                  />
                                 </div>
-                              )}
-                            </div>
 
-                            {/* CARATS */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                              <div>
-                                <p className="text-sm mb-2">
-                                  Center Stone Carat
-                                </p>
-                                <input
-                                  disabled
-                                  type="number"
-                                  step="0.01"
-                                  value={customData.centerStoneCarat}
-                                  className="bg-[#D9D9D9] text-black h-11 px-4 rounded-full opacity-60"
-                                />
+                                <div>
+                                  <p className="text-sm mb-2">Total Carat Weight</p>
+                                  <input
+                                    type="number"
+                                    step="0.01"
+                                    value={customData.totalCaratWeight}
+                                    onChange={(e) =>
+                                      setCustomData((prev) => ({
+                                        ...prev,
+                                        totalCaratWeight: e.target.value,
+                                      }))
+                                    }
+                                    className="bg-[#D9D9D9] text-black h-11 px-4 rounded-full w-full"
+                                  />
+                                </div>
                               </div>
 
-                              <div>
-                                <p className="text-sm mb-2">
-                                  Total Carat Weight
-                                </p>
-                                <input
-                                  disabled
-                                  type="number"
-                                  step="0.01"
-                                  value={customData.totalCaratWeight}
-                                  className="bg-[#D9D9D9] text-black h-11 px-4 rounded-full opacity-60"
-                                />
+                              {/* PRICE */}
+                              <div className="flex justify-between bg-[#D9D9D9] text-black p-4 rounded-lg text-xs mt-6">
+                                <div className="flex">
+                                  <p>Price: ${priceData.totalPriceWithRoyalties}</p>
+                                  <button
+                                    onClick={() => setShowBreakdown(true)}
+                                    className="ml-2 w-4 h-4 bg-black text-white rounded-full text-[10px]"
+                                  >
+                                    i
+                                  </button>
+                                </div>
+                                <p>Commission: ${priceData.commission}</p>
                               </div>
-                            </div>
+                            </>
 
-                            {/* PRICE */}
-                            <div className="flex justify-between bg-[#D9D9D9] text-black p-4 rounded-lg text-xs mt-6">
-                              <div className="flex">
-                                <p>
-                                  Price: ${priceData.totalPriceWithRoyalties}
-                                </p>
-                                <button
-                                  disabled
-                                  className="ml-2 w-4 h-4 bg-black text-white rounded-full text-[10px]"
-                                >
-                                  i
-                                </button>
-                              </div>
-                              <p>Commission: ${priceData.commission}</p>
-                            </div>
-                          </>
                         );
                       })()}
                     </div>

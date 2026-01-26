@@ -97,6 +97,8 @@ export default function MyActivity() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [adding, setAdding] = useState(false);
+  const [showShare, setShowShare] = useState(false);
+  const shareUrl = `${window.location.origin}/product/${selectedProduct?.id}`;
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -300,34 +302,34 @@ export default function MyActivity() {
         newImages.forEach((file)=>formData.append("images",file));
       }
       // UPDATE NAME + DESC + ATTRIBUTES
-      // const { data } = await axios.put(
-      //   `${import.meta.env.VITE_BASE_URL}/api/product/${selectedProduct.id}/update`,
-      //   {
-      //     name: editData.name,
-      //     description: editData.description,
-      //     ...(customData),
-      //     ...(newImages.length>0?formData:{})
-      //   },
-      //   {
-      //     headers: { Authorization: `Bearer ${localStorage.getItem("token")}`,
-      //               },
-      //             withCredentials: true,
-      //   },
-      // );
-      formData.append("name",editData.name)
-      
-
       const { data } = await axios.put(
         `${import.meta.env.VITE_BASE_URL}/api/product/${selectedProduct.id}/update`,
-        
-          {name:editData.name,...formData}
-        ,
+        {
+          name: editData.name,
+          description: editData.description,
+          ...(customData),
+          ...(newImages.length>0?formData:{})
+        },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}`,
                     },
                   withCredentials: true,
         },
       );
+      // formData.append("name",editData.name)
+      
+
+      // const { data } = await axios.put(
+      //   `${import.meta.env.VITE_BASE_URL}/api/product/${selectedProduct.id}/update`,
+        
+      //     {name:editData.name,...formData}
+      //   ,
+      //   {
+      //     headers: { Authorization: `Bearer ${localStorage.getItem("token")}`,
+      //               },
+      //             withCredentials: true,
+      //   },
+      // );
       console.log(data)
       if (!data.success) {
         toast.error("Update failed");
@@ -861,15 +863,12 @@ export default function MyActivity() {
                   {/* ACTION BUTTONS */}
                   <div className="space-y-4">
                     <div className="grid md:grid-cols-4 grid-cols-3 gap-1">
-                      {/* <button
-                        onClick={() => {
-                          setIsViewModal(false);
-                          setIsEditModal(true);
-                        }}
-                        className="px-5 py-3 w-full rounded-full text-xs tracking-widest text-white bg-[#6B6B6B] hover:bg-[#2E4B45]"
-                      >
-                        EDIT
-                      </button> */}
+                      <button
+                      onClick={() => setShowShare(true)}
+                      className="w-12 h-12 bg-[#C3C3C3] rounded-full flex items-center justify-center hover:bg-[#b5b5b5]"
+                    >
+                      <img src="/assets/grp32.svg" className="w-5 h-5" />
+                    </button>
 
                       <button
                         disabled={uploading}
@@ -895,6 +894,67 @@ export default function MyActivity() {
                   </div>
                 </div>
               </div>
+              {showShare && (
+            <div className="fixed inset-0 z-[60] flex items-center justify-center">
+              <div
+                className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+                onClick={() => setShowShare(false)}
+              />
+
+              <div className="relative bg-white rounded-2xl w-[360px] p-6 shadow-xl">
+                <h3 className="text-lg font-semibold mb-4 text-center">
+                  Share this design
+                </h3>
+
+                <div className="flex items-center bg-gray-100 rounded-lg px-3 py-2 mb-4">
+                  <input
+                    readOnly
+                    value={shareUrl}
+                    className="flex-1 bg-transparent text-sm outline-none"
+                  />
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(shareUrl);
+                      toast.success("Link copied!");
+                    }}
+                    className="text-sm font-medium text-[#2E4B45]"
+                  >
+                    Copy
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4 text-xs text-center">
+                  <a href="https://www.instagram.com" target="_blank">
+                    <img src="/assets/instagram.svg" className="w-8 mx-auto" />
+                    Instagram
+                  </a>
+
+                  <a
+                    href={selectedProduct.facebook_share_url}
+                    target="_blank"
+                  >
+                    <img src="/assets/facebook.svg" className="w-8 mx-auto" />
+                    Facebook
+                  </a>
+
+                  <a
+                    href={`https://wa.me/?text=${encodeURIComponent(shareUrl)}`}
+                    target="_blank"
+                  >
+                    <img src="/assets/whatsapp.svg" className="w-8 mx-auto" />
+                    WhatsApp
+                  </a>
+                </div>
+
+                <button
+                  onClick={() => setShowShare(false)}
+                  className="absolute top-3 right-3 text-gray-400"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+          )}
             </div>
           </div>
         )}

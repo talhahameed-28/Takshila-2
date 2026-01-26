@@ -168,7 +168,7 @@ export default function CommunityMobile({
 /* COMMENTS BOTTOM SHEET */
 /* ------------------------------------------------------------------ */
 
-function CommentsSheet({ productId, onClose, isLoggedIn, handleOpenModal }) {
+function CommentsSheet({ productId, onClose, isLoggedIn, handleOpenModal,setCommentsCount }) {
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(true);
@@ -185,7 +185,7 @@ function CommentsSheet({ productId, onClose, isLoggedIn, handleOpenModal }) {
             },
           },
         );
-
+        console.log(data)
         if (data.success) {
           setComments(data.data.comments.list || []);
         }
@@ -231,6 +231,7 @@ function CommentsSheet({ productId, onClose, isLoggedIn, handleOpenModal }) {
           ...prev,
         ]);
         setComment("");
+        setCommentsCount((prev)=>prev+1)
       }
     } catch (err) {
       console.error("Failed to post comment", err);
@@ -315,6 +316,7 @@ function ReelItem({
   const [isRated, setIsRated] = useState(item.is_rated);
   const [averageRating, setAverageRating] = useState(item.average_rating);
   const [ratingsCount, setRatingsCount] = useState(item.ratings_count);
+  const [commentsCount, setCommentsCount] = useState(item.comments_count || 0)
   const [expanded, setExpanded] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [showShare, setShowShare] = useState(false)
@@ -627,7 +629,7 @@ function ReelItem({
                   className="flex items-center gap-1"
                 >
                   <img src="/assets/comments.png" className="w-6 h-6" />
-                  <span className="text-xs">{item.comments_count || 0}</span>
+                  <span className="text-xs">{commentsCount}</span>
                 </button>
               </>
 
@@ -684,6 +686,7 @@ function ReelItem({
           handleOpenModal={handleOpenModal}
           isLoggedIn={isLoggedIn}
           productId={item.id}
+          setCommentsCount={setCommentsCount}
           onClose={() => {
             setShowComments(false);
             setHideMobileNavbar(false);

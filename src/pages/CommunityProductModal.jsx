@@ -33,14 +33,9 @@ export default function CommunityProductModal({
   useEffect(() => {
     if (selectedProductDetails?.meta_data) {
       setCustomData({
-        goldType:
-          selectedProductDetails.meta_data.goldType != "undefined"
-            ? selectedProductDetails.meta_data.goldType
-            : "rose",
-        goldKarat:
-          selectedProductDetails.meta_data.goldKarat != "undefined"
-            ? selectedProductDetails.meta_data.goldKarat
-            : "10K",
+        goldType:selectedProductDetails.meta_data.goldType,
+        goldKarat: selectedProductDetails.meta_data.goldKarat,
+
         ringSize: selectedProductDetails.meta_data.ringSize,
         diamondShape: selectedProductDetails.meta_data.diamondShape,
         quality: selectedProductDetails.meta_data.quality,

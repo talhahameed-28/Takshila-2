@@ -12,7 +12,7 @@ import MyActivity from "../pages/MyActivity";
 import Wishlist from "../pages/Wishlist";
 import VerifyOtp from '../pages/ResetPassword';
 import DesignStudio from "../pages/DesignStudio";
-import ProtectedRoute from "./protectedRoute";
+import ProtectedRoute from "./ProtectedRoute";
 import PrivacyPolicy from "../pages/Privacypolicy"
 import Refundpolicy from "../pages/Refundpolicy"
 import Shippingpolicy from "../pages/Shippingpolicy"

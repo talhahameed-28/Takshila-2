@@ -162,7 +162,7 @@ export default function MyActivity() {
             },
           },
         );
-
+        console.log(data)
         if (data.success) {
           setDesigns(data.data.products);
           setTotalProducts(data.data.pagination.total);
@@ -178,33 +178,34 @@ export default function MyActivity() {
   }, [currentPage]);
 
   // ================= REMOVE DESIGN =================
-  const handleRemoveDesign = async (productId) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to remove this design?",
-    );
-    if (!confirmDelete) return;
+  // const handleRemoveDesign = async (productId) => {
+  //   const confirmDelete = window.confirm(
+  //     "Are you sure you want to remove this design?",
+  //   );
+  //   if (!confirmDelete) return;
 
-    try {
-      axios.defaults.withCredentials = true;
+  //   try {
+  //     axios.defaults.withCredentials = true;
 
-      const { data } = await axios.delete(
-        `${import.meta.env.VITE_BASE_URL}/api/product/${productId}`,
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        },
-      );
+  //     const { data } = await axios.post(
+  //       `${import.meta.env.VITE_BASE_URL}/api/product/`,
+            // {},
+  //       {
+  //         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  //       },
+  //     );
 
-      if (data.success) {
-        toast.success("Design removed");
-        setDesigns((prev) => prev.filter((d) => d.id !== productId));
-      } else {
-        toast.error("Could not remove design");
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("Deletion failed");
-    }
-  };
+  //     if (data.success) {
+  //       toast.success("Design removed");
+  //       setDesigns((prev) => prev.filter((d) => d.id !== productId));
+  //     } else {
+  //       toast.error("Could not remove design");
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //     toast.error("Deletion failed");
+  //   }
+  // };
 
   // ================= COMMUNITY HANDLER =================
   const handleCommunityStatus = async () => {
@@ -293,20 +294,41 @@ export default function MyActivity() {
 
     try {
       axios.defaults.withCredentials = true;
-
+      let formData=new FormData()
+      console.log(newImages)
+      if (newImages.length > 0) {
+        newImages.forEach((file)=>formData.append("images",file));
+      }
       // UPDATE NAME + DESC + ATTRIBUTES
+      // const { data } = await axios.put(
+      //   `${import.meta.env.VITE_BASE_URL}/api/product/${selectedProduct.id}/update`,
+      //   {
+      //     name: editData.name,
+      //     description: editData.description,
+      //     ...(customData),
+      //     ...(newImages.length>0?formData:{})
+      //   },
+      //   {
+      //     headers: { Authorization: `Bearer ${localStorage.getItem("token")}`,
+      //               },
+      //             withCredentials: true,
+      //   },
+      // );
+      formData.append("name",editData.name)
+      
+
       const { data } = await axios.put(
         `${import.meta.env.VITE_BASE_URL}/api/product/${selectedProduct.id}/update`,
+        
+          {name:editData.name,...formData}
+        ,
         {
-          name: editData.name,
-          description: editData.description,
-          meta_data: customData,
-        },
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                  withCredentials: true,
         },
       );
-
+      console.log(data)
       if (!data.success) {
         toast.error("Update failed");
         return;
@@ -318,7 +340,7 @@ export default function MyActivity() {
       setDesigns((prev) =>
         prev.map((p) =>
           p.id === selectedProduct.id
-            ? { ...p, name: editData.name, description: editData.description }
+            ? { ...p,meta_data:customData, name: editData.name, description: editData.description }
             : p,
         ),
       );
@@ -332,22 +354,22 @@ export default function MyActivity() {
       }));
 
       // UPLOAD IMAGES IF NEW ONES WERE ADDED
-      if (newImages.length > 0) {
-        const formData = new FormData();
-        newImages.forEach((file) => formData.append("images", file));
+      // if (newImages.length > 0) {
+      //   const formData = new FormData();
+      //   newImages.forEach((file) => formData.append("images", file));
 
-        await axios.post(
-          `${import.meta.env.VITE_BASE_URL}/api/product/${selectedProduct.id}/upload-images`,
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          },
-        );
+      //   await axios.post(
+      //     `${import.meta.env.VITE_BASE_URL}/api/product/${selectedProduct.id}/upload-images`,
+      //     formData,
+      //     {
+      //       headers: {
+      //         Authorization: `Bearer ${localStorage.getItem("token")}`,
+      //       },
+      //     },
+      //   );
 
-        toast.success("Images updated");
-      }
+      //   toast.success("Images updated");
+      // }
 
       setIsEditModal(false);
     } catch (err) {
@@ -839,7 +861,7 @@ export default function MyActivity() {
                   {/* ACTION BUTTONS */}
                   <div className="space-y-4">
                     <div className="grid md:grid-cols-4 grid-cols-3 gap-1">
-                      <button
+                      {/* <button
                         onClick={() => {
                           setIsViewModal(false);
                           setIsEditModal(true);
@@ -847,7 +869,7 @@ export default function MyActivity() {
                         className="px-5 py-3 w-full rounded-full text-xs tracking-widest text-white bg-[#6B6B6B] hover:bg-[#2E4B45]"
                       >
                         EDIT
-                      </button>
+                      </button> */}
 
                       <button
                         disabled={uploading}
@@ -880,6 +902,12 @@ export default function MyActivity() {
         {/* ======================= EDIT MODAL (FULLY EDITABLE) ========================== */}
         {selectedProduct && isEditModal && (
           <div className="fixed inset-0 flex items-end md:items-center justify-center z-[70] pt-10">
+             {showBreakdown && (
+              <PricingBreakdownModal
+                breakdown={priceData}
+                setShowBreakdown={setShowBreakdown}
+              />
+            )}
             <div
               className="absolute inset-0 bg-black/40 backdrop-blur-md"
               onClick={closeModals}
@@ -1322,7 +1350,7 @@ export default function MyActivity() {
           </div>
         )}
 
-        <Footer />
+     
       </div>
     </>
   );

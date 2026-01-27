@@ -1,28 +1,39 @@
+import { lazy, Suspense } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
-import Home from "../pages/Home";
 import { ROUTES } from "./routes";
-import Community from "../pages/Community";
-import CommunityProduct from "../pages/CommunityProduct";
-import OurStory from "../pages/OurStory";
-import Blogs from "../pages/Blogs";
-import EmailVerify from "../pages/EmailVerify";
-import Orders from "../pages/Orders";
-import Catalogue from "../pages/Catalogue";
-import MyActivity from "../pages/MyActivity";
-import Wishlist from "../pages/Wishlist";
-import VerifyOtp from '../pages/ResetPassword';
-import DesignStudio from "../pages/DesignStudio";
-import ProtectedRoute from "./protectedRoute";
-import PrivacyPolicy from "../pages/Privacypolicy"
-import Refundpolicy from "../pages/Refundpolicy"
-import Shippingpolicy from "../pages/Shippingpolicy"
-import TermConditions from "../pages/TermsConditions"
-import Faqs from "../pages/Faqs";
-import Checkout from "../pages/Checkout";
-import OrderSuccess from "../pages/OrderSuccess";
-import OrderCancel from "../pages/OrderCancel";
-
 import ScrollToTop from "../utils/ScrollToTop";
+
+// ⚡ Critical pages - load immediately (no lazy loading)
+import Community from "../pages/Community";
+
+// 📦 Lazy load all other pages for better performance
+const Home = lazy(() => import("../pages/Home"));
+const CommunityProduct = lazy(() => import("../pages/CommunityProduct"));
+const OurStory = lazy(() => import("../pages/OurStory"));
+const Blogs = lazy(() => import("../pages/Blogs"));
+const EmailVerify = lazy(() => import("../pages/EmailVerify"));
+const Orders = lazy(() => import("../pages/Orders"));
+const Catalogue = lazy(() => import("../pages/Catalogue"));
+const MyActivity = lazy(() => import("../pages/MyActivity"));
+const Wishlist = lazy(() => import("../pages/Wishlist"));
+const VerifyOtp = lazy(() => import("../pages/ResetPassword"));
+const DesignStudio = lazy(() => import("../pages/DesignStudio"));
+const ProtectedRoute = lazy(() => import("./protectedRoute"));
+const PrivacyPolicy = lazy(() => import("../pages/Privacypolicy"));
+const Refundpolicy = lazy(() => import("../pages/Refundpolicy"));
+const Shippingpolicy = lazy(() => import("../pages/Shippingpolicy"));
+const TermConditions = lazy(() => import("../pages/TermsConditions"));
+const Faqs = lazy(() => import("../pages/Faqs"));
+const Checkout = lazy(() => import("../pages/Checkout"));
+const OrderSuccess = lazy(() => import("../pages/OrderSuccess"));
+const OrderCancel = lazy(() => import("../pages/OrderCancel"));
+
+// Loading fallback component
+const PageLoader = () => (
+  <div className="flex items-center justify-center min-h-screen bg-[#111]">
+    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+  </div>
+);
 const MainRoutes = ({
   setIsMobileMenuOpen,
   setModalOpen,
@@ -40,7 +51,8 @@ const MainRoutes = ({
     <>
       <ScrollToTop />
 
-      <Routes>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
         <Route
           path={ROUTES.HOME}
           element={<Navigate to={ROUTES.COMMUNITY} replace />}
@@ -78,6 +90,7 @@ const MainRoutes = ({
           <Route path={ROUTES.ORDERCANCEL} element={<OrderCancel />} />
         </Route>
       </Routes>
+      </Suspense>
     </>
   );
 };

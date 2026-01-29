@@ -21,5 +21,6 @@ export const ROUTES = {
     FAQS:'/faqs',
     CHECKOUT:'/checkout',
     ORDERSUCCESS:'/order-success',
-    ORDERCANCEL:'/order-cancel'
+    ORDERCANCEL:'/order-cancel',
+    INNERBLOG:'/innerBlog'
 }

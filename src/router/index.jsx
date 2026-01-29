@@ -21,6 +21,7 @@ import Faqs from "../pages/Faqs";
 import Checkout from "../pages/Checkout";
 import OrderSuccess from "../pages/OrderSuccess";
 import OrderCancel from "../pages/OrderCancel";
+import InnerBlog from "../pages/Innerblog"
 
 import ScrollToTop from "../utils/ScrollToTop";
 const MainRoutes = ({
@@ -59,6 +60,7 @@ const MainRoutes = ({
           element={<CommunityProduct handleOpenModal={handleOpenModal} />}
         />
         <Route path={ROUTES.CATALOGUE} element={<Catalogue />} />
+         <Route path={ROUTES.INNERBLOG} element={<InnerBlog />} />
         <Route path={ROUTES.ABOUT} element={<OurStory />} />
         <Route path={ROUTES.BLOG} element={<Blogs />} />
         <Route path={ROUTES.FAQS} element={<Faqs />} />

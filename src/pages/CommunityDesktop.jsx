@@ -101,6 +101,7 @@ export default function CommunityDesktop({ handleOpenModal }) {
   // ⭐ INITIALIZE CUSTOMDATA FROM PRODUCT
   useEffect(() => {
     if (selectedProductDetails?.meta_data) {
+      console.log(selectedProductDetails)
       setCustomData({
         goldType: selectedProductDetails.meta_data.goldType,
         goldKarat: selectedProductDetails.meta_data.goldKarat,
@@ -514,7 +515,7 @@ console.log(customData)
                 <img
                   src={item.image}
                   alt={item.name}
-                  className="w-full h-64 object-cover rounded-t-3xl"
+                  className="w-full h-64 object-fit rounded-t-3xl"
                 />
 
                 <div className="p-6 flex flex-col justify-between min-h-[150px]">
@@ -537,9 +538,7 @@ console.log(customData)
 
                   {/* Price + Wishlist */}
                   <div className="flex justify-between items-center mt-4">
-                    <span className="font-medium text-[#1a1a1a]">
-                      ${item.price}
-                    </span>
+                    
 
                     <div className="flex items-center gap-3">
                       {/* ❤️ Wishlist Button */}
@@ -590,7 +589,7 @@ console.log(customData)
             {/* BACKDROP */}
             <div
               className="absolute inset-0 bg-black/40 backdrop-blur-md animate-blurFade z-[40]"
-              onClick={() =>{ setSelectedProductId(null);setCurrentIndex(0)}}
+              onClick={() =>{ setSelectedProductDetails({});setSelectedProductId(null);setCurrentIndex(0)}}
             />
 
             {/* MODAL PANEL */}
@@ -607,7 +606,7 @@ console.log(customData)
             >
               {/* CLOSE */}
               <button
-                onClick={() => { setSelectedProductId(null);setCurrentIndex(0)}}
+                onClick={() => {setSelectedProductDetails({}); setSelectedProductId(null);setCurrentIndex(0)}}
                 className="absolute top-4 right-4 md:top-6 md:right-6 z-50 text-black/50 hover:text-black text-2xl"
               >
                 ✕

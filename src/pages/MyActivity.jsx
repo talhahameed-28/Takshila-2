@@ -103,7 +103,7 @@ export default function MyActivity() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const [newImages, setNewImages] = useState([]); // For edit modal
-
+  const [existingImages, setExistingImages] = useState({})
   const [menuOpenId, setMenuOpenId] = useState(null);
 
   // ================= INIT CUSTOM DATA WHEN MODAL OPENS =================
@@ -120,7 +120,8 @@ export default function MyActivity() {
         centerStoneCarat: selectedProduct.meta_data.centerStoneCarat,
         totalCaratWeight: selectedProduct.meta_data.totalCaratWeight,
       });
-
+      setExistingImages(Object.fromEntries(selectedProduct.images.map((key,idx)=>[idx+1,true])))
+      console.log(selectedProduct.images)
       setEditData({
         name: selectedProduct.name,
         description: selectedProduct.description,
@@ -297,39 +298,47 @@ export default function MyActivity() {
     try {
       axios.defaults.withCredentials = true;
       let formData=new FormData()
-      console.log(newImages)
+      formData.append("name",editData.name)
+      formData.append("description",editData.description)
       if (newImages.length > 0) {
-        newImages.forEach((file)=>formData.append("images",file));
+        newImages.forEach((file)=>formData.append("images[]",file));
+      }
+      for (const key in customData) {        
+        formData.append(key,customData[key]);    
       }
       // UPDATE NAME + DESC + ATTRIBUTES
-      const { data } = await axios.put(
-        `${import.meta.env.VITE_BASE_URL}/api/product/${selectedProduct.id}/update`,
-        {
-          name: editData.name,
-          description: editData.description,
-          ...(customData),
-          ...(newImages.length>0?formData:{})
-        },
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
-                  withCredentials: true,
-        },
-      );
-      // formData.append("name",editData.name)
-      
-
       // const { data } = await axios.put(
       //   `${import.meta.env.VITE_BASE_URL}/api/product/${selectedProduct.id}/update`,
-        
-      //     {name:editData.name,...formData}
-      //   ,
+      //   {
+      //     name: editData.name,
+      //     description: editData.description,
+      //     ...(customData),
+      //     ...(newImages.length>0?formData:{})
+      //   },
       //   {
       //     headers: { Authorization: `Bearer ${localStorage.getItem("token")}`,
       //               },
       //             withCredentials: true,
       //   },
       // );
+      console.log(existingImages)
+      const images=Object.keys(existingImages)
+      const delete_images=Object.keys(existingImages).filter(key=>!existingImages[key]).map(idx=>"image_"+idx)
+      console.log(delete_images)
+      console.log(editData.name)
+      for (const img of delete_images) {
+        formData.append("delete_images[]",img)     
+      }
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/product/${selectedProduct.id}/update`,        
+          formData
+        ,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                  withCredentials: true,
+        },
+      );
       console.log(data)
       if (!data.success) {
         toast.error("Update failed");
@@ -337,41 +346,29 @@ export default function MyActivity() {
       }
 
       toast.success("Changes saved");
-
+      setExistingImages(data.data.images)
+      setNewImages([])
       // Update list
       setDesigns((prev) =>
         prev.map((p) =>
           p.id === selectedProduct.id
-            ? { ...p,meta_data:customData, name: editData.name, description: editData.description }
+            ? { ...data.data.product,image:p.image,images:Object.values(data.data.product.images) }
             : p,
         ),
       );
 
       // Update selected product
-      setSelectedProduct((prev) => ({
-        ...prev,
-        name: editData.name,
-        description: editData.description,
-        meta_data: { ...customData },
-      }));
+      // setSelectedProduct((prev) => ({
+      //   ...prev,
+      //   name: editData.name,
+      //   description: editData.description,
+      //   meta_data: { ...customData },
+      // }));
 
-      // UPLOAD IMAGES IF NEW ONES WERE ADDED
-      // if (newImages.length > 0) {
-      //   const formData = new FormData();
-      //   newImages.forEach((file) => formData.append("images", file));
+      
 
-      //   await axios.post(
-      //     `${import.meta.env.VITE_BASE_URL}/api/product/${selectedProduct.id}/upload-images`,
-      //     formData,
-      //     {
-      //       headers: {
-      //         Authorization: `Bearer ${localStorage.getItem("token")}`,
-      //       },
-      //     },
-      //   );
-
-      //   toast.success("Images updated");
-      // }
+      
+      
 
       setIsEditModal(false);
     } catch (err) {
@@ -1262,8 +1259,36 @@ export default function MyActivity() {
                               <p className="font-semibold mb-3">Add Images</p>
 
                               {/* IMAGE PREVIEW GRID */}
-                              {newImages.length > 0 && (
+                              {Object.entries(existingImages).length>0 && (
                                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-4">
+                                  {console.log(existingImages)}
+                                  {Object.entries(existingImages).map(([imageIdx,value], index) => {
+                                    
+                                    return (
+                                      <div
+                                        key={index}
+                                        className="relative group"
+                                      >
+                                        <img
+                                          src={selectedProduct.images[imageIdx-1]}
+                                          className={`${value?"":"opacity-60"} w-full  h-24 object-cover rounded-xl border border-white/20`}
+                                        />
+
+                                        {/* REMOVE BUTTON */}
+                                        <button
+                                          onClick={(e) => {
+                                            e.preventDefault();
+                                            setExistingImages((prev) =>
+                                              {return {...prev,[imageIdx]:!value}}
+                                            );
+                                          }}
+                                          className={`mt-1 transition duration-150 ${!value?"bg-emerald-500 hover:bg-emerald-600":"bg-red-500 hover:bg-red-600"}  text-white p-1 rounded-full flex items-center justify-center text-xs opacity-90`}
+                                        >
+                                          {!value?"Keep":"Delete"}
+                                        </button>
+                                      </div>
+                                    );
+                                  })}
                                   {newImages.map((file, index) => {
                                     const imageURL = URL.createObjectURL(file);
                                     return (
